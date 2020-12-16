@@ -1,4 +1,4 @@
-module github.com/team18/app
+module github.com/team18 q/app
 
 go 1.15
 
