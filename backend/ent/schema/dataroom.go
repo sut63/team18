@@ -12,7 +12,7 @@ func (DataRoom) Fields() []ent.Field {
 	return nil
 }
 
-// Edges of the DataRoom.
+// Edges of the DataRoom a.
 func (DataRoom) Edges() []ent.Edge {
 	return nil
 }
