@@ -9,7 +9,7 @@ type ReserveRoom struct {
 
 // Fields of the ReserveRoom.
 func (ReserveRoom) Fields() []ent.Field {
-	return nil
+	return nil //add1
 }
 
 // Edges of the ReserveRoom.
