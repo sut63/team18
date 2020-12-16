@@ -3,7 +3,7 @@ package schema
 import "github.com/facebookincubator/ent"
 
 // FixRoom holds the schema definition for the FixRoom entity.
-//V2
+//V3
 type FixRoom struct {
 	ent.Schema
 }
