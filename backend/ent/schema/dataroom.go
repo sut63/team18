@@ -1,6 +1,9 @@
 package schema
 
-import "github.com/facebookincubator/ent"
+import (
+	"github.com/facebook/ent"
+	"github.com/facebook/ent/schema/edge"
+)
 
 // DataRoom holds the schema definition for the DataRoom entity.
 type DataRoom struct {
@@ -14,5 +17,7 @@ func (DataRoom) Fields() []ent.Field {
 
 // Edges of the DataRoom a.
 func (DataRoom) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.To("reserves", ReserveRoom.Type).StorageKey(edge.Column("room id")),
+	}
 }
