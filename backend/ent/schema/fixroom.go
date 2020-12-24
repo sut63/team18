@@ -7,7 +7,6 @@ import (
 )
 
 // FixRoom holds the schema definition for the FixRoom entity.
-//V3
 type FixRoom struct {
 	ent.Schema
 }
@@ -22,8 +21,8 @@ func (FixRoom) Fields() []ent.Field {
 // Edges of the FixRoom.
 func (FixRoom) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("customer",Customer.Type).Ref("fixs").Unique(),
-		edge.From("furnitureDetail",FurnitureDetail.Type).Ref("fixs").Unique(),
-		edge.From("room",DataRoom.Type).Ref("fixs").Unique(),
+		edge.From("customer", Customer.Type).Ref("fixs").Unique(),
+		edge.From("furnitureDetail", FurnitureDetail.Type).Ref("fixs").Unique(),
+		edge.From("room", DataRoom.Type).Ref("fixs").Unique(),
 	}
 }
