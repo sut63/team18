@@ -23,5 +23,6 @@ func (Customer) Fields() []ent.Field {
 func (Customer) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("reserves", ReserveRoom.Type).StorageKey(edge.Column("customer id")),
+		edge.To("fixs", ReserveRoom.Type).StorageKey(edge.Column("customer id")),
 	}
 }

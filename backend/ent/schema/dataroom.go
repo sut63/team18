@@ -19,5 +19,6 @@ func (DataRoom) Fields() []ent.Field {
 func (DataRoom) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("reserves", ReserveRoom.Type).StorageKey(edge.Column("room id")),
+		edge.To("fixs", ReserveRoom.Type).StorageKey(edge.Column("room id")),
 	}
 }
