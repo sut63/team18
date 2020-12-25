@@ -3,6 +3,7 @@ package schema
 import (
 	"github.com/facebook/ent"
 	"github.com/facebook/ent/schema/field"
+	"github.com/facebook/ent/schema/edge"
 )
 
 // CounterStaff holds the schema definition for the CounterStaff entity.
@@ -20,5 +21,7 @@ func (CounterStaff) Fields() []ent.Field {
 
 // Edges of the CounterStaff.
 func (CounterStaff) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.To("checkins", CheckIn.Type).StorageKey(edge.Column("staff id")),
+	}
 }
