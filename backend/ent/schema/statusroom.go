@@ -1,9 +1,9 @@
 package schema
 
 import (
-	"github.com/facebook/ent"
-	"github.com/facebook/ent/schema/edge"
-	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/ent"
+	"github.com/facebookincubator/ent/schema/edge"
+	"github.com/facebookincubator/ent/schema/field"
 )
 
 // StatusRoom holds the schema definition for the StatusRoom entity.
@@ -14,7 +14,7 @@ type StatusRoom struct {
 // Fields of the StatusRoom.
 func (StatusRoom) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("statusname").NotEmpty(),
+		field.String("status_name").NotEmpty(),
 	}
 }
 
