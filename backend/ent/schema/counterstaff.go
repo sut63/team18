@@ -23,5 +23,6 @@ func (CounterStaff) Fields() []ent.Field {
 func (CounterStaff) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("checkins", CheckIn.Type).StorageKey(edge.Column("staff id")),
+		edge.To("checkouts", Checkout.Type).StorageKey(edge.Column("staff id")),		
 	}
 }
