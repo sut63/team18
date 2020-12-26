@@ -1,9 +1,9 @@
 package schema
 
 import (
-	"github.com/facebook/ent"
-	"github.com/facebook/ent/schema/edge"
-	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/ent"
+	"github.com/facebookincubator/ent/schema/edge"
+	"github.com/facebookincubator/ent/schema/field"
 )
 
 // Customer holds the schema definition for the Customer entity.
@@ -22,8 +22,8 @@ func (Customer) Fields() []ent.Field {
 // Edges of the Customer.
 func (Customer) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("reserves", ReserveRoom.Type).StorageKey(edge.Column("customer id")),
-		edge.To("fixs", FixRoom.Type).StorageKey(edge.Column("customer id")),
-		edge.To("checkins", CheckIn.Type).StorageKey(edge.Column("customer id")),
+		edge.To("reserves", ReserveRoom.Type).StorageKey(edge.Column("customer_id")),
+		edge.To("fixs", FixRoom.Type).StorageKey(edge.Column("customer_id")),
+		edge.To("checkins", CheckIn.Type).StorageKey(edge.Column("customer_id")),
 	}
 }
