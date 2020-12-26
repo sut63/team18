@@ -21,6 +21,6 @@ func (TypeRoom) Fields() []ent.Field {
 // Edges of the TypeRoom.
 func (TypeRoom) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("datarooms", DataRoom.Type).StorageKey(edge.Column("typeroom id")),
+		edge.To("datarooms", DataRoom.Type).StorageKey(edge.Column("typeroom_id")),
 	}
 }

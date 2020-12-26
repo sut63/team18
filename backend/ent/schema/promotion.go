@@ -22,7 +22,7 @@ func (Promotion) Fields() []ent.Field {
 // Edges of the Promotion.
 func (Promotion) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("reserves", ReserveRoom.Type).StorageKey(edge.Column("promotion id")),
-		edge.To("datarooms", DataRoom.Type).StorageKey(edge.Column("promotion id")),
+		edge.To("reserves", ReserveRoom.Type).StorageKey(edge.Column("promotion_id")),
+		edge.To("datarooms", DataRoom.Type).StorageKey(edge.Column("promotion_id")),
 	}
 }

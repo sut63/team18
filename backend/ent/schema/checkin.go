@@ -3,9 +3,9 @@ package schema
 import (
 	"time"
 
-	"github.com/facebook/ent"
-	"github.com/facebook/ent/schema/edge"
-	"github.com/facebook/ent/schema/field"
+	"github.com/facebookincubator/ent"
+	"github.com/facebookincubator/ent/schema/edge"
+	"github.com/facebookincubator/ent/schema/field"
 )
 
 // CheckIn holds the schema definition for the CheckIn entity.
@@ -23,9 +23,9 @@ func (CheckIn) Fields() []ent.Field {
 // Edges of the CheckIn.
 func (CheckIn) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("customer",Customer.Type).Ref("checkins").Unique(),
-		edge.From("counter",CounterStaff.Type).Ref("checkins").Unique(),
-		edge.From("reserveroom",ReserveRoom.Type).Ref("checkins").Unique(),
+		edge.From("customer", Customer.Type).Ref("checkins").Unique(),
+		edge.From("counter", CounterStaff.Type).Ref("checkins").Unique(),
+		edge.From("reserveroom", ReserveRoom.Type).Ref("checkins").Unique(),
 		edge.To("checkouts", Checkout.Type).Unique(),
 	}
 }

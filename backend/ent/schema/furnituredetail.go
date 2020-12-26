@@ -1,8 +1,8 @@
 package schema
 
 import (
-	"github.com/facebook/ent"
-	"github.com/facebook/ent/schema/edge"
+	"github.com/facebookincubator/ent"
+	"github.com/facebookincubator/ent/schema/edge"
 )
 
 // FurnitureDetail holds the schema definition for the FurnitureDetail entity.
@@ -18,6 +18,6 @@ func (FurnitureDetail) Fields() []ent.Field {
 // Edges of the FurnitureDetail.
 func (FurnitureDetail) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("fixs", ReserveRoom.Type).StorageKey(edge.Column("object id")),
+		edge.To("fixs", FixRoom.Type).StorageKey(edge.Column("object_id")),
 	}
 }
