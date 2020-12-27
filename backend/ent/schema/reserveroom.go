@@ -23,9 +23,10 @@ func (ReserveRoom) Fields() []ent.Field {
 // Edges of the ReserveRoom.
 func (ReserveRoom) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("customer",Customer.Type).Ref("reserves").Unique(),
-		edge.From("promotion",Promotion.Type).Ref("reserves").Unique(),
-		edge.From("room",DataRoom.Type).Ref("reserves").Unique(),
+		edge.From("customer", Customer.Type).Ref("reserves").Unique(),
+		edge.From("promotion", Promotion.Type).Ref("reserves").Unique(),
+		edge.From("room", DataRoom.Type).Ref("reserves").Unique(),
+
 		edge.To("checkins", CheckIn.Type).StorageKey(edge.Column("reserves_id")),
 	}
 }
