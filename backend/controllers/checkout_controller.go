@@ -174,46 +174,6 @@ func (ctl *CheckoutController) DeleteCheckout(c *gin.Context) {
 	c.JSON(200, gin.H{"result": fmt.Sprintf("ok deleted %v", id)})
 }
 
-// UpdateCheckout handles PUT requests to update a checkout entity
-// @Summary Update a checkout entity by ID
-// @Description update checkout by ID
-// @ID update-checkout
-// @Accept   json
-// @Produce  json
-// @Param id path int true "Checkout ID"
-// @Param checkout body ent.Checkout true "Checkout entity"
-// @Success 200 {object} ent.Checkout
-// @Failure 400 {object} gin.H
-// @Failure 500 {object} gin.H
-// @Router /checkouts/{id} [put]
-func (ctl *CheckoutController) UpdateCheckout(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
-	if err != nil {
-		c.JSON(400, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	obj := ent.Checkout{}
-	if err := c.ShouldBind(&obj); err != nil {
-		c.JSON(400, gin.H{
-			"error": "checkout binding failed",
-		})
-		return
-	}
-	obj.ID = int(id)
-	u, err := ctl.client.Checkout.
-		UpdateOne(&obj).
-		Save(context.Background())
-	if err != nil {
-		c.JSON(400, gin.H{"error": "update failed"})
-		return
-	}
-
-	c.JSON(200, u)
-}
-
 // NewCheckoutController creates and registers handles for the checkout controller
 func NewCheckoutController(router gin.IRouter, client *ent.Client) *CheckoutController {
 	uc := &CheckoutController{
@@ -233,6 +193,5 @@ func (ctl *CheckoutController) register() {
 	// CRUD
 	checkouts.POST("", ctl.CreateCheckout)
 	checkouts.GET(":id", ctl.GetCheckout)
-	checkouts.PUT(":id", ctl.UpdateCheckout)
 	checkouts.DELETE(":id", ctl.DeleteCheckout)
 }
