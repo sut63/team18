@@ -27,6 +27,12 @@ func (csc *CounterStaffCreate) SetName(s string) *CounterStaffCreate {
 	return csc
 }
 
+// SetEmail sets the email field.
+func (csc *CounterStaffCreate) SetEmail(s string) *CounterStaffCreate {
+	csc.mutation.SetEmail(s)
+	return csc
+}
+
 // SetPassword sets the password field.
 func (csc *CounterStaffCreate) SetPassword(s string) *CounterStaffCreate {
 	csc.mutation.SetPassword(s)
@@ -76,6 +82,14 @@ func (csc *CounterStaffCreate) Save(ctx context.Context) (*CounterStaff, error) 
 	if v, ok := csc.mutation.Name(); ok {
 		if err := counterstaff.NameValidator(v); err != nil {
 			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if _, ok := csc.mutation.Email(); !ok {
+		return nil, &ValidationError{Name: "email", err: errors.New("ent: missing required field \"email\"")}
+	}
+	if v, ok := csc.mutation.Email(); ok {
+		if err := counterstaff.EmailValidator(v); err != nil {
+			return nil, &ValidationError{Name: "email", err: fmt.Errorf("ent: validator failed for field \"email\": %w", err)}
 		}
 	}
 	if _, ok := csc.mutation.Password(); !ok {
@@ -153,6 +167,14 @@ func (csc *CounterStaffCreate) createSpec() (*CounterStaff, *sqlgraph.CreateSpec
 			Column: counterstaff.FieldName,
 		})
 		cs.Name = value
+	}
+	if value, ok := csc.mutation.Email(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: counterstaff.FieldEmail,
+		})
+		cs.Email = value
 	}
 	if value, ok := csc.mutation.Password(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

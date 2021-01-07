@@ -35,6 +35,12 @@ func (csu *CounterStaffUpdate) SetName(s string) *CounterStaffUpdate {
 	return csu
 }
 
+// SetEmail sets the email field.
+func (csu *CounterStaffUpdate) SetEmail(s string) *CounterStaffUpdate {
+	csu.mutation.SetEmail(s)
+	return csu
+}
+
 // SetPassword sets the password field.
 func (csu *CounterStaffUpdate) SetPassword(s string) *CounterStaffUpdate {
 	csu.mutation.SetPassword(s)
@@ -111,6 +117,11 @@ func (csu *CounterStaffUpdate) Save(ctx context.Context) (int, error) {
 	if v, ok := csu.mutation.Name(); ok {
 		if err := counterstaff.NameValidator(v); err != nil {
 			return 0, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+		}
+	}
+	if v, ok := csu.mutation.Email(); ok {
+		if err := counterstaff.EmailValidator(v); err != nil {
+			return 0, &ValidationError{Name: "email", err: fmt.Errorf("ent: validator failed for field \"email\": %w", err)}
 		}
 	}
 	if v, ok := csu.mutation.Password(); ok {
@@ -191,6 +202,13 @@ func (csu *CounterStaffUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeString,
 			Value:  value,
 			Column: counterstaff.FieldName,
+		})
+	}
+	if value, ok := csu.mutation.Email(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: counterstaff.FieldEmail,
 		})
 	}
 	if value, ok := csu.mutation.Password(); ok {
@@ -300,6 +318,12 @@ func (csuo *CounterStaffUpdateOne) SetName(s string) *CounterStaffUpdateOne {
 	return csuo
 }
 
+// SetEmail sets the email field.
+func (csuo *CounterStaffUpdateOne) SetEmail(s string) *CounterStaffUpdateOne {
+	csuo.mutation.SetEmail(s)
+	return csuo
+}
+
 // SetPassword sets the password field.
 func (csuo *CounterStaffUpdateOne) SetPassword(s string) *CounterStaffUpdateOne {
 	csuo.mutation.SetPassword(s)
@@ -378,6 +402,11 @@ func (csuo *CounterStaffUpdateOne) Save(ctx context.Context) (*CounterStaff, err
 			return nil, &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
+	if v, ok := csuo.mutation.Email(); ok {
+		if err := counterstaff.EmailValidator(v); err != nil {
+			return nil, &ValidationError{Name: "email", err: fmt.Errorf("ent: validator failed for field \"email\": %w", err)}
+		}
+	}
 	if v, ok := csuo.mutation.Password(); ok {
 		if err := counterstaff.PasswordValidator(v); err != nil {
 			return nil, &ValidationError{Name: "password", err: fmt.Errorf("ent: validator failed for field \"password\": %w", err)}
@@ -454,6 +483,13 @@ func (csuo *CounterStaffUpdateOne) sqlSave(ctx context.Context) (cs *CounterStaf
 			Type:   field.TypeString,
 			Value:  value,
 			Column: counterstaff.FieldName,
+		})
+	}
+	if value, ok := csuo.mutation.Email(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: counterstaff.FieldEmail,
 		})
 	}
 	if value, ok := csuo.mutation.Password(); ok {

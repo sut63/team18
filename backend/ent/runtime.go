@@ -33,8 +33,12 @@ func init() {
 	counterstaffDescName := counterstaffFields[0].Descriptor()
 	// counterstaff.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	counterstaff.NameValidator = counterstaffDescName.Validators[0].(func(string) error)
+	// counterstaffDescEmail is the schema descriptor for email field.
+	counterstaffDescEmail := counterstaffFields[1].Descriptor()
+	// counterstaff.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	counterstaff.EmailValidator = counterstaffDescEmail.Validators[0].(func(string) error)
 	// counterstaffDescPassword is the schema descriptor for password field.
-	counterstaffDescPassword := counterstaffFields[1].Descriptor()
+	counterstaffDescPassword := counterstaffFields[2].Descriptor()
 	// counterstaff.PasswordValidator is a validator for the "password" field. It is called by the builders before save.
 	counterstaff.PasswordValidator = counterstaffDescPassword.Validators[0].(func(string) error)
 	customerFields := schema.Customer{}.Fields()
@@ -47,6 +51,10 @@ func init() {
 	customerDescEmail := customerFields[1].Descriptor()
 	// customer.EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	customer.EmailValidator = customerDescEmail.Validators[0].(func(string) error)
+	// customerDescPassword is the schema descriptor for password field.
+	customerDescPassword := customerFields[2].Descriptor()
+	// customer.PasswordValidator is a validator for the "password" field. It is called by the builders before save.
+	customer.PasswordValidator = customerDescPassword.Validators[0].(func(string) error)
 	dataroomFields := schema.DataRoom{}.Fields()
 	_ = dataroomFields
 	// dataroomDescPrice is the schema descriptor for price field.

@@ -1078,6 +1078,7 @@ type CounterStaffMutation struct {
 	typ              string
 	id               *int
 	name             *string
+	email            *string
 	password         *string
 	clearedFields    map[string]struct{}
 	checkins         map[int]struct{}
@@ -1202,6 +1203,43 @@ func (m *CounterStaffMutation) OldName(ctx context.Context) (v string, err error
 // ResetName reset all changes of the "name" field.
 func (m *CounterStaffMutation) ResetName() {
 	m.name = nil
+}
+
+// SetEmail sets the email field.
+func (m *CounterStaffMutation) SetEmail(s string) {
+	m.email = &s
+}
+
+// Email returns the email value in the mutation.
+func (m *CounterStaffMutation) Email() (r string, exists bool) {
+	v := m.email
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEmail returns the old email value of the CounterStaff.
+// If the CounterStaff object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *CounterStaffMutation) OldEmail(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEmail is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEmail requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEmail: %w", err)
+	}
+	return oldValue.Email, nil
+}
+
+// ResetEmail reset all changes of the "email" field.
+func (m *CounterStaffMutation) ResetEmail() {
+	m.email = nil
 }
 
 // SetPassword sets the password field.
@@ -1339,9 +1377,12 @@ func (m *CounterStaffMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *CounterStaffMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 3)
 	if m.name != nil {
 		fields = append(fields, counterstaff.FieldName)
+	}
+	if m.email != nil {
+		fields = append(fields, counterstaff.FieldEmail)
 	}
 	if m.password != nil {
 		fields = append(fields, counterstaff.FieldPassword)
@@ -1356,6 +1397,8 @@ func (m *CounterStaffMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case counterstaff.FieldName:
 		return m.Name()
+	case counterstaff.FieldEmail:
+		return m.Email()
 	case counterstaff.FieldPassword:
 		return m.Password()
 	}
@@ -1369,6 +1412,8 @@ func (m *CounterStaffMutation) OldField(ctx context.Context, name string) (ent.V
 	switch name {
 	case counterstaff.FieldName:
 		return m.OldName(ctx)
+	case counterstaff.FieldEmail:
+		return m.OldEmail(ctx)
 	case counterstaff.FieldPassword:
 		return m.OldPassword(ctx)
 	}
@@ -1386,6 +1431,13 @@ func (m *CounterStaffMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
+		return nil
+	case counterstaff.FieldEmail:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEmail(v)
 		return nil
 	case counterstaff.FieldPassword:
 		v, ok := value.(string)
@@ -1446,6 +1498,9 @@ func (m *CounterStaffMutation) ResetField(name string) error {
 	switch name {
 	case counterstaff.FieldName:
 		m.ResetName()
+		return nil
+	case counterstaff.FieldEmail:
+		m.ResetEmail()
 		return nil
 	case counterstaff.FieldPassword:
 		m.ResetPassword()
@@ -1567,6 +1622,7 @@ type CustomerMutation struct {
 	id              *int
 	name            *string
 	email           *string
+	password        *string
 	clearedFields   map[string]struct{}
 	reserves        map[int]struct{}
 	removedreserves map[int]struct{}
@@ -1731,6 +1787,43 @@ func (m *CustomerMutation) ResetEmail() {
 	m.email = nil
 }
 
+// SetPassword sets the password field.
+func (m *CustomerMutation) SetPassword(s string) {
+	m.password = &s
+}
+
+// Password returns the password value in the mutation.
+func (m *CustomerMutation) Password() (r string, exists bool) {
+	v := m.password
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPassword returns the old password value of the Customer.
+// If the Customer object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *CustomerMutation) OldPassword(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldPassword is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldPassword requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPassword: %w", err)
+	}
+	return oldValue.Password, nil
+}
+
+// ResetPassword reset all changes of the "password" field.
+func (m *CustomerMutation) ResetPassword() {
+	m.password = nil
+}
+
 // AddReserfIDs adds the reserves edge to ReserveRoom by ids.
 func (m *CustomerMutation) AddReserfIDs(ids ...int) {
 	if m.reserves == nil {
@@ -1871,12 +1964,15 @@ func (m *CustomerMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *CustomerMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 3)
 	if m.name != nil {
 		fields = append(fields, customer.FieldName)
 	}
 	if m.email != nil {
 		fields = append(fields, customer.FieldEmail)
+	}
+	if m.password != nil {
+		fields = append(fields, customer.FieldPassword)
 	}
 	return fields
 }
@@ -1890,6 +1986,8 @@ func (m *CustomerMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case customer.FieldEmail:
 		return m.Email()
+	case customer.FieldPassword:
+		return m.Password()
 	}
 	return nil, false
 }
@@ -1903,6 +2001,8 @@ func (m *CustomerMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldName(ctx)
 	case customer.FieldEmail:
 		return m.OldEmail(ctx)
+	case customer.FieldPassword:
+		return m.OldPassword(ctx)
 	}
 	return nil, fmt.Errorf("unknown Customer field %s", name)
 }
@@ -1925,6 +2025,13 @@ func (m *CustomerMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEmail(v)
+		return nil
+	case customer.FieldPassword:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPassword(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Customer field %s", name)
@@ -1981,6 +2088,9 @@ func (m *CustomerMutation) ResetField(name string) error {
 		return nil
 	case customer.FieldEmail:
 		m.ResetEmail()
+		return nil
+	case customer.FieldPassword:
+		m.ResetPassword()
 		return nil
 	}
 	return fmt.Errorf("unknown Customer field %s", name)
