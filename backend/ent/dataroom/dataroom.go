@@ -18,6 +18,8 @@ const (
 	EdgeFixs = "fixs"
 	// EdgeDetails holds the string denoting the details edge name in mutations.
 	EdgeDetails = "details"
+	// EdgeCheckins holds the string denoting the checkins edge name in mutations.
+	EdgeCheckins = "checkins"
 	// EdgePromotion holds the string denoting the promotion edge name in mutations.
 	EdgePromotion = "promotion"
 	// EdgeStatusroom holds the string denoting the statusroom edge name in mutations.
@@ -48,6 +50,13 @@ const (
 	DetailsInverseTable = "furniture_details"
 	// DetailsColumn is the table column denoting the details relation/edge.
 	DetailsColumn = "room_id"
+	// CheckinsTable is the table the holds the checkins relation/edge.
+	CheckinsTable = "check_ins"
+	// CheckinsInverseTable is the table name for the CheckIn entity.
+	// It exists in this package in order to avoid circular dependency with the "checkin" package.
+	CheckinsInverseTable = "check_ins"
+	// CheckinsColumn is the table column denoting the checkins relation/edge.
+	CheckinsColumn = "room_id"
 	// PromotionTable is the table the holds the promotion relation/edge.
 	PromotionTable = "data_rooms"
 	// PromotionInverseTable is the table name for the Promotion entity.

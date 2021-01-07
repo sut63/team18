@@ -376,6 +376,34 @@ func HasDetailsWith(preds ...predicate.FurnitureDetail) predicate.DataRoom {
 	})
 }
 
+// HasCheckins applies the HasEdge predicate on the "checkins" edge.
+func HasCheckins() predicate.DataRoom {
+	return predicate.DataRoom(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(CheckinsTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CheckinsTable, CheckinsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasCheckinsWith applies the HasEdge predicate on the "checkins" edge with a given conditions (other predicates).
+func HasCheckinsWith(preds ...predicate.CheckIn) predicate.DataRoom {
+	return predicate.DataRoom(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(CheckinsInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, CheckinsTable, CheckinsColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasPromotion applies the HasEdge predicate on the "promotion" edge.
 func HasPromotion() predicate.DataRoom {
 	return predicate.DataRoom(func(s *sql.Selector) {

@@ -66,6 +66,8 @@ type CheckInMutation struct {
 	clearedcounter     bool
 	reserveroom        *int
 	clearedreserveroom bool
+	dataroom           *int
+	cleareddataroom    bool
 	checkouts          *int
 	clearedcheckouts   bool
 	done               bool
@@ -305,6 +307,45 @@ func (m *CheckInMutation) ResetReserveroom() {
 	m.clearedreserveroom = false
 }
 
+// SetDataroomID sets the dataroom edge to DataRoom by id.
+func (m *CheckInMutation) SetDataroomID(id int) {
+	m.dataroom = &id
+}
+
+// ClearDataroom clears the dataroom edge to DataRoom.
+func (m *CheckInMutation) ClearDataroom() {
+	m.cleareddataroom = true
+}
+
+// DataroomCleared returns if the edge dataroom was cleared.
+func (m *CheckInMutation) DataroomCleared() bool {
+	return m.cleareddataroom
+}
+
+// DataroomID returns the dataroom id in the mutation.
+func (m *CheckInMutation) DataroomID() (id int, exists bool) {
+	if m.dataroom != nil {
+		return *m.dataroom, true
+	}
+	return
+}
+
+// DataroomIDs returns the dataroom ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// DataroomID instead. It exists only for internal usage by the builders.
+func (m *CheckInMutation) DataroomIDs() (ids []int) {
+	if id := m.dataroom; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetDataroom reset all changes of the "dataroom" edge.
+func (m *CheckInMutation) ResetDataroom() {
+	m.dataroom = nil
+	m.cleareddataroom = false
+}
+
 // SetCheckoutsID sets the checkouts edge to Checkout by id.
 func (m *CheckInMutation) SetCheckoutsID(id int) {
 	m.checkouts = &id
@@ -459,7 +500,7 @@ func (m *CheckInMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *CheckInMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.customer != nil {
 		edges = append(edges, checkin.EdgeCustomer)
 	}
@@ -468,6 +509,9 @@ func (m *CheckInMutation) AddedEdges() []string {
 	}
 	if m.reserveroom != nil {
 		edges = append(edges, checkin.EdgeReserveroom)
+	}
+	if m.dataroom != nil {
+		edges = append(edges, checkin.EdgeDataroom)
 	}
 	if m.checkouts != nil {
 		edges = append(edges, checkin.EdgeCheckouts)
@@ -491,6 +535,10 @@ func (m *CheckInMutation) AddedIDs(name string) []ent.Value {
 		if id := m.reserveroom; id != nil {
 			return []ent.Value{*id}
 		}
+	case checkin.EdgeDataroom:
+		if id := m.dataroom; id != nil {
+			return []ent.Value{*id}
+		}
 	case checkin.EdgeCheckouts:
 		if id := m.checkouts; id != nil {
 			return []ent.Value{*id}
@@ -502,7 +550,7 @@ func (m *CheckInMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *CheckInMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	return edges
 }
 
@@ -517,7 +565,7 @@ func (m *CheckInMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *CheckInMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.clearedcustomer {
 		edges = append(edges, checkin.EdgeCustomer)
 	}
@@ -526,6 +574,9 @@ func (m *CheckInMutation) ClearedEdges() []string {
 	}
 	if m.clearedreserveroom {
 		edges = append(edges, checkin.EdgeReserveroom)
+	}
+	if m.cleareddataroom {
+		edges = append(edges, checkin.EdgeDataroom)
 	}
 	if m.clearedcheckouts {
 		edges = append(edges, checkin.EdgeCheckouts)
@@ -543,6 +594,8 @@ func (m *CheckInMutation) EdgeCleared(name string) bool {
 		return m.clearedcounter
 	case checkin.EdgeReserveroom:
 		return m.clearedreserveroom
+	case checkin.EdgeDataroom:
+		return m.cleareddataroom
 	case checkin.EdgeCheckouts:
 		return m.clearedcheckouts
 	}
@@ -561,6 +614,9 @@ func (m *CheckInMutation) ClearEdge(name string) error {
 		return nil
 	case checkin.EdgeReserveroom:
 		m.ClearReserveroom()
+		return nil
+	case checkin.EdgeDataroom:
+		m.ClearDataroom()
 		return nil
 	case checkin.EdgeCheckouts:
 		m.ClearCheckouts()
@@ -582,6 +638,9 @@ func (m *CheckInMutation) ResetEdge(name string) error {
 		return nil
 	case checkin.EdgeReserveroom:
 		m.ResetReserveroom()
+		return nil
+	case checkin.EdgeDataroom:
+		m.ResetDataroom()
 		return nil
 	case checkin.EdgeCheckouts:
 		m.ResetCheckouts()
@@ -2238,6 +2297,8 @@ type DataRoomMutation struct {
 	removedfixs       map[int]struct{}
 	details           map[int]struct{}
 	removeddetails    map[int]struct{}
+	checkins          map[int]struct{}
+	removedcheckins   map[int]struct{}
 	promotion         *int
 	clearedpromotion  bool
 	statusroom        *int
@@ -2547,6 +2608,48 @@ func (m *DataRoomMutation) ResetDetails() {
 	m.removeddetails = nil
 }
 
+// AddCheckinIDs adds the checkins edge to CheckIn by ids.
+func (m *DataRoomMutation) AddCheckinIDs(ids ...int) {
+	if m.checkins == nil {
+		m.checkins = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.checkins[ids[i]] = struct{}{}
+	}
+}
+
+// RemoveCheckinIDs removes the checkins edge to CheckIn by ids.
+func (m *DataRoomMutation) RemoveCheckinIDs(ids ...int) {
+	if m.removedcheckins == nil {
+		m.removedcheckins = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedcheckins[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedCheckins returns the removed ids of checkins.
+func (m *DataRoomMutation) RemovedCheckinsIDs() (ids []int) {
+	for id := range m.removedcheckins {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// CheckinsIDs returns the checkins ids in the mutation.
+func (m *DataRoomMutation) CheckinsIDs() (ids []int) {
+	for id := range m.checkins {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetCheckins reset all changes of the "checkins" edge.
+func (m *DataRoomMutation) ResetCheckins() {
+	m.checkins = nil
+	m.removedcheckins = nil
+}
+
 // SetPromotionID sets the promotion edge to Promotion by id.
 func (m *DataRoomMutation) SetPromotionID(id int) {
 	m.promotion = &id
@@ -2811,7 +2914,7 @@ func (m *DataRoomMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *DataRoomMutation) AddedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.reserves != nil {
 		edges = append(edges, dataroom.EdgeReserves)
 	}
@@ -2820,6 +2923,9 @@ func (m *DataRoomMutation) AddedEdges() []string {
 	}
 	if m.details != nil {
 		edges = append(edges, dataroom.EdgeDetails)
+	}
+	if m.checkins != nil {
+		edges = append(edges, dataroom.EdgeCheckins)
 	}
 	if m.promotion != nil {
 		edges = append(edges, dataroom.EdgePromotion)
@@ -2855,6 +2961,12 @@ func (m *DataRoomMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case dataroom.EdgeCheckins:
+		ids := make([]ent.Value, 0, len(m.checkins))
+		for id := range m.checkins {
+			ids = append(ids, id)
+		}
+		return ids
 	case dataroom.EdgePromotion:
 		if id := m.promotion; id != nil {
 			return []ent.Value{*id}
@@ -2874,7 +2986,7 @@ func (m *DataRoomMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *DataRoomMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.removedreserves != nil {
 		edges = append(edges, dataroom.EdgeReserves)
 	}
@@ -2883,6 +2995,9 @@ func (m *DataRoomMutation) RemovedEdges() []string {
 	}
 	if m.removeddetails != nil {
 		edges = append(edges, dataroom.EdgeDetails)
+	}
+	if m.removedcheckins != nil {
+		edges = append(edges, dataroom.EdgeCheckins)
 	}
 	return edges
 }
@@ -2909,6 +3024,12 @@ func (m *DataRoomMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case dataroom.EdgeCheckins:
+		ids := make([]ent.Value, 0, len(m.removedcheckins))
+		for id := range m.removedcheckins {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -2916,7 +3037,7 @@ func (m *DataRoomMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *DataRoomMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.clearedpromotion {
 		edges = append(edges, dataroom.EdgePromotion)
 	}
@@ -2973,6 +3094,9 @@ func (m *DataRoomMutation) ResetEdge(name string) error {
 		return nil
 	case dataroom.EdgeDetails:
 		m.ResetDetails()
+		return nil
+	case dataroom.EdgeCheckins:
+		m.ResetCheckins()
 		return nil
 	case dataroom.EdgePromotion:
 		m.ResetPromotion()

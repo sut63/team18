@@ -38,6 +38,8 @@ type DataRoomEdges struct {
 	Fixs []*FixRoom
 	// Details holds the value of the details edge.
 	Details []*FurnitureDetail
+	// Checkins holds the value of the checkins edge.
+	Checkins []*CheckIn
 	// Promotion holds the value of the promotion edge.
 	Promotion *Promotion
 	// Statusroom holds the value of the statusroom edge.
@@ -46,7 +48,7 @@ type DataRoomEdges struct {
 	Typeroom *TypeRoom
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [7]bool
 }
 
 // ReservesOrErr returns the Reserves value or an error if the edge
@@ -76,10 +78,19 @@ func (e DataRoomEdges) DetailsOrErr() ([]*FurnitureDetail, error) {
 	return nil, &NotLoadedError{edge: "details"}
 }
 
+// CheckinsOrErr returns the Checkins value or an error if the edge
+// was not loaded in eager-loading.
+func (e DataRoomEdges) CheckinsOrErr() ([]*CheckIn, error) {
+	if e.loadedTypes[3] {
+		return e.Checkins, nil
+	}
+	return nil, &NotLoadedError{edge: "checkins"}
+}
+
 // PromotionOrErr returns the Promotion value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e DataRoomEdges) PromotionOrErr() (*Promotion, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		if e.Promotion == nil {
 			// The edge promotion was loaded in eager-loading,
 			// but was not found.
@@ -93,7 +104,7 @@ func (e DataRoomEdges) PromotionOrErr() (*Promotion, error) {
 // StatusroomOrErr returns the Statusroom value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e DataRoomEdges) StatusroomOrErr() (*StatusRoom, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[5] {
 		if e.Statusroom == nil {
 			// The edge statusroom was loaded in eager-loading,
 			// but was not found.
@@ -107,7 +118,7 @@ func (e DataRoomEdges) StatusroomOrErr() (*StatusRoom, error) {
 // TyperoomOrErr returns the Typeroom value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e DataRoomEdges) TyperoomOrErr() (*TypeRoom, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[6] {
 		if e.Typeroom == nil {
 			// The edge typeroom was loaded in eager-loading,
 			// but was not found.
@@ -195,6 +206,11 @@ func (dr *DataRoom) QueryFixs() *FixRoomQuery {
 // QueryDetails queries the details edge of the DataRoom.
 func (dr *DataRoom) QueryDetails() *FurnitureDetailQuery {
 	return (&DataRoomClient{config: dr.config}).QueryDetails(dr)
+}
+
+// QueryCheckins queries the checkins edge of the DataRoom.
+func (dr *DataRoom) QueryCheckins() *CheckInQuery {
+	return (&DataRoomClient{config: dr.config}).QueryCheckins(dr)
 }
 
 // QueryPromotion queries the promotion edge of the DataRoom.

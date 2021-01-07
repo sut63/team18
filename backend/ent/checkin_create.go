@@ -14,6 +14,7 @@ import (
 	"github.com/team18/app/ent/checkout"
 	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/customer"
+	"github.com/team18/app/ent/dataroom"
 	"github.com/team18/app/ent/reserveroom"
 )
 
@@ -85,6 +86,25 @@ func (cic *CheckInCreate) SetNillableReserveroomID(id *int) *CheckInCreate {
 // SetReserveroom sets the reserveroom edge to ReserveRoom.
 func (cic *CheckInCreate) SetReserveroom(r *ReserveRoom) *CheckInCreate {
 	return cic.SetReserveroomID(r.ID)
+}
+
+// SetDataroomID sets the dataroom edge to DataRoom by id.
+func (cic *CheckInCreate) SetDataroomID(id int) *CheckInCreate {
+	cic.mutation.SetDataroomID(id)
+	return cic
+}
+
+// SetNillableDataroomID sets the dataroom edge to DataRoom by id if the given value is not nil.
+func (cic *CheckInCreate) SetNillableDataroomID(id *int) *CheckInCreate {
+	if id != nil {
+		cic = cic.SetDataroomID(*id)
+	}
+	return cic
+}
+
+// SetDataroom sets the dataroom edge to DataRoom.
+func (cic *CheckInCreate) SetDataroom(d *DataRoom) *CheckInCreate {
+	return cic.SetDataroomID(d.ID)
 }
 
 // SetCheckoutsID sets the checkouts edge to Checkout by id.
@@ -233,6 +253,25 @@ func (cic *CheckInCreate) createSpec() (*CheckIn, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: reserveroom.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := cic.mutation.DataroomIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   checkin.DataroomTable,
+			Columns: []string{checkin.DataroomColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: dataroom.FieldID,
 				},
 			},
 		}
