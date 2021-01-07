@@ -82,6 +82,9 @@ func (ctl *DataRoomController) GetDataRoom(c *gin.Context) {
 
 	s, err := ctl.client.DataRoom.
 		Query().
+		WithPromotion().
+		WithStatusroom().
+		WithTyperoom().
 		Where(dataroom.IDEQ(int(id))).
 		Only(context.Background())
 	if err != nil {
@@ -126,6 +129,9 @@ func (ctl *DataRoomController) ListDataRoom(c *gin.Context) {
 
 	datarooms, err := ctl.client.DataRoom.
 		Query().
+		WithPromotion().
+		WithStatusroom().
+		WithTyperoom().
 		Limit(limit).
 		Offset(offset).
 		All(context.Background())
