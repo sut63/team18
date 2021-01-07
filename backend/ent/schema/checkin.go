@@ -1,8 +1,6 @@
 package schema
 
 import (
-	"time"
-
 	"github.com/facebookincubator/ent"
 	"github.com/facebookincubator/ent/schema/edge"
 	"github.com/facebookincubator/ent/schema/field"
@@ -16,7 +14,7 @@ type CheckIn struct {
 // Fields of the CheckIn.
 func (CheckIn) Fields() []ent.Field {
 	return []ent.Field{
-		field.Time("checkin_date").Default(time.Now().Local),
+		field.Time("checkin_date"),
 	}
 }
 

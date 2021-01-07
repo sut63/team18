@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -26,14 +27,6 @@ type CheckInCreate struct {
 // SetCheckinDate sets the checkin_date field.
 func (cic *CheckInCreate) SetCheckinDate(t time.Time) *CheckInCreate {
 	cic.mutation.SetCheckinDate(t)
-	return cic
-}
-
-// SetNillableCheckinDate sets the checkin_date field if the given value is not nil.
-func (cic *CheckInCreate) SetNillableCheckinDate(t *time.Time) *CheckInCreate {
-	if t != nil {
-		cic.SetCheckinDate(*t)
-	}
 	return cic
 }
 
@@ -121,8 +114,7 @@ func (cic *CheckInCreate) Mutation() *CheckInMutation {
 // Save creates the CheckIn in the database.
 func (cic *CheckInCreate) Save(ctx context.Context) (*CheckIn, error) {
 	if _, ok := cic.mutation.CheckinDate(); !ok {
-		v := checkin.DefaultCheckinDate()
-		cic.mutation.SetCheckinDate(v)
+		return nil, &ValidationError{Name: "checkin_date", err: errors.New("ent: missing required field \"checkin_date\"")}
 	}
 	var (
 		err  error

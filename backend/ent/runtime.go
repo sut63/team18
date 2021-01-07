@@ -3,9 +3,6 @@
 package ent
 
 import (
-	"time"
-
-	"github.com/team18/app/ent/checkin"
 	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/customer"
 	"github.com/team18/app/ent/dataroom"
@@ -21,12 +18,6 @@ import (
 // code (default values, validators or hooks) and stitches it
 // to their package variables.
 func init() {
-	checkinFields := schema.CheckIn{}.Fields()
-	_ = checkinFields
-	// checkinDescCheckinDate is the schema descriptor for checkin_date field.
-	checkinDescCheckinDate := checkinFields[0].Descriptor()
-	// checkin.DefaultCheckinDate holds the default value on creation for the checkin_date field.
-	checkin.DefaultCheckinDate = checkinDescCheckinDate.Default.(func() time.Time)
 	counterstaffFields := schema.CounterStaff{}.Fields()
 	_ = counterstaffFields
 	// counterstaffDescName is the schema descriptor for name field.

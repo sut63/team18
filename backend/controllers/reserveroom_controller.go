@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package controllers
 
 import (
@@ -291,6 +290,3 @@ func (ctl *ReserveRoomController) register() {
 	ReserveRooms.PUT(":id", ctl.UpdateReserveRoom)
 	ReserveRooms.DELETE(":id", ctl.DeleteReserveRoom)
 }
-=======
-
->>>>>>> 62645723e4c323463db55139e0fe0d2b809a3bd8

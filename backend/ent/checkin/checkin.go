@@ -2,10 +2,6 @@
 
 package checkin
 
-import (
-	"time"
-)
-
 const (
 	// Label holds the string label denoting the checkin type in the database.
 	Label = "check_in"
@@ -67,8 +63,3 @@ var ForeignKeys = []string{
 	"customer_id",
 	"reserves_id",
 }
-
-var (
-	// DefaultCheckinDate holds the default value on creation for the checkin_date field.
-	DefaultCheckinDate func() time.Time
-)
