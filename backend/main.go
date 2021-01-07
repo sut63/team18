@@ -14,20 +14,20 @@ import (
 	"github.com/team18/app/ent"
 )
 
-type RoomTypes struct {
-	RoomType []RoomType
+type StatusRooms struct {
+	StatusRoom []StatusRoom
 }
 
-type RoomType struct {
-	name string
+type StatusRoom struct {
+	StatusName string
 }
 
-type RoomStatus struct {
-	RoomStatu []RoomStatu
+type TypeRooms struct {
+	TypeRoom []TypeRoom
 }
 
-type RoomStatu struct {
-	name string
+type TypeRoom struct {
+	TypeName string
 }
 
 type Promotions struct {
@@ -35,8 +35,8 @@ type Promotions struct {
 }
 
 type Promotion struct {
-	name     string
-	discount float64
+	PromotionName string
+	Discount      float64
 }
 
 type Customers struct {
@@ -103,57 +103,55 @@ func main() {
 	}
 
 	v1 := router.Group("/api/v1")
+	controllers.NewDataRoomController(v1, client)
 	controllers.NewReserveRoomController(v1, client)
 	controllers.NewPromotionController(v1, client)
 	controllers.NewCustomerController(v1, client)
 	controllers.NewDataRoomController(v1, client)
 
-	// Set RoomType Data
-	types := RoomTypes{
-		RoomType: []RoomType{
-			RoomType{"Standard"},
-			RoomType{"Superior"},
-			RoomType{"Suite"},
-			RoomType{"Duplex"},
-			RoomType{"Deluxe"},
+	// Set StatusRoom Data
+	statusrooms := StatusRooms{
+		StatusRoom: []StatusRoom{
+			StatusRoom{"ว่าง"},
+			StatusRoom{"ไม่ว่าง"},
 		},
 	}
-
-	for _, t := range types.RoomType {
-		client.TypeRoom.
+	for _, s := range statusrooms.StatusRoom {
+		client.StatusRoom.
 			Create().
-			SetTypeName(t.name).
+			SetStatusName(s.StatusName).
 			Save(context.Background())
 	}
 
-	// Set RoomStatus Data
-	status := RoomStatus{
-		RoomStatu: []RoomStatu{
-			RoomStatu{"Aviable"},
-			RoomStatu{"Unaviable"},
+	// Set TypeRoom Data
+	typerooms := TypeRooms{
+		TypeRoom: []TypeRoom{
+			TypeRoom{"Standard"},
+			TypeRoom{"Superior"},
+			TypeRoom{"Deluxe"},
+			TypeRoom{"Suite"},
 		},
 	}
 
-	for _, s := range status.RoomStatu {
-		client.StatusRoom.
+	for _, t := range typerooms.TypeRoom {
+		client.TypeRoom.
 			Create().
-			SetStatusName(s.name).
+			SetTypeName(t.TypeName).
 			Save(context.Background())
 	}
 
 	// Set Promotion Data
-	promo := Promotions{
+	promotions := Promotions{
 		Promotion: []Promotion{
-			Promotion{"New Year Sale!!", 2000.00},
-			Promotion{"Summer Sale", 1000.00},
+			Promotion{"ปีใหม่", 120.50},
 		},
 	}
 
-	for _, p := range promo.Promotion {
+	for _, p := range promotions.Promotion {
 		client.Promotion.
 			Create().
-			SetPromotionName(p.name).
-			SetDiscount(p.discount).
+			SetPromotionName(p.PromotionName).
+			SetDiscount(p.Discount).
 			Save(context.Background())
 	}
 
