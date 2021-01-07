@@ -15,6 +15,7 @@ type CounterStaff struct {
 func (CounterStaff) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").Unique().NotEmpty(),
+		field.String("email").Unique().NotEmpty(),
 		field.String("password").Unique().NotEmpty(),
 	}
 }
