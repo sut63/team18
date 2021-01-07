@@ -103,7 +103,6 @@ func main() {
 	}
 
 	v1 := router.Group("/api/v1")
-	controllers.NewDataRoomController(v1, client)
 	controllers.NewReserveRoomController(v1, client)
 	controllers.NewPromotionController(v1, client)
 	controllers.NewCustomerController(v1, client)
