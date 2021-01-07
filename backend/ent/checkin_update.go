@@ -38,14 +38,6 @@ func (ciu *CheckInUpdate) SetCheckinDate(t time.Time) *CheckInUpdate {
 	return ciu
 }
 
-// SetNillableCheckinDate sets the checkin_date field if the given value is not nil.
-func (ciu *CheckInUpdate) SetNillableCheckinDate(t *time.Time) *CheckInUpdate {
-	if t != nil {
-		ciu.SetCheckinDate(*t)
-	}
-	return ciu
-}
-
 // SetCustomerID sets the customer edge to Customer by id.
 func (ciu *CheckInUpdate) SetCustomerID(id int) *CheckInUpdate {
 	ciu.mutation.SetCustomerID(id)
@@ -389,14 +381,6 @@ type CheckInUpdateOne struct {
 // SetCheckinDate sets the checkin_date field.
 func (ciuo *CheckInUpdateOne) SetCheckinDate(t time.Time) *CheckInUpdateOne {
 	ciuo.mutation.SetCheckinDate(t)
-	return ciuo
-}
-
-// SetNillableCheckinDate sets the checkin_date field if the given value is not nil.
-func (ciuo *CheckInUpdateOne) SetNillableCheckinDate(t *time.Time) *CheckInUpdateOne {
-	if t != nil {
-		ciuo.SetCheckinDate(*t)
-	}
 	return ciuo
 }
 

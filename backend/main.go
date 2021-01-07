@@ -46,6 +46,7 @@ type Customers struct {
 type Customer struct {
 	name  string
 	email string
+	password string
 }
 
 // @title SUT SE Example API
@@ -101,12 +102,13 @@ func main() {
 	if err := client.Schema.Create(context.Background()); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
-
+	
 	v1 := router.Group("/api/v1")
 	controllers.NewReserveRoomController(v1, client)
 	controllers.NewPromotionController(v1, client)
 	controllers.NewCustomerController(v1, client)
 	controllers.NewDataRoomController(v1, client)
+	controllers.NewCheckinController(v1, client)
 
 	// Set StatusRoom Data
 	statusrooms := StatusRooms{
@@ -157,8 +159,8 @@ func main() {
 	// Set Customers Data
 	customer := Customers{
 		Customer: []Customer{
-			Customer{"sawadee", "example@gmail.com"},
-			Customer{"hello", "hellow@gmail.com"},
+			Customer{"sawadee", "example@gmail.com","1234"},
+			Customer{"hello", "hellow@gmail.com","7890"},
 		},
 	}
 
@@ -167,6 +169,7 @@ func main() {
 			Create().
 			SetName(c.name).
 			SetEmail(c.email).
+			SetPassword(c.password).
 			Save(context.Background())
 	}
 
