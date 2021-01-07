@@ -334,6 +334,22 @@ func (c *CheckInClient) QueryReserveroom(ci *CheckIn) *ReserveRoomQuery {
 	return query
 }
 
+// QueryDataroom queries the dataroom edge of a CheckIn.
+func (c *CheckInClient) QueryDataroom(ci *CheckIn) *DataRoomQuery {
+	query := &DataRoomQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := ci.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(checkin.Table, checkin.FieldID, id),
+			sqlgraph.To(dataroom.Table, dataroom.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, checkin.DataroomTable, checkin.DataroomColumn),
+		)
+		fromV = sqlgraph.Neighbors(ci.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryCheckouts queries the checkouts edge of a CheckIn.
 func (c *CheckInClient) QueryCheckouts(ci *CheckIn) *CheckoutQuery {
 	query := &CheckoutQuery{config: c.config}
@@ -851,6 +867,22 @@ func (c *DataRoomClient) QueryDetails(dr *DataRoom) *FurnitureDetailQuery {
 			sqlgraph.From(dataroom.Table, dataroom.FieldID, id),
 			sqlgraph.To(furnituredetail.Table, furnituredetail.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, dataroom.DetailsTable, dataroom.DetailsColumn),
+		)
+		fromV = sqlgraph.Neighbors(dr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCheckins queries the checkins edge of a DataRoom.
+func (c *DataRoomClient) QueryCheckins(dr *DataRoom) *CheckInQuery {
+	query := &CheckInQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := dr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(dataroom.Table, dataroom.FieldID, id),
+			sqlgraph.To(checkin.Table, checkin.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, dataroom.CheckinsTable, dataroom.CheckinsColumn),
 		)
 		fromV = sqlgraph.Neighbors(dr.driver.Dialect(), step)
 		return fromV, nil

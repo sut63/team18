@@ -12,6 +12,7 @@ import (
 	"github.com/team18/app/ent/checkout"
 	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/customer"
+	"github.com/team18/app/ent/dataroom"
 	"github.com/team18/app/ent/reserveroom"
 )
 
@@ -27,6 +28,7 @@ type CheckIn struct {
 	Edges       CheckInEdges `json:"edges"`
 	staff_id    *int
 	customer_id *int
+	room_id     *int
 	reserves_id *int
 }
 
@@ -38,11 +40,13 @@ type CheckInEdges struct {
 	Counter *CounterStaff
 	// Reserveroom holds the value of the reserveroom edge.
 	Reserveroom *ReserveRoom
+	// Dataroom holds the value of the dataroom edge.
+	Dataroom *DataRoom
 	// Checkouts holds the value of the checkouts edge.
 	Checkouts *Checkout
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 }
 
 // CustomerOrErr returns the Customer value or an error if the edge
@@ -87,10 +91,24 @@ func (e CheckInEdges) ReserveroomOrErr() (*ReserveRoom, error) {
 	return nil, &NotLoadedError{edge: "reserveroom"}
 }
 
+// DataroomOrErr returns the Dataroom value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e CheckInEdges) DataroomOrErr() (*DataRoom, error) {
+	if e.loadedTypes[3] {
+		if e.Dataroom == nil {
+			// The edge dataroom was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: dataroom.Label}
+		}
+		return e.Dataroom, nil
+	}
+	return nil, &NotLoadedError{edge: "dataroom"}
+}
+
 // CheckoutsOrErr returns the Checkouts value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e CheckInEdges) CheckoutsOrErr() (*Checkout, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		if e.Checkouts == nil {
 			// The edge checkouts was loaded in eager-loading,
 			// but was not found.
@@ -114,6 +132,7 @@ func (*CheckIn) fkValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{}, // staff_id
 		&sql.NullInt64{}, // customer_id
+		&sql.NullInt64{}, // room_id
 		&sql.NullInt64{}, // reserves_id
 	}
 }
@@ -150,6 +169,12 @@ func (ci *CheckIn) assignValues(values ...interface{}) error {
 			*ci.customer_id = int(value.Int64)
 		}
 		if value, ok := values[2].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field room_id", value)
+		} else if value.Valid {
+			ci.room_id = new(int)
+			*ci.room_id = int(value.Int64)
+		}
+		if value, ok := values[3].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field reserves_id", value)
 		} else if value.Valid {
 			ci.reserves_id = new(int)
@@ -172,6 +197,11 @@ func (ci *CheckIn) QueryCounter() *CounterStaffQuery {
 // QueryReserveroom queries the reserveroom edge of the CheckIn.
 func (ci *CheckIn) QueryReserveroom() *ReserveRoomQuery {
 	return (&CheckInClient{config: ci.config}).QueryReserveroom(ci)
+}
+
+// QueryDataroom queries the dataroom edge of the CheckIn.
+func (ci *CheckIn) QueryDataroom() *DataRoomQuery {
+	return (&CheckInClient{config: ci.config}).QueryDataroom(ci)
 }
 
 // QueryCheckouts queries the checkouts edge of the CheckIn.

@@ -12,6 +12,7 @@ import (
 	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/customer"
 	"github.com/team18/app/ent/reserveroom"
+	"github.com/team18/app/ent/dataroom"
 )
 
 // CheckinController defines the struct for the checkin controller
@@ -19,12 +20,13 @@ type CheckinController struct {
 	client *ent.Client
 	router gin.IRouter
 }
-
+// CheckIn struct
 type CheckIn struct {
 	CheckinDate	string
 	Customer	int
 	Counter		int
 	Reserveroom	int
+	Dataroom	int
 }
 
 // CreateCheckIn handles POST requests for adding checkin entities
@@ -85,13 +87,32 @@ func (ctl *CheckinController) CreateCheckIn(c *gin.Context) {
 			return
 		}	
 
+	dr, err := ctl.client.DataRoom.
+		Query().
+		Where(dataroom.IDEQ(int(obj.Dataroom))).
+		Only(context.Background())
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error" : "DataRoom not found",
+		})
+	}
+
 	ch, err := ctl.client.CheckIn.
 	Create().
 	SetCheckinDate(time).
 	SetCustomer(cus).
 	SetCounter(cou).
 	SetReserveroom(r).
+	SetDataroom(dr).
 	Save(context.Background())	
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "Create CheckIn error",
+		})
+			return
+		}	
 
 	c.JSON(200, ch)
 }
@@ -139,7 +160,7 @@ func (ctl *CheckinController) ListCheckIn(c *gin.Context) {
 	c.JSON(200, checkins)
 }
 
-// GetCheckin handles GET requests to retrieve a checkin entity
+// GetCheckIn handles GET requests to retrieve a checkin entity
 // @Summary Get a checkin entity by ID
 // @Description get checkin by ID
 // @ID get-checkin
@@ -205,6 +226,48 @@ func (ctl *CheckinController) DeleteCheckIn(c *gin.Context) {
 
 	c.JSON(200, gin.H{"result": fmt.Sprintf("ok deleted %v", id)})
 }
+// UpdateCheckIn handles PUT requests to update a Checkin entity
+// @Summary Update a Checkin entity by ID
+// @Description update Checkin by ID
+// @ID update-Checkin
+// @Accept   json
+// @Produce  json
+// @Param id path int true "Checkin ID"
+// @Param Checkin body ent.CheckIn true "CheckIn entity"
+// @Success 200 {object} ent.CheckIn
+// @Failure 400 {object} gin.H
+// @Failure 500 {object} gin.H
+// @Router /checkins/{id} [put]
+func (ctl *CheckinController) UpdateCheckIn(c *gin.Context) {
+
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	obj := ent.CheckIn{}
+	if err := c.ShouldBind(&obj); err != nil {
+		c.JSON(400, gin.H{
+			"error": "Checkin binding failed",
+		})
+		return
+	}
+	obj.ID = int(id)
+
+	ci, err := ctl.client.CheckIn.
+		UpdateOne(&obj).
+		Save(context.Background())
+
+	if err != nil {
+		c.JSON(400, gin.H{"error": "update failed"})
+		return
+	}
+
+	c.JSON(200, ci)
+}
 
 // NewCheckinController creates and registers handles for the checkin controller
 func NewCheckinController(router gin.IRouter, client *ent.Client) *CheckinController {
@@ -224,6 +287,7 @@ func (ctl *CheckinController) register() {
 
 	// CRUD
 	checkins.POST("", ctl.CreateCheckIn)
+	checkins.PUT(":id", ctl.UpdateCheckIn)
 	checkins.GET(":id", ctl.GetCheckIn)
 	checkins.DELETE(":id", ctl.DeleteCheckIn)
 }

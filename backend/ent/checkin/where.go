@@ -260,6 +260,34 @@ func HasReserveroomWith(preds ...predicate.ReserveRoom) predicate.CheckIn {
 	})
 }
 
+// HasDataroom applies the HasEdge predicate on the "dataroom" edge.
+func HasDataroom() predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(DataroomTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, DataroomTable, DataroomColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasDataroomWith applies the HasEdge predicate on the "dataroom" edge with a given conditions (other predicates).
+func HasDataroomWith(preds ...predicate.DataRoom) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(DataroomInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, DataroomTable, DataroomColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasCheckouts applies the HasEdge predicate on the "checkouts" edge.
 func HasCheckouts() predicate.CheckIn {
 	return predicate.CheckIn(func(s *sql.Selector) {

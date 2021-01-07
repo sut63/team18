@@ -14,6 +14,7 @@ import (
 	"github.com/team18/app/ent/checkout"
 	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/customer"
+	"github.com/team18/app/ent/dataroom"
 	"github.com/team18/app/ent/predicate"
 	"github.com/team18/app/ent/reserveroom"
 )
@@ -95,6 +96,25 @@ func (ciu *CheckInUpdate) SetReserveroom(r *ReserveRoom) *CheckInUpdate {
 	return ciu.SetReserveroomID(r.ID)
 }
 
+// SetDataroomID sets the dataroom edge to DataRoom by id.
+func (ciu *CheckInUpdate) SetDataroomID(id int) *CheckInUpdate {
+	ciu.mutation.SetDataroomID(id)
+	return ciu
+}
+
+// SetNillableDataroomID sets the dataroom edge to DataRoom by id if the given value is not nil.
+func (ciu *CheckInUpdate) SetNillableDataroomID(id *int) *CheckInUpdate {
+	if id != nil {
+		ciu = ciu.SetDataroomID(*id)
+	}
+	return ciu
+}
+
+// SetDataroom sets the dataroom edge to DataRoom.
+func (ciu *CheckInUpdate) SetDataroom(d *DataRoom) *CheckInUpdate {
+	return ciu.SetDataroomID(d.ID)
+}
+
 // SetCheckoutsID sets the checkouts edge to Checkout by id.
 func (ciu *CheckInUpdate) SetCheckoutsID(id int) *CheckInUpdate {
 	ciu.mutation.SetCheckoutsID(id)
@@ -134,6 +154,12 @@ func (ciu *CheckInUpdate) ClearCounter() *CheckInUpdate {
 // ClearReserveroom clears the reserveroom edge to ReserveRoom.
 func (ciu *CheckInUpdate) ClearReserveroom() *CheckInUpdate {
 	ciu.mutation.ClearReserveroom()
+	return ciu
+}
+
+// ClearDataroom clears the dataroom edge to DataRoom.
+func (ciu *CheckInUpdate) ClearDataroom() *CheckInUpdate {
+	ciu.mutation.ClearDataroom()
 	return ciu
 }
 
@@ -325,6 +351,41 @@ func (ciu *CheckInUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ciu.mutation.DataroomCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   checkin.DataroomTable,
+			Columns: []string{checkin.DataroomColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: dataroom.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ciu.mutation.DataroomIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   checkin.DataroomTable,
+			Columns: []string{checkin.DataroomColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: dataroom.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if ciu.mutation.CheckoutsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
@@ -441,6 +502,25 @@ func (ciuo *CheckInUpdateOne) SetReserveroom(r *ReserveRoom) *CheckInUpdateOne {
 	return ciuo.SetReserveroomID(r.ID)
 }
 
+// SetDataroomID sets the dataroom edge to DataRoom by id.
+func (ciuo *CheckInUpdateOne) SetDataroomID(id int) *CheckInUpdateOne {
+	ciuo.mutation.SetDataroomID(id)
+	return ciuo
+}
+
+// SetNillableDataroomID sets the dataroom edge to DataRoom by id if the given value is not nil.
+func (ciuo *CheckInUpdateOne) SetNillableDataroomID(id *int) *CheckInUpdateOne {
+	if id != nil {
+		ciuo = ciuo.SetDataroomID(*id)
+	}
+	return ciuo
+}
+
+// SetDataroom sets the dataroom edge to DataRoom.
+func (ciuo *CheckInUpdateOne) SetDataroom(d *DataRoom) *CheckInUpdateOne {
+	return ciuo.SetDataroomID(d.ID)
+}
+
 // SetCheckoutsID sets the checkouts edge to Checkout by id.
 func (ciuo *CheckInUpdateOne) SetCheckoutsID(id int) *CheckInUpdateOne {
 	ciuo.mutation.SetCheckoutsID(id)
@@ -480,6 +560,12 @@ func (ciuo *CheckInUpdateOne) ClearCounter() *CheckInUpdateOne {
 // ClearReserveroom clears the reserveroom edge to ReserveRoom.
 func (ciuo *CheckInUpdateOne) ClearReserveroom() *CheckInUpdateOne {
 	ciuo.mutation.ClearReserveroom()
+	return ciuo
+}
+
+// ClearDataroom clears the dataroom edge to DataRoom.
+func (ciuo *CheckInUpdateOne) ClearDataroom() *CheckInUpdateOne {
+	ciuo.mutation.ClearDataroom()
 	return ciuo
 }
 
@@ -661,6 +747,41 @@ func (ciuo *CheckInUpdateOne) sqlSave(ctx context.Context) (ci *CheckIn, err err
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: reserveroom.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ciuo.mutation.DataroomCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   checkin.DataroomTable,
+			Columns: []string{checkin.DataroomColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: dataroom.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ciuo.mutation.DataroomIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   checkin.DataroomTable,
+			Columns: []string{checkin.DataroomColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: dataroom.FieldID,
 				},
 			},
 		}

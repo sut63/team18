@@ -14,6 +14,7 @@ var (
 		{Name: "checkin_date", Type: field.TypeTime},
 		{Name: "staff_id", Type: field.TypeInt, Nullable: true},
 		{Name: "customer_id", Type: field.TypeInt, Nullable: true},
+		{Name: "room_id", Type: field.TypeInt, Nullable: true},
 		{Name: "reserves_id", Type: field.TypeInt, Nullable: true},
 	}
 	// CheckInsTable holds the schema information for the "check_ins" table.
@@ -37,8 +38,15 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "check_ins_reserve_rooms_checkins",
+				Symbol:  "check_ins_data_rooms_checkins",
 				Columns: []*schema.Column{CheckInsColumns[4]},
+
+				RefColumns: []*schema.Column{DataRoomsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "check_ins_reserve_rooms_checkins",
+				Columns: []*schema.Column{CheckInsColumns[5]},
 
 				RefColumns: []*schema.Column{ReserveRoomsColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -356,7 +364,8 @@ var (
 func init() {
 	CheckInsTable.ForeignKeys[0].RefTable = CounterStaffsTable
 	CheckInsTable.ForeignKeys[1].RefTable = CustomersTable
-	CheckInsTable.ForeignKeys[2].RefTable = ReserveRoomsTable
+	CheckInsTable.ForeignKeys[2].RefTable = DataRoomsTable
+	CheckInsTable.ForeignKeys[3].RefTable = ReserveRoomsTable
 	CheckoutsTable.ForeignKeys[0].RefTable = CheckInsTable
 	CheckoutsTable.ForeignKeys[1].RefTable = CounterStaffsTable
 	CheckoutsTable.ForeignKeys[2].RefTable = StatusTable

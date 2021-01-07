@@ -9,6 +9,7 @@ import (
 
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
+	"github.com/team18/app/ent/checkin"
 	"github.com/team18/app/ent/dataroom"
 	"github.com/team18/app/ent/fixroom"
 	"github.com/team18/app/ent/furnituredetail"
@@ -80,6 +81,21 @@ func (drc *DataRoomCreate) AddDetails(f ...*FurnitureDetail) *DataRoomCreate {
 		ids[i] = f[i].ID
 	}
 	return drc.AddDetailIDs(ids...)
+}
+
+// AddCheckinIDs adds the checkins edge to CheckIn by ids.
+func (drc *DataRoomCreate) AddCheckinIDs(ids ...int) *DataRoomCreate {
+	drc.mutation.AddCheckinIDs(ids...)
+	return drc
+}
+
+// AddCheckins adds the checkins edges to CheckIn.
+func (drc *DataRoomCreate) AddCheckins(c ...*CheckIn) *DataRoomCreate {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return drc.AddCheckinIDs(ids...)
 }
 
 // SetPromotionID sets the promotion edge to Promotion by id.
@@ -287,6 +303,25 @@ func (drc *DataRoomCreate) createSpec() (*DataRoom, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: furnituredetail.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := drc.mutation.CheckinsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   dataroom.CheckinsTable,
+			Columns: []string{dataroom.CheckinsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: checkin.FieldID,
 				},
 			},
 		}
