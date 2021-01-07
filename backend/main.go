@@ -14,20 +14,20 @@ import (
 	"github.com/team18/app/ent"
 )
 
-type StatusRooms struct {
-	StatusRoom []StatusRoom
+type RoomTypes struct {
+	RoomType []RoomType
 }
 
-type StatusRoom struct {
-	StatusName string
+type RoomType struct {
+	name string
 }
 
-type TypeRooms struct {
-	TypeRoom []TypeRoom
+type RoomStatus struct {
+	RoomStatu []RoomStatu
 }
 
-type TypeRoom struct {
-	TypeName string
+type RoomStatu struct {
+	name string
 }
 
 type Promotions struct {
@@ -35,11 +35,20 @@ type Promotions struct {
 }
 
 type Promotion struct {
-	PromotionName string
-	Discount      float64
+	name     string
+	discount float64
 }
 
-// @title SUT SA Example API
+type Customers struct {
+	Customer []Customer
+}
+
+type Customer struct {
+	name  string
+	email string
+}
+
+// @title SUT SE Example API
 // @version 1.0
 // @description This is a sample server for SUT SE 2563
 // @termsOfService http://swagger.io/terms/
@@ -83,7 +92,7 @@ func main() {
 	router := gin.Default()
 	router.Use(cors.Default())
 
-	client, err := ent.Open("sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+	client, err := ent.Open("sqlite3", "file:ent.db?cache=shared&_fk=1")
 	if err != nil {
 		log.Fatalf("fail to open sqlite3: %v", err)
 	}
@@ -94,54 +103,73 @@ func main() {
 	}
 
 	v1 := router.Group("/api/v1")
-	controllers.NewDataRoomController(v1, client)
+	controllers.NewReserveRoomController(v1, client)
 	controllers.NewPromotionController(v1, client)
-	controllers.NewTypeRoomController(v1, client)
-	controllers.NewStatusRoomController(v1, client)
+	controllers.NewCustomerController(v1, client)
+	controllers.NewDataRoomController(v1, client)
 
-	// Set StatusRoom Data
-	statusrooms := StatusRooms{
-		StatusRoom: []StatusRoom{
-			StatusRoom{"ว่าง"},
-			StatusRoom{"ไม่ว่าง"},
+	// Set RoomType Data
+	types := RoomTypes{
+		RoomType: []RoomType{
+			RoomType{"Standard"},
+			RoomType{"Superior"},
+			RoomType{"Suite"},
+			RoomType{"Duplex"},
+			RoomType{"Deluxe"},
 		},
 	}
-	for _, s := range statusrooms.StatusRoom {
-		client.StatusRoom.
+
+	for _, t := range types.RoomType {
+		client.TypeRoom.
 			Create().
-			SetStatusName(s.StatusName).
+			SetTypeName(t.name).
 			Save(context.Background())
 	}
 
-	// Set TypeRoom Data
-	typerooms := TypeRooms{
-		TypeRoom: []TypeRoom{
-			TypeRoom{"Standard"},
-			TypeRoom{"Superior"},
-			TypeRoom{"Deluxe"},
-			TypeRoom{"Suite"},
+	// Set RoomStatus Data
+	status := RoomStatus{
+		RoomStatu: []RoomStatu{
+			RoomStatu{"Aviable"},
+			RoomStatu{"Unaviable"},
 		},
 	}
 
-	for _, t := range typerooms.TypeRoom {
-		client.TypeRoom.
+	for _, s := range status.RoomStatu {
+		client.StatusRoom.
 			Create().
-			SetTypeName(t.TypeName).
+			SetStatusName(s.name).
 			Save(context.Background())
 	}
 
 	// Set Promotion Data
-	promotions := Promotions{
+	promo := Promotions{
 		Promotion: []Promotion{
-			Promotion{"ปีใหม่", 120.50},
+			Promotion{"New Year Sale!!", 2000.00},
+			Promotion{"Summer Sale", 1000.00},
 		},
 	}
 
-	for _, p := range promotions.Promotion {
+	for _, p := range promo.Promotion {
 		client.Promotion.
 			Create().
-			SetPromotionName(p.PromotionName).
-			SetDiscount(p.Discount).
+			SetPromotionName(p.name).
+			SetDiscount(p.discount).
+			Save(context.Background())
+	}
+
+	// Set Customers Data
+	customer := Customers{
+		Customer: []Customer{
+			Customer{"sawadee", "example@gmail.com"},
+			Customer{"hello", "hellow@gmail.com"},
+		},
+	}
+
+	for _, c := range customer.Customer {
+		client.Customer.
+			Create().
+			SetName(c.name).
+			SetEmail(c.email).
 			Save(context.Background())
 	}
 

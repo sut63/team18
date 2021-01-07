@@ -1,6 +1,6 @@
 import { createPlugin } from '@backstage/core';
 import WelcomePage from './components/WelcomePage';
-import WatchVideo from './components/WatchVideo'
+import WatchVideo from './components/ReserveRoom'
 import SignIn from './components/SignIn'
 
 
