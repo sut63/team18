@@ -57,6 +57,16 @@ type Customer struct {
 	password string
 }
 
+type CounterStaffs struct {
+	CounterStaff []CounterStaff
+}
+
+type CounterStaff struct {
+	name     string
+	email    string
+	password string
+}
+
 // @title SUT SE Example API
 // @version 1.0
 // @description This is a sample server for SUT SE 2563
@@ -203,6 +213,22 @@ func main() {
 		client.StatusReserve.
 			Create().
 			SetStatusName(sr.Status).
+			Save(context.Background())
+	}
+
+	// Set CounterStaff Data
+	counterstaffs := CounterStaffs{
+		CounterStaff: []CounterStaff{
+			CounterStaff{"Staff No.1", "staff1@gmail.com", "1234"},
+			CounterStaff{"Staff No.2", "staff2@gmail.con", "abcd"},
+		},
+	}
+	for _, ct := range counterstaffs.CounterStaff {
+		client.CounterStaff.
+			Create().
+			SetName(ct.name).
+			SetEmail(ct.email).
+			SetPassword(ct.password).
 			Save(context.Background())
 	}
 
