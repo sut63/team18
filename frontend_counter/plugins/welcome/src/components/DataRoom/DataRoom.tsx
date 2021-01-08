@@ -15,10 +15,10 @@ import {
   Avatar,
   Button,
 } from '@material-ui/core';
-import { DefaultApi } from '../../api/apis'; // Api Gennerate From Command
-import { EntPromotion } from '../../api/models/EntPromotion'; // import interface User
-import { EntTypeRoom } from '../../api/models/EntTypeRoom'; // import interface Resolution
-import { EntStatusRoom } from '../../api/models/EntStatusRoom'; // import interface Playlist
+import { DefaultApi } from '../../api/apis';
+import { EntPromotion } from '../../api/models/EntPromotion'; 
+import { EntTypeRoom } from '../../api/models/EntTypeRoom';
+import { EntStatusRoom } from '../../api/models/EntStatusRoom'; 
 
 // header css
 const HeaderCustom = {
@@ -151,7 +151,7 @@ const DataRoom: FC<{}> = () => {
 
   return (
     <Page theme={pageTheme.home}>
-      <Header style={HeaderCustom} title={`Watch Video`}>
+      <Header style={HeaderCustom} title={`ข้อมูลห้องพัก`}>
         <Avatar alt="Remy Sharp" src="../../image/account.jpg" />
         <div style={{ marginLeft: 10 }}>Tanapon Kongjaroensuk</div>
       </Header>
@@ -255,7 +255,7 @@ const DataRoom: FC<{}> = () => {
                 startIcon={<SaveIcon />}
                 onClick={save}
               >
-                บันทึกการดู
+                บันทึกข้อมูล
               </Button>
             </Grid>
           </Grid>
