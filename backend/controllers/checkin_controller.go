@@ -49,7 +49,7 @@ func (ctl *CheckinController) CreateCheckIn(c *gin.Context) {
 		return
 	}
 
-	time := time.Now()
+	time := time.Now().Local()
 	
 	cus, err := ctl.client.Customer.
 		Query().
