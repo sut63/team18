@@ -132,7 +132,7 @@ func main() {
 	controllers.NewStatusReserveController(v1, client)
 	controllers.NewStatusRoomController(v1, client)
 	controllers.NewTypeRoomController(v1, client)
-
+	controllers.NewCounterStaffController(v1, client)
 	// Set StatusRoom Data
 	statusrooms := StatusRooms{
 		StatusRoom: []StatusRoom{
