@@ -426,6 +426,34 @@ func HasRoomWith(preds ...predicate.DataRoom) predicate.ReserveRoom {
 	})
 }
 
+// HasStatus applies the HasEdge predicate on the "status" edge.
+func HasStatus() predicate.ReserveRoom {
+	return predicate.ReserveRoom(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(StatusTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, StatusTable, StatusColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasStatusWith applies the HasEdge predicate on the "status" edge with a given conditions (other predicates).
+func HasStatusWith(preds ...predicate.StatusReserve) predicate.ReserveRoom {
+	return predicate.ReserveRoom(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(StatusInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, StatusTable, StatusColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasCheckins applies the HasEdge predicate on the "checkins" edge.
 func HasCheckins() predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {

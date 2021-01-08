@@ -16,6 +16,7 @@ import (
 	"github.com/team18/app/ent/predicate"
 	"github.com/team18/app/ent/promotion"
 	"github.com/team18/app/ent/reserveroom"
+	"github.com/team18/app/ent/statusreserve"
 )
 
 // ReserveRoomUpdate is the builder for updating ReserveRoom entities.
@@ -114,6 +115,25 @@ func (rru *ReserveRoomUpdate) SetRoom(d *DataRoom) *ReserveRoomUpdate {
 	return rru.SetRoomID(d.ID)
 }
 
+// SetStatusID sets the status edge to StatusReserve by id.
+func (rru *ReserveRoomUpdate) SetStatusID(id int) *ReserveRoomUpdate {
+	rru.mutation.SetStatusID(id)
+	return rru
+}
+
+// SetNillableStatusID sets the status edge to StatusReserve by id if the given value is not nil.
+func (rru *ReserveRoomUpdate) SetNillableStatusID(id *int) *ReserveRoomUpdate {
+	if id != nil {
+		rru = rru.SetStatusID(*id)
+	}
+	return rru
+}
+
+// SetStatus sets the status edge to StatusReserve.
+func (rru *ReserveRoomUpdate) SetStatus(s *StatusReserve) *ReserveRoomUpdate {
+	return rru.SetStatusID(s.ID)
+}
+
 // AddCheckinIDs adds the checkins edge to CheckIn by ids.
 func (rru *ReserveRoomUpdate) AddCheckinIDs(ids ...int) *ReserveRoomUpdate {
 	rru.mutation.AddCheckinIDs(ids...)
@@ -149,6 +169,12 @@ func (rru *ReserveRoomUpdate) ClearPromotion() *ReserveRoomUpdate {
 // ClearRoom clears the room edge to DataRoom.
 func (rru *ReserveRoomUpdate) ClearRoom() *ReserveRoomUpdate {
 	rru.mutation.ClearRoom()
+	return rru
+}
+
+// ClearStatus clears the status edge to StatusReserve.
+func (rru *ReserveRoomUpdate) ClearStatus() *ReserveRoomUpdate {
+	rru.mutation.ClearStatus()
 	return rru
 }
 
@@ -375,6 +401,41 @@ func (rru *ReserveRoomUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if rru.mutation.StatusCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   reserveroom.StatusTable,
+			Columns: []string{reserveroom.StatusColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: statusreserve.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rru.mutation.StatusIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   reserveroom.StatusTable,
+			Columns: []string{reserveroom.StatusColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: statusreserve.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if nodes := rru.mutation.RemovedCheckinsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -513,6 +574,25 @@ func (rruo *ReserveRoomUpdateOne) SetRoom(d *DataRoom) *ReserveRoomUpdateOne {
 	return rruo.SetRoomID(d.ID)
 }
 
+// SetStatusID sets the status edge to StatusReserve by id.
+func (rruo *ReserveRoomUpdateOne) SetStatusID(id int) *ReserveRoomUpdateOne {
+	rruo.mutation.SetStatusID(id)
+	return rruo
+}
+
+// SetNillableStatusID sets the status edge to StatusReserve by id if the given value is not nil.
+func (rruo *ReserveRoomUpdateOne) SetNillableStatusID(id *int) *ReserveRoomUpdateOne {
+	if id != nil {
+		rruo = rruo.SetStatusID(*id)
+	}
+	return rruo
+}
+
+// SetStatus sets the status edge to StatusReserve.
+func (rruo *ReserveRoomUpdateOne) SetStatus(s *StatusReserve) *ReserveRoomUpdateOne {
+	return rruo.SetStatusID(s.ID)
+}
+
 // AddCheckinIDs adds the checkins edge to CheckIn by ids.
 func (rruo *ReserveRoomUpdateOne) AddCheckinIDs(ids ...int) *ReserveRoomUpdateOne {
 	rruo.mutation.AddCheckinIDs(ids...)
@@ -548,6 +628,12 @@ func (rruo *ReserveRoomUpdateOne) ClearPromotion() *ReserveRoomUpdateOne {
 // ClearRoom clears the room edge to DataRoom.
 func (rruo *ReserveRoomUpdateOne) ClearRoom() *ReserveRoomUpdateOne {
 	rruo.mutation.ClearRoom()
+	return rruo
+}
+
+// ClearStatus clears the status edge to StatusReserve.
+func (rruo *ReserveRoomUpdateOne) ClearStatus() *ReserveRoomUpdateOne {
+	rruo.mutation.ClearStatus()
 	return rruo
 }
 
@@ -764,6 +850,41 @@ func (rruo *ReserveRoomUpdateOne) sqlSave(ctx context.Context) (rr *ReserveRoom,
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: dataroom.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if rruo.mutation.StatusCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   reserveroom.StatusTable,
+			Columns: []string{reserveroom.StatusColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: statusreserve.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rruo.mutation.StatusIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   reserveroom.StatusTable,
+			Columns: []string{reserveroom.StatusColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: statusreserve.FieldID,
 				},
 			},
 		}

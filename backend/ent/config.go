@@ -36,6 +36,7 @@ type hooks struct {
 	Promotion       []ent.Hook
 	ReserveRoom     []ent.Hook
 	Status          []ent.Hook
+	StatusReserve   []ent.Hook
 	StatusRoom      []ent.Hook
 	TypeRoom        []ent.Hook
 }

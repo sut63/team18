@@ -12,6 +12,7 @@ import (
 	"github.com/team18/app/ent/dataroom"
 	"github.com/team18/app/ent/promotion"
 	"github.com/team18/app/ent/reserveroom"
+	"github.com/team18/app/ent/statusreserve"
 )
 
 // CourseItemController defines the struct for the course item controller
@@ -25,6 +26,7 @@ type Resreve_Room struct {
 	Rooms       int
 	Promotions  int
 	Customers   int
+	Status      int
 	ReserveDate string
 	OutDate     string
 	NetPrice    float64
@@ -86,6 +88,18 @@ func (ctl *ReserveRoomController) CreateReserveRoom(c *gin.Context) {
 		return
 	}
 
+	s, err := ctl.client.StatusReserve.
+		Query().
+		Where(statusreserve.IDEQ(int(obj.Status))).
+		Only(context.Background())
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "Status not found",
+		})
+		return
+	}
+
 	timereserve, err := time.Parse(time.RFC3339, obj.ReserveDate)
 	timeout, err := time.Parse(time.RFC3339, obj.OutDate)
 
@@ -96,6 +110,7 @@ func (ctl *ReserveRoomController) CreateReserveRoom(c *gin.Context) {
 		SetCustomer(cus).
 		SetPromotion(p).
 		SetRoom(d).
+		SetStatus(s).
 		SetNetPrice(obj.NetPrice).
 		Save(context.Background())
 
@@ -181,6 +196,7 @@ func (ctl *ReserveRoomController) ListReserveRoom(c *gin.Context) {
 		WithRoom().
 		WithCustomer().
 		WithPromotion().
+		WithStatus().
 		Limit(limit).
 		Offset(offset).
 		All(context.Background())

@@ -15,6 +15,7 @@ import (
 	"github.com/team18/app/ent/dataroom"
 	"github.com/team18/app/ent/promotion"
 	"github.com/team18/app/ent/reserveroom"
+	"github.com/team18/app/ent/statusreserve"
 )
 
 // ReserveRoomCreate is the builder for creating a ReserveRoom entity.
@@ -97,6 +98,25 @@ func (rrc *ReserveRoomCreate) SetNillableRoomID(id *int) *ReserveRoomCreate {
 // SetRoom sets the room edge to DataRoom.
 func (rrc *ReserveRoomCreate) SetRoom(d *DataRoom) *ReserveRoomCreate {
 	return rrc.SetRoomID(d.ID)
+}
+
+// SetStatusID sets the status edge to StatusReserve by id.
+func (rrc *ReserveRoomCreate) SetStatusID(id int) *ReserveRoomCreate {
+	rrc.mutation.SetStatusID(id)
+	return rrc
+}
+
+// SetNillableStatusID sets the status edge to StatusReserve by id if the given value is not nil.
+func (rrc *ReserveRoomCreate) SetNillableStatusID(id *int) *ReserveRoomCreate {
+	if id != nil {
+		rrc = rrc.SetStatusID(*id)
+	}
+	return rrc
+}
+
+// SetStatus sets the status edge to StatusReserve.
+func (rrc *ReserveRoomCreate) SetStatus(s *StatusReserve) *ReserveRoomCreate {
+	return rrc.SetStatusID(s.ID)
 }
 
 // AddCheckinIDs adds the checkins edge to CheckIn by ids.
@@ -268,6 +288,25 @@ func (rrc *ReserveRoomCreate) createSpec() (*ReserveRoom, *sqlgraph.CreateSpec) 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: dataroom.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := rrc.mutation.StatusIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   reserveroom.StatusTable,
+			Columns: []string{reserveroom.StatusColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: statusreserve.FieldID,
 				},
 			},
 		}
