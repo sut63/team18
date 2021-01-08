@@ -281,17 +281,17 @@ func (ctl *ReserveRoomController) UpdateReserveRoom(c *gin.Context) {
 	c.JSON(200, ci)
 }
 
-// GetReserveRoomCustomer handles GET requests to retrieve a ReserveRoom entity
-// @Summary Get a ReserveRoom entity by ID
-// @Description get ReserveRoom by ID
-// @ID get-ReserveRoom
+// GetReserveRoomCustomer handles GET requests to retrieve a ReserveRoomCustomer entity
+// @Summary Get a ReserveRoomCustomer entity by ID
+// @Description get ReserveRoomCustomer by ID
+// @ID get-ReserveRoomCustomer
 // @Produce  json
-// @Param id path int true "ReserveRoom ID"
+// @Param id path int true "ReserveRoomCustomer ID"
 // @Success 200 {object} ent.ReserveRoom
 // @Failure 400 {object} gin.H
 // @Failure 404 {object} gin.H
 // @Failure 500 {object} gin.H
-// @Router /ReserveRooms/{id}/customer [get]
+// @Router /ReserveRoomsCustomer/{id} [get]
 func (ctl *ReserveRoomController) GetReserveRoomCustomer(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -303,11 +303,12 @@ func (ctl *ReserveRoomController) GetReserveRoomCustomer(c *gin.Context) {
 
 	i, err := ctl.client.ReserveRoom.
 		Query().
-		WithStatus().
-		WithPromotion().
+		WithRoom().
 		WithCustomer().
+		WithPromotion().
+		WithStatus().
 		Where(reserveroom.HasCustomerWith(customer.IDEQ(int(id))), reserveroom.HasStatusWith(statusreserve.StatusNameEQ("ยังไม่เข้าพัก"))).
-		Only(context.Background())
+		All(context.Background())
 	if err != nil {
 		c.JSON(404, gin.H{
 			"error": err.Error(),
@@ -334,13 +335,14 @@ func NewReserveRoomController(router gin.IRouter, client *ent.Client) *ReserveRo
 // InitReserveRoomController registers routes to the main engine
 func (ctl *ReserveRoomController) register() {
 	ReserveRooms := ctl.router.Group("/ReserveRooms")
+	ReserveRoomsCustomer := ctl.router.Group("/ReserveRoomsCustomer")
 
 	ReserveRooms.GET("", ctl.ListReserveRoom)
 
 	// CRUD
 	ReserveRooms.POST("", ctl.CreateReserveRoom)
 	ReserveRooms.GET(":id", ctl.GetReserveRoom)
-	ReserveRooms.GET(":id/customer", ctl.GetReserveRoomCustomer)
+	ReserveRoomsCustomer.GET(":id", ctl.GetReserveRoomCustomer)
 	ReserveRooms.PUT(":id", ctl.UpdateReserveRoom)
 	ReserveRooms.DELETE(":id", ctl.DeleteReserveRoom)
 }
