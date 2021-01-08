@@ -281,6 +281,43 @@ func (ctl *ReserveRoomController) UpdateReserveRoom(c *gin.Context) {
 	c.JSON(200, ci)
 }
 
+// GetReserveRoomCustomer handles GET requests to retrieve a ReserveRoom entity
+// @Summary Get a ReserveRoom entity by ID
+// @Description get ReserveRoom by ID
+// @ID get-ReserveRoom
+// @Produce  json
+// @Param id path int true "ReserveRoom ID"
+// @Success 200 {object} ent.ReserveRoom
+// @Failure 400 {object} gin.H
+// @Failure 404 {object} gin.H
+// @Failure 500 {object} gin.H
+// @Router /ReserveRooms/{id}/customer [get]
+func (ctl *ReserveRoomController) GetReserveRoomCustomer(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	i, err := ctl.client.ReserveRoom.
+		Query().
+		WithStatus().
+		WithPromotion().
+		WithCustomer().
+		Where(reserveroom.HasCustomerWith(customer.IDEQ(int(id))), reserveroom.HasStatusWith(statusreserve.StatusNameEQ("ยังไม่เข้าพัก"))).
+		Only(context.Background())
+	if err != nil {
+		c.JSON(404, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, i)
+}
+
 // NewReserveRoomControllercreates and registers handles for the ReserveRoom controller
 func NewReserveRoomController(router gin.IRouter, client *ent.Client) *ReserveRoomController {
 	rr := &ReserveRoomController{
@@ -303,6 +340,7 @@ func (ctl *ReserveRoomController) register() {
 	// CRUD
 	ReserveRooms.POST("", ctl.CreateReserveRoom)
 	ReserveRooms.GET(":id", ctl.GetReserveRoom)
+	ReserveRooms.GET(":id/customer", ctl.GetReserveRoomCustomer)
 	ReserveRooms.PUT(":id", ctl.UpdateReserveRoom)
 	ReserveRooms.DELETE(":id", ctl.DeleteReserveRoom)
 }
