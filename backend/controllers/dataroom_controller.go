@@ -14,6 +14,7 @@ type DataRoomController struct {
 	client *ent.Client
 	router gin.IRouter
 }
+// DataRoom ...
 type DataRoom struct {
 	RoomNumber string
 	Price      float64
@@ -37,7 +38,7 @@ func (ctl *DataRoomController) CreateDataRoom(c *gin.Context) {
 	obj := DataRoom{}
 	if err := c.ShouldBind(&obj); err != nil {
 		c.JSON(400, gin.H{
-			"error": "dataroom binding failed",
+			"error": "DataRoom binding failed",
 		})
 		return
 	}
