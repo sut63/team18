@@ -21,6 +21,7 @@ import (
 	"github.com/team18/app/ent/promotion"
 	"github.com/team18/app/ent/reserveroom"
 	"github.com/team18/app/ent/status"
+	"github.com/team18/app/ent/statusreserve"
 	"github.com/team18/app/ent/statusroom"
 	"github.com/team18/app/ent/typeroom"
 
@@ -58,6 +59,8 @@ type Client struct {
 	ReserveRoom *ReserveRoomClient
 	// Status is the client for interacting with the Status builders.
 	Status *StatusClient
+	// StatusReserve is the client for interacting with the StatusReserve builders.
+	StatusReserve *StatusReserveClient
 	// StatusRoom is the client for interacting with the StatusRoom builders.
 	StatusRoom *StatusRoomClient
 	// TypeRoom is the client for interacting with the TypeRoom builders.
@@ -87,6 +90,7 @@ func (c *Client) init() {
 	c.Promotion = NewPromotionClient(c.config)
 	c.ReserveRoom = NewReserveRoomClient(c.config)
 	c.Status = NewStatusClient(c.config)
+	c.StatusReserve = NewStatusReserveClient(c.config)
 	c.StatusRoom = NewStatusRoomClient(c.config)
 	c.TypeRoom = NewTypeRoomClient(c.config)
 }
@@ -133,6 +137,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Promotion:       NewPromotionClient(cfg),
 		ReserveRoom:     NewReserveRoomClient(cfg),
 		Status:          NewStatusClient(cfg),
+		StatusReserve:   NewStatusReserveClient(cfg),
 		StatusRoom:      NewStatusRoomClient(cfg),
 		TypeRoom:        NewTypeRoomClient(cfg),
 	}, nil
@@ -162,6 +167,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Promotion:       NewPromotionClient(cfg),
 		ReserveRoom:     NewReserveRoomClient(cfg),
 		Status:          NewStatusClient(cfg),
+		StatusReserve:   NewStatusReserveClient(cfg),
 		StatusRoom:      NewStatusRoomClient(cfg),
 		TypeRoom:        NewTypeRoomClient(cfg),
 	}, nil
@@ -204,6 +210,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Promotion.Use(hooks...)
 	c.ReserveRoom.Use(hooks...)
 	c.Status.Use(hooks...)
+	c.StatusReserve.Use(hooks...)
 	c.StatusRoom.Use(hooks...)
 	c.TypeRoom.Use(hooks...)
 }
@@ -1660,6 +1667,22 @@ func (c *ReserveRoomClient) QueryRoom(rr *ReserveRoom) *DataRoomQuery {
 	return query
 }
 
+// QueryStatus queries the status edge of a ReserveRoom.
+func (c *ReserveRoomClient) QueryStatus(rr *ReserveRoom) *StatusReserveQuery {
+	query := &StatusReserveQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := rr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(reserveroom.Table, reserveroom.FieldID, id),
+			sqlgraph.To(statusreserve.Table, statusreserve.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, reserveroom.StatusTable, reserveroom.StatusColumn),
+		)
+		fromV = sqlgraph.Neighbors(rr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryCheckins queries the checkins edge of a ReserveRoom.
 func (c *ReserveRoomClient) QueryCheckins(rr *ReserveRoom) *CheckInQuery {
 	query := &CheckInQuery{config: c.config}
@@ -1778,6 +1801,105 @@ func (c *StatusClient) QueryCheckouts(s *Status) *CheckoutQuery {
 // Hooks returns the client hooks.
 func (c *StatusClient) Hooks() []Hook {
 	return c.hooks.Status
+}
+
+// StatusReserveClient is a client for the StatusReserve schema.
+type StatusReserveClient struct {
+	config
+}
+
+// NewStatusReserveClient returns a client for the StatusReserve from the given config.
+func NewStatusReserveClient(c config) *StatusReserveClient {
+	return &StatusReserveClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `statusreserve.Hooks(f(g(h())))`.
+func (c *StatusReserveClient) Use(hooks ...Hook) {
+	c.hooks.StatusReserve = append(c.hooks.StatusReserve, hooks...)
+}
+
+// Create returns a create builder for StatusReserve.
+func (c *StatusReserveClient) Create() *StatusReserveCreate {
+	mutation := newStatusReserveMutation(c.config, OpCreate)
+	return &StatusReserveCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Update returns an update builder for StatusReserve.
+func (c *StatusReserveClient) Update() *StatusReserveUpdate {
+	mutation := newStatusReserveMutation(c.config, OpUpdate)
+	return &StatusReserveUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *StatusReserveClient) UpdateOne(sr *StatusReserve) *StatusReserveUpdateOne {
+	mutation := newStatusReserveMutation(c.config, OpUpdateOne, withStatusReserve(sr))
+	return &StatusReserveUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *StatusReserveClient) UpdateOneID(id int) *StatusReserveUpdateOne {
+	mutation := newStatusReserveMutation(c.config, OpUpdateOne, withStatusReserveID(id))
+	return &StatusReserveUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for StatusReserve.
+func (c *StatusReserveClient) Delete() *StatusReserveDelete {
+	mutation := newStatusReserveMutation(c.config, OpDelete)
+	return &StatusReserveDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *StatusReserveClient) DeleteOne(sr *StatusReserve) *StatusReserveDeleteOne {
+	return c.DeleteOneID(sr.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *StatusReserveClient) DeleteOneID(id int) *StatusReserveDeleteOne {
+	builder := c.Delete().Where(statusreserve.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &StatusReserveDeleteOne{builder}
+}
+
+// Create returns a query builder for StatusReserve.
+func (c *StatusReserveClient) Query() *StatusReserveQuery {
+	return &StatusReserveQuery{config: c.config}
+}
+
+// Get returns a StatusReserve entity by its id.
+func (c *StatusReserveClient) Get(ctx context.Context, id int) (*StatusReserve, error) {
+	return c.Query().Where(statusreserve.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *StatusReserveClient) GetX(ctx context.Context, id int) *StatusReserve {
+	sr, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return sr
+}
+
+// QueryReserves queries the reserves edge of a StatusReserve.
+func (c *StatusReserveClient) QueryReserves(sr *StatusReserve) *ReserveRoomQuery {
+	query := &ReserveRoomQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := sr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(statusreserve.Table, statusreserve.FieldID, id),
+			sqlgraph.To(reserveroom.Table, reserveroom.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, statusreserve.ReservesTable, statusreserve.ReservesColumn),
+		)
+		fromV = sqlgraph.Neighbors(sr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *StatusReserveClient) Hooks() []Hook {
+	return c.hooks.StatusReserve
 }
 
 // StatusRoomClient is a client for the StatusRoom schema.

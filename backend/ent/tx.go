@@ -36,6 +36,8 @@ type Tx struct {
 	ReserveRoom *ReserveRoomClient
 	// Status is the client for interacting with the Status builders.
 	Status *StatusClient
+	// StatusReserve is the client for interacting with the StatusReserve builders.
+	StatusReserve *StatusReserveClient
 	// StatusRoom is the client for interacting with the StatusRoom builders.
 	StatusRoom *StatusRoomClient
 	// TypeRoom is the client for interacting with the TypeRoom builders.
@@ -187,6 +189,7 @@ func (tx *Tx) init() {
 	tx.Promotion = NewPromotionClient(tx.config)
 	tx.ReserveRoom = NewReserveRoomClient(tx.config)
 	tx.Status = NewStatusClient(tx.config)
+	tx.StatusReserve = NewStatusReserveClient(tx.config)
 	tx.StatusRoom = NewStatusRoomClient(tx.config)
 	tx.TypeRoom = NewTypeRoomClient(tx.config)
 }

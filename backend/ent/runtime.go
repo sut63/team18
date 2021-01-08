@@ -10,6 +10,7 @@ import (
 	"github.com/team18/app/ent/promotion"
 	"github.com/team18/app/ent/reserveroom"
 	"github.com/team18/app/ent/schema"
+	"github.com/team18/app/ent/statusreserve"
 	"github.com/team18/app/ent/statusroom"
 	"github.com/team18/app/ent/typeroom"
 )
@@ -78,6 +79,12 @@ func init() {
 	reserveroomDescNetPrice := reserveroomFields[2].Descriptor()
 	// reserveroom.NetPriceValidator is a validator for the "net_price" field. It is called by the builders before save.
 	reserveroom.NetPriceValidator = reserveroomDescNetPrice.Validators[0].(func(float64) error)
+	statusreserveFields := schema.StatusReserve{}.Fields()
+	_ = statusreserveFields
+	// statusreserveDescStatusName is the schema descriptor for status_name field.
+	statusreserveDescStatusName := statusreserveFields[0].Descriptor()
+	// statusreserve.StatusNameValidator is a validator for the "status_name" field. It is called by the builders before save.
+	statusreserve.StatusNameValidator = statusreserveDescStatusName.Validators[0].(func(string) error)
 	statusroomFields := schema.StatusRoom{}.Fields()
 	_ = statusroomFields
 	// statusroomDescStatusName is the schema descriptor for status_name field.
