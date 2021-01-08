@@ -341,7 +341,7 @@ var (
 	// StatusRoomsColumns holds the columns for the "status_rooms" table.
 	StatusRoomsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "status_name", Type: field.TypeString},
+		{Name: "status_name", Type: field.TypeString, Unique: true},
 	}
 	// StatusRoomsTable holds the schema information for the "status_rooms" table.
 	StatusRoomsTable = &schema.Table{
@@ -353,7 +353,7 @@ var (
 	// TypeRoomsColumns holds the columns for the "type_rooms" table.
 	TypeRoomsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "type_name", Type: field.TypeString},
+		{Name: "type_name", Type: field.TypeString, Unique: true},
 	}
 	// TypeRoomsTable holds the schema information for the "type_rooms" table.
 	TypeRoomsTable = &schema.Table{
