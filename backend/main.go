@@ -144,7 +144,9 @@ func main() {
 	// Set Promotion Data
 	promotions := Promotions{
 		Promotion: []Promotion{
-			Promotion{"ปีใหม่", 120.50},
+			Promotion{"ปีใหม่", 1200.50},
+			Promotion{"สงกรานต์", 500},
+			Promotion{"ฮาโลวีน", 350},
 		},
 	}
 
@@ -159,8 +161,12 @@ func main() {
 	// Set Customers Data
 	customer := Customers{
 		Customer: []Customer{
-			Customer{"sawadee", "example@gmail.com","1234"},
-			Customer{"hello", "hellow@gmail.com","7890"},
+			Customer{"Bos", "bos@gmail.com","bos123"},
+			Customer{"Noi", "noi@gmail.com","noi666"},
+			Customer{"Best", "best@gmail.com","best33"},
+			Customer{"Tongkong", "tongkong@gmail.com","tong456"},
+			Customer{"Ta", "ta@gmail.com","ta007"},
+			Customer{"Film", "film@gmail.com","film89"},
 		},
 	}
 
