@@ -20,6 +20,8 @@ const (
 	EdgePromotion = "promotion"
 	// EdgeRoom holds the string denoting the room edge name in mutations.
 	EdgeRoom = "room"
+	// EdgeStatus holds the string denoting the status edge name in mutations.
+	EdgeStatus = "status"
 	// EdgeCheckins holds the string denoting the checkins edge name in mutations.
 	EdgeCheckins = "checkins"
 
@@ -46,6 +48,13 @@ const (
 	RoomInverseTable = "data_rooms"
 	// RoomColumn is the table column denoting the room relation/edge.
 	RoomColumn = "room_id"
+	// StatusTable is the table the holds the status relation/edge.
+	StatusTable = "reserve_rooms"
+	// StatusInverseTable is the table name for the StatusReserve entity.
+	// It exists in this package in order to avoid circular dependency with the "statusreserve" package.
+	StatusInverseTable = "status_reserves"
+	// StatusColumn is the table column denoting the status relation/edge.
+	StatusColumn = "status_id"
 	// CheckinsTable is the table the holds the checkins relation/edge.
 	CheckinsTable = "check_ins"
 	// CheckinsInverseTable is the table name for the CheckIn entity.
@@ -68,6 +77,7 @@ var ForeignKeys = []string{
 	"customer_id",
 	"room_id",
 	"promotion_id",
+	"status_id",
 }
 
 var (

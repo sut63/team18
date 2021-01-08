@@ -12,6 +12,7 @@ import (
 	"github.com/team18/app/ent/dataroom"
 	"github.com/team18/app/ent/promotion"
 	"github.com/team18/app/ent/reserveroom"
+	"github.com/team18/app/ent/statusreserve"
 )
 
 // ReserveRoom is the model entity for the ReserveRoom schema.
@@ -31,6 +32,7 @@ type ReserveRoom struct {
 	customer_id  *int
 	room_id      *int
 	promotion_id *int
+	status_id    *int
 }
 
 // ReserveRoomEdges holds the relations/edges for other nodes in the graph.
@@ -41,11 +43,13 @@ type ReserveRoomEdges struct {
 	Promotion *Promotion
 	// Room holds the value of the room edge.
 	Room *DataRoom
+	// Status holds the value of the status edge.
+	Status *StatusReserve
 	// Checkins holds the value of the checkins edge.
 	Checkins []*CheckIn
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 }
 
 // CustomerOrErr returns the Customer value or an error if the edge
@@ -90,10 +94,24 @@ func (e ReserveRoomEdges) RoomOrErr() (*DataRoom, error) {
 	return nil, &NotLoadedError{edge: "room"}
 }
 
+// StatusOrErr returns the Status value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e ReserveRoomEdges) StatusOrErr() (*StatusReserve, error) {
+	if e.loadedTypes[3] {
+		if e.Status == nil {
+			// The edge status was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: statusreserve.Label}
+		}
+		return e.Status, nil
+	}
+	return nil, &NotLoadedError{edge: "status"}
+}
+
 // CheckinsOrErr returns the Checkins value or an error if the edge
 // was not loaded in eager-loading.
 func (e ReserveRoomEdges) CheckinsOrErr() ([]*CheckIn, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		return e.Checkins, nil
 	}
 	return nil, &NotLoadedError{edge: "checkins"}
@@ -115,6 +133,7 @@ func (*ReserveRoom) fkValues() []interface{} {
 		&sql.NullInt64{}, // customer_id
 		&sql.NullInt64{}, // room_id
 		&sql.NullInt64{}, // promotion_id
+		&sql.NullInt64{}, // status_id
 	}
 }
 
@@ -165,6 +184,12 @@ func (rr *ReserveRoom) assignValues(values ...interface{}) error {
 			rr.promotion_id = new(int)
 			*rr.promotion_id = int(value.Int64)
 		}
+		if value, ok := values[3].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field status_id", value)
+		} else if value.Valid {
+			rr.status_id = new(int)
+			*rr.status_id = int(value.Int64)
+		}
 	}
 	return nil
 }
@@ -182,6 +207,11 @@ func (rr *ReserveRoom) QueryPromotion() *PromotionQuery {
 // QueryRoom queries the room edge of the ReserveRoom.
 func (rr *ReserveRoom) QueryRoom() *DataRoomQuery {
 	return (&ReserveRoomClient{config: rr.config}).QueryRoom(rr)
+}
+
+// QueryStatus queries the status edge of the ReserveRoom.
+func (rr *ReserveRoom) QueryStatus() *StatusReserveQuery {
+	return (&ReserveRoomClient{config: rr.config}).QueryStatus(rr)
 }
 
 // QueryCheckins queries the checkins edge of the ReserveRoom.

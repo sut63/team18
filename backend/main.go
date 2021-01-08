@@ -22,6 +22,14 @@ type StatusRoom struct {
 	StatusName string
 }
 
+type StatusReserves struct {
+	StatusReserve []StatusReserve
+}
+
+type StatusReserve struct {
+	Status string
+}
+
 type TypeRooms struct {
 	TypeRoom []TypeRoom
 }
@@ -44,8 +52,9 @@ type Customers struct {
 }
 
 type Customer struct {
-	name  string
-	email string
+	name     string
+	email    string
+	password string
 }
 
 // @title SUT SE Example API
@@ -103,10 +112,15 @@ func main() {
 	}
 
 	v1 := router.Group("/api/v1")
-	controllers.NewReserveRoomController(v1, client)
-	controllers.NewPromotionController(v1, client)
+	controllers.NewCheckoutController(v1, client)
 	controllers.NewCustomerController(v1, client)
 	controllers.NewDataRoomController(v1, client)
+	controllers.NewPromotionController(v1, client)
+	controllers.NewReserveRoomController(v1, client)
+	controllers.NewStatusController(v1, client)
+	controllers.NewStatusReserveController(v1, client)
+	controllers.NewStatusRoomController(v1, client)
+	controllers.NewTypeRoomController(v1, client)
 
 	// Set StatusRoom Data
 	statusrooms := StatusRooms{
@@ -142,7 +156,9 @@ func main() {
 	// Set Promotion Data
 	promotions := Promotions{
 		Promotion: []Promotion{
-			Promotion{"ปีใหม่", 120.50},
+			Promotion{"ปีใหม่", 1200.50},
+			Promotion{"สงกรานต์", 500},
+			Promotion{"ฮาโลวีน", 350},
 		},
 	}
 
@@ -157,8 +173,12 @@ func main() {
 	// Set Customers Data
 	customer := Customers{
 		Customer: []Customer{
-			Customer{"sawadee", "example@gmail.com"},
-			Customer{"hello", "hellow@gmail.com"},
+			Customer{"Bos", "bos@gmail.com", "bos123"},
+			Customer{"Noi", "noi@gmail.com", "noi666"},
+			Customer{"Best", "best@gmail.com", "best33"},
+			Customer{"Tongkong", "tongkong@gmail.com", "tong456"},
+			Customer{"Ta", "ta@gmail.com", "ta007"},
+			Customer{"Film", "film@gmail.com", "film89"},
 		},
 	}
 
@@ -167,7 +187,22 @@ func main() {
 			Create().
 			SetName(c.name).
 			SetEmail(c.email).
+			SetPassword(c.password).
 			Save(context.Background())
+	}
+
+	// Set StatusReserve Data
+	statusreserves := StatusReserves{
+		StatusReserve: []StatusReserve{
+			StatusReserve{"ยังไม่เข้าพัก"},
+			StatusReserve{"เข้าพัก"},
+		},
+	}
+	for _, sr := range statusreserves.StatusReserve {
+		client.StatusReserve.
+			Create().
+			SetStatusName(sr.Status)
+		Save(context.Background())
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

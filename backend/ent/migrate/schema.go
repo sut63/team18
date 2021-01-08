@@ -268,6 +268,7 @@ var (
 		{Name: "customer_id", Type: field.TypeInt, Nullable: true},
 		{Name: "room_id", Type: field.TypeInt, Nullable: true},
 		{Name: "promotion_id", Type: field.TypeInt, Nullable: true},
+		{Name: "status_id", Type: field.TypeInt, Nullable: true},
 	}
 	// ReserveRoomsTable holds the schema information for the "reserve_rooms" table.
 	ReserveRoomsTable = &schema.Table{
@@ -296,6 +297,13 @@ var (
 				RefColumns: []*schema.Column{PromotionsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
+			{
+				Symbol:  "reserve_rooms_status_reserves_reserves",
+				Columns: []*schema.Column{ReserveRoomsColumns[7]},
+
+				RefColumns: []*schema.Column{StatusReservesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
 		},
 	}
 	// StatusColumns holds the columns for the "status" table.
@@ -308,6 +316,18 @@ var (
 		Name:        "status",
 		Columns:     StatusColumns,
 		PrimaryKey:  []*schema.Column{StatusColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
+	// StatusReservesColumns holds the columns for the "status_reserves" table.
+	StatusReservesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "status_name", Type: field.TypeString},
+	}
+	// StatusReservesTable holds the schema information for the "status_reserves" table.
+	StatusReservesTable = &schema.Table{
+		Name:        "status_reserves",
+		Columns:     StatusReservesColumns,
+		PrimaryKey:  []*schema.Column{StatusReservesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
 	// StatusRoomsColumns holds the columns for the "status_rooms" table.
@@ -348,6 +368,7 @@ var (
 		PromotionsTable,
 		ReserveRoomsTable,
 		StatusTable,
+		StatusReservesTable,
 		StatusRoomsTable,
 		TypeRoomsTable,
 	}
@@ -372,4 +393,5 @@ func init() {
 	ReserveRoomsTable.ForeignKeys[0].RefTable = CustomersTable
 	ReserveRoomsTable.ForeignKeys[1].RefTable = DataRoomsTable
 	ReserveRoomsTable.ForeignKeys[2].RefTable = PromotionsTable
+	ReserveRoomsTable.ForeignKeys[3].RefTable = StatusReservesTable
 }

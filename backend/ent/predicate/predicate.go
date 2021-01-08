@@ -42,6 +42,9 @@ type ReserveRoom func(*sql.Selector)
 // Status is the predicate function for status builders.
 type Status func(*sql.Selector)
 
+// StatusReserve is the predicate function for statusreserve builders.
+type StatusReserve func(*sql.Selector)
+
 // StatusRoom is the predicate function for statusroom builders.
 type StatusRoom func(*sql.Selector)
 
