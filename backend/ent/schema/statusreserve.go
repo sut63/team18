@@ -14,7 +14,7 @@ type StatusReserve struct {
 // Fields of the StatusReserve.
 func (StatusReserve) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("status_name").NotEmpty(),
+		field.String("status_name").NotEmpty().Unique(),
 	}
 }
 
