@@ -130,6 +130,10 @@ export interface GetDataroomRequest {
     id: number;
 }
 
+export interface GetDataroomcustomerRequest {
+    id: number;
+}
+
 export interface GetPromotionRequest {
     id: number;
 }
@@ -890,7 +894,7 @@ export class DefaultApi extends runtime.BaseAPI {
             headers: headerParameters,
             query: queryParameters,
         });
-       
+
         return new runtime.JSONApiResponse(response, (jsonValue) => EntDataRoomFromJSON(jsonValue));
     }
 
@@ -900,6 +904,38 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getDataroom(requestParameters: GetDataroomRequest): Promise<EntDataRoom> {
         const response = await this.getDataroomRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * get dataroomcustomer by ID
+     * Get a dataroomcustomer entity by ID
+     */
+    async getDataroomcustomerRaw(requestParameters: GetDataroomcustomerRequest): Promise<runtime.ApiResponse<Array<EntDataRoom>>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getDataroomcustomer.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/dataroomcustomer/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntDataRoomFromJSON));
+    }
+
+    /**
+     * get dataroomcustomer by ID
+     * Get a dataroomcustomer entity by ID
+     */
+    async getDataroomcustomer(requestParameters: GetDataroomcustomerRequest): Promise<Array<EntDataRoom>> {
+        const response = await this.getDataroomcustomerRaw(requestParameters);
         return await response.value();
     }
 
@@ -987,7 +1023,6 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        
         return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntReserveRoomFromJSON));
     }
 
