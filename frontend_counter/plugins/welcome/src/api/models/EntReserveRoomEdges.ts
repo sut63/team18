@@ -84,11 +84,11 @@ export function EntReserveRoomEdgesFromJSONTyped(json: any, ignoreDiscriminator:
     }
     return {
         
-        'checkins': !exists(json, 'Checkins') ? undefined : ((json['Checkins'] as Array<any>).map(EntCheckInFromJSON)),
-        'customer': !exists(json, 'Customer') ? undefined : EntCustomerFromJSON(json['Customer']),
-        'promotion': !exists(json, 'Promotion') ? undefined : EntPromotionFromJSON(json['Pomotion']),
-        'room': !exists(json, 'Room') ? undefined : EntDataRoomFromJSON(json['Room']),
-        'status': !exists(json, 'Status') ? undefined : EntStatusReserveFromJSON(json['Status']),
+        'checkins': !exists(json, 'checkins') ? undefined : ((json['checkins'] as Array<any>).map(EntCheckInFromJSON)),
+        'customer': !exists(json, 'customer') ? undefined : EntCustomerFromJSON(json['customer']),
+        'promotion': !exists(json, 'promotion') ? undefined : EntPromotionFromJSON(json['promotion']),
+        'room': !exists(json, 'room') ? undefined : EntDataRoomFromJSON(json['room']),
+        'status': !exists(json, 'status') ? undefined : EntStatusReserveFromJSON(json['status']),
     };
 }
 

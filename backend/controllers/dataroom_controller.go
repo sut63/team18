@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/team18/app/ent"
 	"github.com/team18/app/ent/dataroom"
+	"github.com/team18/app/ent/reserveroom"
 )
 
 // DataRoomController defines the struct for the dataroom controller
@@ -144,6 +145,42 @@ func (ctl *DataRoomController) ListDataRoom(c *gin.Context) {
 	c.JSON(200, datarooms)
 }
 
+// GetDataroomCustomer handles GET requests to retrieve a dataroomcustomer entity
+// @Summary Get a dataroomcustomer entity by ID
+// @Description get dataroomcustomer by ID
+// @ID get-dataroomcustomer
+// @Produce  json
+// @Param id path int true "dataroomcustomer ID"
+// @Success 200 {array} ent.DataRoom
+// @Failure 400 {object} gin.H
+// @Failure 404 {object} gin.H
+// @Failure 500 {object} gin.H
+// @Router /dataroomcustomer/{id} [get]
+func (ctl *DataRoomController) GetDataroomCustomer(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	s, err := ctl.client.DataRoom.
+		Query().
+		WithPromotion().
+		WithStatusroom().
+		WithTyperoom().
+		Where(dataroom.HasReservesWith(reserveroom.IDEQ(int(id)))).
+		All(context.Background())
+	if err != nil {
+		c.JSON(404, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, s)
+}
+
 // NewDataRoomController creates and registers handles for the dataroomn controller
 func NewDataRoomController(router gin.IRouter, client *ent.Client) *DataRoomController {
 	dc := &DataRoomController{
@@ -157,8 +194,10 @@ func NewDataRoomController(router gin.IRouter, client *ent.Client) *DataRoomCont
 // InitDataRoomController registers routes to the main engine
 func (ctl *DataRoomController) register() {
 	datarooms := ctl.router.Group("/datarooms")
+	dataroomcustomer := ctl.router.Group("/dataroomcustomer")
 	datarooms.GET("", ctl.ListDataRoom)
 	// CRUD
 	datarooms.POST("", ctl.CreateDataRoom)
 	datarooms.GET(":id", ctl.GetDataRoom)
+	dataroomcustomer.GET(":id", ctl.GetDataroomCustomer)
 }
