@@ -329,7 +329,7 @@ var (
 	// StatusReservesColumns holds the columns for the "status_reserves" table.
 	StatusReservesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "status_name", Type: field.TypeString},
+		{Name: "status_name", Type: field.TypeString, Unique: true},
 	}
 	// StatusReservesTable holds the schema information for the "status_reserves" table.
 	StatusReservesTable = &schema.Table{

@@ -346,4 +346,5 @@ func (ctl *ReserveRoomController) register() {
 	ReserveRooms.PUT(":id", ctl.UpdateReserveRoom)
 	ReserveRooms.DELETE(":id", ctl.DeleteReserveRoom)
 }
+
 //
