@@ -255,6 +255,7 @@ const DataRoom: FC<{}> = () => {
             </Grid>
             <Grid item xs={9}>
             <TextField  
+            value={DataRoom.Price || ''}
             label="ราคา" 
             name = "Price"
             variant="outlined" 
