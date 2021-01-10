@@ -114,6 +114,19 @@ func (ctl *CheckinController) CreateCheckIn(c *gin.Context) {
 			return
 		}	
 
+		ci, err := ctl.client.ReserveRoom.
+		UpdateOne(r).
+		SetStatusID(2).
+		Save(context.Background())
+
+		if err != nil {
+			c.JSON(400, gin.H{
+				"error": "Update status re CheckIn error",
+			})
+			return
+		}
+	fmt.Print(ci)
+
 	c.JSON(200, ch)
 }
 

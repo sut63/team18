@@ -23,14 +23,19 @@ export const AppSidebar = () => (
     {/* <SidebarItem icon={CreateComponentIcon} to="create" text="Create..." />
     <SidebarItem icon={CreateComponentIcon} to="welcome" text="Welcome" /> */}
     <SidebarItem
-      icon={YouTube}
-      to="playlist_video"
-      text="Playlist Video"
+      icon={CreateComponentIcon}
+      to="dataroom"
+      text="Data Room"
     />
     <SidebarItem
       icon={CreateComponentIcon}
-      to="watch_video"
-      text="Watch Video"
+      to="CheckIn"
+      text="Check In"
+    />
+    <SidebarItem
+      icon={CreateComponentIcon}
+      to="checkout"
+      text="Check Out"
     />
 
     {/* End global nav */}
