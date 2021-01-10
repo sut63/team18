@@ -1,14 +1,27 @@
 import { createPlugin } from '@backstage/core';
-import WelcomePage from './components/WelcomePage';
-import WatchVideo from './components/ReserveRoom'
+import FixRoom from './components/FixRoom';
+import Reserve from './components/ReserveRoom'
+import RoomList from './components/RoomList'
 import SignIn from './components/SignIn'
+import { Cookies } from './Cookie'
 
+var ck = new Cookies()
+var cookie = ck.GetCookie()
 
 export const plugin = createPlugin({
   id: 'welcome',
   register({ router }) {
-    router.registerRoute('/', WelcomePage);
-    router.registerRoute('/watch_video', WatchVideo);
-    router.registerRoute('/signin', SignIn);
+    if(cookie == undefined){
+      router.registerRoute('/', SignIn);
+      router.registerRoute('/reserve', SignIn);
+      router.registerRoute('/fix', SignIn);
+      router.registerRoute('/sign_in', SignIn);
+    }else{
+      router.registerRoute('/', RoomList);
+      router.registerRoute('/reserve', Reserve);
+      router.registerRoute('/fix', FixRoom);
+      router.registerRoute('/sign_in', SignIn);
+    }
   },
 });
+

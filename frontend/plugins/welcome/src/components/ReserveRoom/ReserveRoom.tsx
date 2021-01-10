@@ -24,6 +24,7 @@ import { EntDataRoom } from '../../api/models/EntDataRoom';
 import { EntPromotion } from '../../api/models/EntPromotion';
 import { EntCustomer } from '../../api/models/EntCustomer';
 import { EntStatusReserve } from '../../api/models/EntStatusReserve';
+import { Cookies } from '../../Cookie'
 
 // header css
 const HeaderCustom = {
@@ -65,29 +66,80 @@ interface reserve {
   // create_by: number;
 }
 
+interface room {
+	StatusRoom: number;
+  // create_by: number;
+}
+
 const ReserveRoom: FC<{}> = () => {
   const classes = useStyles();
   const api = new DefaultApi();
 
+   // ดึงคุกกี้
+   var ck = new Cookies()
+   var cookieName = ck.GetCookie()
+   var cookieID = ck.GetID()
+
+   //อันหลักสำหรับสร้าง การ reserve_room
   const [reserve_room, setReserveroom] = React.useState<Partial<reserve>>({});
 
+  // data room List
   const [dataroom, setdataroom] = React.useState<EntDataRoom[]>([]);
+  const getDataRoom = async () => {
+    const res = await api.listDataRoomPromo({ id: ids });
+    setdataroom(res);
+  };
+  // Room
   const [room, setroom] = React.useState<EntDataRoom>();
+  const getRoom = async () => {
+    const res = await api.getDataroom({ id: dids })
+    setroom(res);
+    setPrice(res.price);
+  }
 
+  // promotion List
   const [promotions, setPromotions] = React.useState<EntPromotion[]>([]);
+  const getPromotion = async () => {
+    const res = await api.listPromotion({ limit: 10, offset: 0 });
+    setPromotions(res);
+  };
+  // promotion
   const [promo, setPromo] = React.useState<EntPromotion>();
+  const getPromo = async () => {
+    const res = await api.getPromotion({ id: ids })
+    setPromo(res);
+    setDiscount(res.discount);
+    setPrice(0);
+    clearNet();
+  }
 
-  const [customers, setCustomers] = React.useState<EntCustomer[]>([]);
+  //customer
+  const [customers, setCustomers] = React.useState<EntCustomer>();
+  const getCustomes = async () => {
+    const res = await api.getCustomer({id: Number(cookieID)});
+    setCustomers(res);
+  };
 
+  //status
   const [status, setStatus] = React.useState<EntStatusReserve>();
+  const getStatus = async () => {
+    const res = await api.getStatusReserve({ id: 1 })
+    setStatus(res);
+  }
 
+  //find net price
   const [price, setPrice] = React.useState<any>(0)
   const [discount, setDiscount] = React.useState<any>(0)
   const [netprice, setNetprice] = React.useState<any>(0)
+  const getNetprice = async () => {
+    setNetprice(price - discount);
+  };
 
+  //set time
   const [timeIn, setTimeIn] = React.useState<any>(0)
   const [timeOut, setTimeOut] = React.useState<any>(0)
 
+  //id for find room and price
   const [ids, setIds] = React.useState<number>(0)
   const [dids, setDIds] = React.useState<number>(0)
 
@@ -104,51 +156,13 @@ const ReserveRoom: FC<{}> = () => {
     },
   });
 
-  const getCustomes = async () => {
-    const res = await api.listCustomer({ limit: 10, offset: 0 });
-    setCustomers(res);
-  };
-
-  const getDataRoom = async () => {
-    const res = await api.listDataRoomPromo({ id: ids });
-    setdataroom(res);
-  };
-
-  const getPromotion = async () => {
-    const res = await api.listPromotion({ limit: 10, offset: 0 });
-    setPromotions(res);
-  };
-
-  const getRoom = async () => {
-    const res = await api.getDataroom({ id: dids })
-    setroom(res);
-    setPrice(res.price);
-  }
-
-  const getStatus = async () => {
-    const res = await api.getStatusReserve({ id: 1 })
-    setStatus(res);
-  }
-
-  const getPromo = async () => {
-    const res = await api.getPromotion({ id: ids })
-    setPromo(res);
-    setDiscount(res.discount);
-    setPrice(0);
-    clearNet();
-  }
-
-  const getNetprice = async () => {
-    setNetprice(price - discount);
-  };
-
   // Lifecycle Hooks
   useEffect(() => {
     getCustomes();
     getPromotion();
     getStatus();
   }, []);
-
+  
   useEffect(() => {
     getPromo();
     getDataRoom();
@@ -170,8 +184,11 @@ const ReserveRoom: FC<{}> = () => {
     setReserveroom({ ...reserve_room, ['Status']: status?.id });
   }, [status]);
 
+  useEffect(() => {
+    setReserveroom({ ...reserve_room, ['Customers']: customers?.id });
+  }, [customers]);
 
-  // set data to object playlist_video
+  // set data to object reserve_room
   const handleChange = (
     event: React.ChangeEvent<{ name?: string; value: any }>,
   ) => {
@@ -183,6 +200,7 @@ const ReserveRoom: FC<{}> = () => {
     console.log(reserve_room);
   };
 
+  // set data for time in
   const handleChangeTimeIN = (
     event: React.ChangeEvent<{ name?: string; value: any }>,
   ) => {
@@ -194,6 +212,7 @@ const ReserveRoom: FC<{}> = () => {
     console.log(reserve_room);
   };
 
+  // set data for time out
   const handleChangeTimeOut = (
     event: React.ChangeEvent<{ name?: string; value: any }>,
   ) => {
@@ -208,6 +227,13 @@ const ReserveRoom: FC<{}> = () => {
   // clear input form
   function clear() {
     setReserveroom({});
+    setDIds(0);
+    setIds(0);
+    setDiscount(0);
+    setPrice(0);
+    setNetprice(0);
+    setTimeIn({});
+    setTimeOut({});
   }
 
   // clear netprice form
@@ -215,6 +241,12 @@ const ReserveRoom: FC<{}> = () => {
     setNetprice(0);
   }
 
+  // clear cookies
+  function Clears() {
+    ck.ClearCookie()
+    window.location.reload(false)
+  }
+  
   // function save data
   function save() {
     const apiUrl = 'http://localhost:8080/api/v1/ReserveRooms';
@@ -223,7 +255,7 @@ const ReserveRoom: FC<{}> = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(reserve_room),
     };
-
+   
     console.log(reserve_room); // log ดูข้อมูล สามารถ Inspect ดูข้อมูลได้ F12 เลือก Tab Console
 
     fetch(apiUrl, requestOptions)
@@ -249,7 +281,15 @@ const ReserveRoom: FC<{}> = () => {
     <Page theme={pageTheme.home}>
       <Header style={HeaderCustom} title={`ระบบจองห้องพัก`}>
         <Avatar alt="Remy Sharp" src="../../image/account.jpg" />
-        <div style={{ marginLeft: 10 }}>รอทำ login</div>
+        <div style={{ marginLeft: 10, marginRight:20 }}>{cookieName}</div>
+        <Button
+          variant="outlined"
+          color="secondary"
+          size="large"
+          onClick={Clears}
+          >
+          Logout
+        </Button>
       </Header>
       <Content>
         <Container maxWidth="sm">
@@ -259,21 +299,13 @@ const ReserveRoom: FC<{}> = () => {
               <div className={classes.paper}>ลูกค้า</div>
             </Grid>
             <Grid item xs={9}>
-              <FormControl variant="outlined" className={classes.formControl}>
-                <InputLabel>เลือกลูกค้า</InputLabel>
-                <Select
-                  name="Customers"
-                  value={reserve_room.Customers || ''} // (undefined || '') = ''
-                  onChange={handleChange}
-                >
-                  {customers.map(item => {
-                    return (
-                      <MenuItem key={item.id} value={item.id}>
-                        {item.name}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
+            <FormControl variant="outlined" className={classes.formControl}>
+                <TextField
+                  disabled 
+                  name="Customer"
+                  variant="outlined"
+                  value={customers?.name}
+                />
               </FormControl>
             </Grid>
 
@@ -363,6 +395,7 @@ const ReserveRoom: FC<{}> = () => {
             <Grid item xs={9}>
               <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
+                  disabled 
                   name="Price"
                   variant="outlined"
                   value={price}
@@ -376,6 +409,7 @@ const ReserveRoom: FC<{}> = () => {
             <Grid item xs={9}>
               <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
+                  disabled 
                   name="Discount"
                   variant="outlined"
                   value={discount}
@@ -389,6 +423,7 @@ const ReserveRoom: FC<{}> = () => {
             <Grid item xs={9}>
               <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
+                  disabled 
                   name="NetPrice"
                   variant="outlined"
                   value={netprice}
@@ -403,6 +438,7 @@ const ReserveRoom: FC<{}> = () => {
             <Grid item xs={9}>
               <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
+                  disabled 
                   name="Status"
                   variant="outlined"
                   value={status?.statusName}

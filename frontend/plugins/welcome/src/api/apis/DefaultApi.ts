@@ -126,6 +126,10 @@ export interface GetCounterStaffRequest {
     id: number;
 }
 
+export interface GetCustomerRequest {
+    id: number;
+}
+
 export interface GetDataroomRequest {
     id: number;
 }
@@ -883,6 +887,38 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getCounterStaff(requestParameters: GetCounterStaffRequest): Promise<EntCounterStaff> {
         const response = await this.getCounterStaffRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * get Customer by ID
+     * Get a Customer entity by ID
+     */
+    async getCustomerRaw(requestParameters: GetCustomerRequest): Promise<runtime.ApiResponse<EntCustomer>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getCustomer.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/Customers/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntCustomerFromJSON(jsonValue));
+    }
+
+    /**
+     * get Customer by ID
+     * Get a Customer entity by ID
+     */
+    async getCustomer(requestParameters: GetCustomerRequest): Promise<EntCustomer> {
+        const response = await this.getCustomerRaw(requestParameters);
         return await response.value();
     }
 

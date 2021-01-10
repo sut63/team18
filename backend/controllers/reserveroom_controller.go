@@ -121,6 +121,19 @@ func (ctl *ReserveRoomController) CreateReserveRoom(c *gin.Context) {
 		return
 	}
 
+	dr, err := ctl.client.DataRoom.
+		UpdateOne(d).
+		SetStatusroomID(2).
+		Save(context.Background())
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "Update status error",
+		})
+		return
+	}
+	fmt.Print(dr)
+
 	c.JSON(200, gin.H{
 		"status": true,
 		"data":   r,
