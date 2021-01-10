@@ -306,6 +306,51 @@ var doc = `{
                 }
             }
         },
+        "/Customers/{id}": {
+            "get": {
+                "description": "get Customer by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get a Customer entity by ID",
+                "operationId": "get-Customer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Customer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ent.Customer"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            }
+        },
         "/ReserveRooms": {
             "get": {
                 "description": "list ReserveRoom entities",
