@@ -175,8 +175,6 @@ const CheckIn: FC<{}> = () => {
           variant="outlined"
           color="secondary"
           size="large"
-          component={RouterLink}
-          to="/"
           onClick={Clears}
           >
           Logout
