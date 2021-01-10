@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import Log from './Log';
-import { Cookies } from './Cookie'
+import { Cookies } from 'plugin-welcome/src/Cookie'
 
 var ck = new Cookies()
 var cookie = ck.GetCookie()
