@@ -3,7 +3,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import CreateComponentIcon from '@material-ui/icons/AddCircleOutline';
 import YouTube from '@material-ui/icons/YouTube';
 import SignOut from '@material-ui/icons/Settings';
-
+import { Cookies } from 'plugin-welcome/src/Cookie'
 
 import {
   Sidebar,
@@ -14,6 +14,13 @@ import {
   SidebarThemeToggle,
   SidebarPinButton,
 } from '@backstage/core';
+
+var ck = new Cookies()
+ // clear cookies
+ function Clears() {
+  ck.ClearCookie()
+  window.location.reload(false)
+}
 
 export const AppSidebar = () => (
   <Sidebar>
@@ -46,6 +53,7 @@ export const AppSidebar = () => (
       icon={SignOut}
       to="sign_out"
       text="Sign Out"
+      onClick={Clears}
     />
     {/* <SidebarUserSettings  /> */}
     <SidebarPinButton />

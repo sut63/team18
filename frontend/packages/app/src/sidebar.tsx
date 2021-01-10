@@ -3,7 +3,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import CreateComponentIcon from '@material-ui/icons/AddCircleOutline';
 import YouTube from '@material-ui/icons/YouTube';
 import SignOut from '@material-ui/icons/Settings';
-import { Cookies } from './Cookie'
+import { Cookies } from 'plugin-welcome/src/Cookie'
 
 import { 
   Sidebar,
