@@ -182,6 +182,12 @@ export interface ListCustomerRequest {
     offset?: number;
 }
 
+export interface ListDataRoomPromoRequest {
+    id: number;
+    limit?: number;
+    offset?: number;
+}
+
 export interface ListDataroomRequest {
     limit?: number;
     offset?: number;
@@ -225,6 +231,11 @@ export interface UpdateCheckinRequest {
 export interface UpdateCounterStaffRequest {
     id: number;
     counterStaff: EntCounterStaff;
+}
+
+export interface UpdateDataroomRequest {
+    id: number;
+    dataroom: EntDataRoom;
 }
 
 export interface UpdateReserveRoomRequest {
@@ -1308,6 +1319,46 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * list DataRoomPromo entities by id
+     * List DataRoomPromo entities by id
+     */
+    async listDataRoomPromoRaw(requestParameters: ListDataRoomPromoRequest): Promise<runtime.ApiResponse<Array<EntDataRoom>>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling listDataRoomPromo.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.offset !== undefined) {
+            queryParameters['offset'] = requestParameters.offset;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/dataroompromos/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntDataRoomFromJSON));
+    }
+
+    /**
+     * list DataRoomPromo entities by id
+     * List DataRoomPromo entities by id
+     */
+    async listDataRoomPromo(requestParameters: ListDataRoomPromoRequest): Promise<Array<EntDataRoom>> {
+        const response = await this.listDataRoomPromoRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
      * list dataroom entities
      * List dataroom entities
      */
@@ -1634,6 +1685,45 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async updateCounterStaff(requestParameters: UpdateCounterStaffRequest): Promise<EntCounterStaff> {
         const response = await this.updateCounterStaffRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * update Dataroom by ID
+     * Update a Dataroom entity by ID
+     */
+    async updateDataroomRaw(requestParameters: UpdateDataroomRequest): Promise<runtime.ApiResponse<EntDataRoom>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateDataroom.');
+        }
+
+        if (requestParameters.dataroom === null || requestParameters.dataroom === undefined) {
+            throw new runtime.RequiredError('dataroom','Required parameter requestParameters.dataroom was null or undefined when calling updateDataroom.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/datarooms/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: EntDataRoomToJSON(requestParameters.dataroom),
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntDataRoomFromJSON(jsonValue));
+    }
+
+    /**
+     * update Dataroom by ID
+     * Update a Dataroom entity by ID
+     */
+    async updateDataroom(requestParameters: UpdateDataroomRequest): Promise<EntDataRoom> {
+        const response = await this.updateDataroomRaw(requestParameters);
         return await response.value();
     }
 
