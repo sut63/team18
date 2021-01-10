@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Content, Header, Page, pageTheme } from '@backstage/core';
 import SaveIcon from '@material-ui/icons/Save'; // icon save
 import Swal from 'sweetalert2'; // alert
+import { Cookies } from '../../Cookie' 
 
 import {
   Container,
@@ -59,9 +60,10 @@ interface DataRoom {
 }
 
 const DataRoom: FC<{}> = () => {
-  const classes = useStyles();
-  const api = new DefaultApi();
-
+  const classes = useStyles()
+  const api = new DefaultApi()
+  var ck = new Cookies()
+  var cookieName = ck.GetCookie()
   const [DataRoom, setDataRoom] = React.useState<Partial<DataRoom>>({});
   const [StatusRoom, setStatusRoom] = React.useState<EntStatusRoom[]>([]);
   const [Promotion, setPromotion] = React.useState<EntPromotion[]>([]);
@@ -148,12 +150,24 @@ const DataRoom: FC<{}> = () => {
         }
       });
   }
+  function Clears() {
+    ck.ClearCookie()
+    window.location.reload(false)
+  }
 
   return (
     <Page theme={pageTheme.home}>
       <Header style={HeaderCustom} title={`ข้อมูลห้องพัก`}>
         <Avatar alt="Remy Sharp" src="../../image/account.jpg" />
-        <div style={{ marginLeft: 10 }}>Tanapon Kongjaroensuk</div>
+        <div style={{ marginLeft: 10, marginRight:20 }}>{cookieName}</div>
+        <Button
+          variant="outlined"
+          color="secondary"
+          size="large"
+          onClick={Clears}
+          >
+          Logout
+        </Button>
       </Header>
       <Content>
         <Container maxWidth="sm">
