@@ -49,7 +49,8 @@ func (ctl *CheckinController) CreateCheckIn(c *gin.Context) {
 		return
 	}
 
-	time := time.Now().Local()
+	settime := time.Now().Format("2006-01-02T15:04:05Z07:00")
+	time, err := time.Parse(time.RFC3339, settime)
 	
 	cus, err := ctl.client.Customer.
 		Query().

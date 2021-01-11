@@ -147,7 +147,7 @@ const CheckIn: FC<{}> = () => {
       .then(data => {
         console.log(data);
         if (data.id != null) {
-          //clear();
+          clear();
           Toast.fire({
             icon: 'success',
             title: 'Ckeck in สำเร็จ',
@@ -164,6 +164,11 @@ const CheckIn: FC<{}> = () => {
   function Clears() {
     ck.ClearCookie()
     window.location.reload(false)
+  }
+
+  // clear input form
+  function clear() {
+    setCheckIn({});
   }
  
   return (
