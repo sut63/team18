@@ -247,6 +247,12 @@ export interface ListFurnitureRequest {
     offset?: number;
 }
 
+export interface ListFurnitureDetailRoomRequest {
+    id: number;
+    limit?: number;
+    offset?: number;
+}
+
 export interface ListFurnituredetailRequest {
     limit?: number;
     offset?: number;
@@ -1789,6 +1795,46 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async listFurniture(requestParameters: ListFurnitureRequest): Promise<Array<EntFurniture>> {
         const response = await this.listFurnitureRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * list FurnitureDetailRoom entities
+     * List FurnitureDetailRoom entities
+     */
+    async listFurnitureDetailRoomRaw(requestParameters: ListFurnitureDetailRoomRequest): Promise<runtime.ApiResponse<Array<EntFurnitureDetail>>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling listFurnitureDetailRoom.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.offset !== undefined) {
+            queryParameters['offset'] = requestParameters.offset;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/FurnitureDetailRooms/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntFurnitureDetailFromJSON));
+    }
+
+    /**
+     * list FurnitureDetailRoom entities
+     * List FurnitureDetailRoom entities
+     */
+    async listFurnitureDetailRoom(requestParameters: ListFurnitureDetailRoomRequest): Promise<Array<EntFurnitureDetail>> {
+        const response = await this.listFurnitureDetailRoomRaw(requestParameters);
         return await response.value();
     }
 

@@ -94,7 +94,10 @@ func (ctl *FixRoomController) CreateFixRoom(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, s)
+	c.JSON(200, gin.H{
+		"status": true,
+		"data":   s,
+	})
 }
 
 // GetFixRoom handles GET requests to retrieve a fixroom entity
