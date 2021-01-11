@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Content, Header, Page, pageTheme } from '@backstage/core';
 import SaveIcon from '@material-ui/icons/Save'; // icon save
 import Swal from 'sweetalert2'; // alert
+import Alert from '@material-ui/lab/Alert';//new alert
 import {Cookies} from '../../Cookie'
 import {
   Container,
@@ -16,9 +17,6 @@ import {
   Button,
 } from '@material-ui/core';
 import { DefaultApi } from '../../api/apis'; // Api Gennerate From Command
-import { EntPromotion } from '../../api/models/EntPromotion'; // import interface User
-import { EntTypeRoom } from '../../api/models/EntTypeRoom'; // import interface Resolution
-import { EntStatusRoom } from '../../api/models/EntStatusRoom'; // import interface Playlist
 // me
 import { EntCheckIn } from '../../api/models/EntCheckIn'; // import interface checkin
 import { EntStatus } from '../../api/models/EntStatus'; // import interface Status
@@ -52,16 +50,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-/*
-interface DataRoom {
-  Promotion: number;
-  StatusRoom: number;
-  TypeRoom: number;
-  Price: number;
-  RoomNumber: string;
-  // create_by: number;
-}
-*/
 interface CheckOut {
     CheckinsID: number;
     StatussID: number;
@@ -76,9 +64,6 @@ const checkout: FC<{}> = () => {
   var cookieName = ck.GetCookie()
 
   const [CheckOut, setDataRoom] = React.useState<Partial<CheckOut>>({});
-  const [StatusRoom, setStatusRoom] = React.useState<EntStatusRoom[]>([]);
-  const [Promotion, setPromotion] = React.useState<EntPromotion[]>([]);
-  const [TypeRoom, setTypeRoom] = React.useState<EntTypeRoom[]>([]);
 
   // checkout
   const [Checkin, setCheckin] = React.useState<EntCheckIn[]>([]);  
@@ -91,7 +76,7 @@ const checkout: FC<{}> = () => {
     toast: true,
     position: 'top-end',
     showConfirmButton: false,
-    timer: 3000,
+    timer: 10000,
     timerProgressBar: true,
     didOpen: toast => {
       toast.addEventListener('mouseenter', Swal.stopTimer);
@@ -100,16 +85,6 @@ const checkout: FC<{}> = () => {
   });
 
 
-  // tata
-
-  const getTypeRoom = async () => {
-    const res = await api.listTyperoom({ limit: 10, offset: 0 });
-    setTypeRoom(res);
-  };
-  const getPromotion = async () => {
-    const res = await api.listPromotion({ limit: 10, offset: 0 });
-    setPromotion(res);
-  };
 
   // set data for checkout
   const getcheckIn = async () => {
@@ -131,9 +106,6 @@ const checkout: FC<{}> = () => {
 
   // Lifecycle Hooks
   useEffect(() => {
-
-    getPromotion();
-    getTypeRoom();
 
     // me 
     getcheckIn();
@@ -180,10 +152,18 @@ const checkout: FC<{}> = () => {
             title: 'บันทึกข้อมูลสำเร็จ',
           });
         } else {
-          Toast.fire({
+           
+           Toast.fire({
             icon: 'error',
             title: 'บันทึกข้อมูลไม่สำเร็จ',
           });
+          
+          /** Alert({
+            onClose: '{standard}',
+            variant:'outlined', 
+            severity: 'error',
+          }) ; 
+          */
         }
       });
   }
@@ -195,7 +175,8 @@ const checkout: FC<{}> = () => {
 
   return (
     <Page theme={pageTheme.home}>
-      <Header style={HeaderCustom} title={`Watch Video`}>
+  
+      <Header style={HeaderCustom} title={`ระบบ check out`}>
         <Avatar alt="Remy Sharp" src="../../image/account.jpg" />
         <div style={{ marginLeft: 10, marginRight:20 }}>{cookieName}</div>
         <Button
