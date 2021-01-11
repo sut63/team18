@@ -24,6 +24,7 @@ func (FurnitureDetail) Edges() []ent.Edge {
 		edge.To("fixs", FixRoom.Type).StorageKey(edge.Column("object_id")),
 
 		edge.From("furnitures", Furniture.Type).Ref("details").Unique(),
+		edge.From("counterstaffs", CounterStaff.Type).Ref("details").Unique(),
 		edge.From("types", FurnitureType.Type).Ref("details").Unique(),
 		edge.From("rooms", DataRoom.Type).Ref("details").Unique(),
 	}

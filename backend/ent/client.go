@@ -619,6 +619,22 @@ func (c *CounterStaffClient) QueryCheckouts(cs *CounterStaff) *CheckoutQuery {
 	return query
 }
 
+// QueryDetails queries the details edge of a CounterStaff.
+func (c *CounterStaffClient) QueryDetails(cs *CounterStaff) *FurnitureDetailQuery {
+	query := &FurnitureDetailQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := cs.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(counterstaff.Table, counterstaff.FieldID, id),
+			sqlgraph.To(furnituredetail.Table, furnituredetail.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, counterstaff.DetailsTable, counterstaff.DetailsColumn),
+		)
+		fromV = sqlgraph.Neighbors(cs.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *CounterStaffClient) Hooks() []Hook {
 	return c.hooks.CounterStaff
@@ -1283,6 +1299,22 @@ func (c *FurnitureDetailClient) QueryFurnitures(fd *FurnitureDetail) *FurnitureQ
 			sqlgraph.From(furnituredetail.Table, furnituredetail.FieldID, id),
 			sqlgraph.To(furniture.Table, furniture.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, furnituredetail.FurnituresTable, furnituredetail.FurnituresColumn),
+		)
+		fromV = sqlgraph.Neighbors(fd.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCounterstaffs queries the counterstaffs edge of a FurnitureDetail.
+func (c *FurnitureDetailClient) QueryCounterstaffs(fd *FurnitureDetail) *CounterStaffQuery {
+	query := &CounterStaffQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := fd.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(furnituredetail.Table, furnituredetail.FieldID, id),
+			sqlgraph.To(counterstaff.Table, counterstaff.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, furnituredetail.CounterstaffsTable, furnituredetail.CounterstaffsColumn),
 		)
 		fromV = sqlgraph.Neighbors(fd.driver.Dialect(), step)
 		return fromV, nil

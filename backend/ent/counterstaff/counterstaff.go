@@ -18,6 +18,8 @@ const (
 	EdgeCheckins = "checkins"
 	// EdgeCheckouts holds the string denoting the checkouts edge name in mutations.
 	EdgeCheckouts = "checkouts"
+	// EdgeDetails holds the string denoting the details edge name in mutations.
+	EdgeDetails = "details"
 
 	// Table holds the table name of the counterstaff in the database.
 	Table = "counter_staffs"
@@ -35,6 +37,13 @@ const (
 	CheckoutsInverseTable = "checkouts"
 	// CheckoutsColumn is the table column denoting the checkouts relation/edge.
 	CheckoutsColumn = "staff_id"
+	// DetailsTable is the table the holds the details relation/edge.
+	DetailsTable = "furniture_details"
+	// DetailsInverseTable is the table name for the FurnitureDetail entity.
+	// It exists in this package in order to avoid circular dependency with the "furnituredetail" package.
+	DetailsInverseTable = "furniture_details"
+	// DetailsColumn is the table column denoting the details relation/edge.
+	DetailsColumn = "staff_id"
 )
 
 // Columns holds all SQL columns for counterstaff fields.

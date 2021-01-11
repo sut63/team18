@@ -32,9 +32,11 @@ type CounterStaffEdges struct {
 	Checkins []*CheckIn
 	// Checkouts holds the value of the checkouts edge.
 	Checkouts []*Checkout
+	// Details holds the value of the details edge.
+	Details []*FurnitureDetail
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // CheckinsOrErr returns the Checkins value or an error if the edge
@@ -53,6 +55,15 @@ func (e CounterStaffEdges) CheckoutsOrErr() ([]*Checkout, error) {
 		return e.Checkouts, nil
 	}
 	return nil, &NotLoadedError{edge: "checkouts"}
+}
+
+// DetailsOrErr returns the Details value or an error if the edge
+// was not loaded in eager-loading.
+func (e CounterStaffEdges) DetailsOrErr() ([]*FurnitureDetail, error) {
+	if e.loadedTypes[2] {
+		return e.Details, nil
+	}
+	return nil, &NotLoadedError{edge: "details"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -103,6 +114,11 @@ func (cs *CounterStaff) QueryCheckins() *CheckInQuery {
 // QueryCheckouts queries the checkouts edge of the CounterStaff.
 func (cs *CounterStaff) QueryCheckouts() *CheckoutQuery {
 	return (&CounterStaffClient{config: cs.config}).QueryCheckouts(cs)
+}
+
+// QueryDetails queries the details edge of the CounterStaff.
+func (cs *CounterStaff) QueryDetails() *FurnitureDetailQuery {
+	return (&CounterStaffClient{config: cs.config}).QueryDetails(cs)
 }
 
 // Update returns a builder for updating this CounterStaff.

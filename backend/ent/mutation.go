@@ -1146,6 +1146,8 @@ type CounterStaffMutation struct {
 	removedcheckins  map[int]struct{}
 	checkouts        map[int]struct{}
 	removedcheckouts map[int]struct{}
+	details          map[int]struct{}
+	removeddetails   map[int]struct{}
 	done             bool
 	oldValue         func(context.Context) (*CounterStaff, error)
 }
@@ -1424,6 +1426,48 @@ func (m *CounterStaffMutation) ResetCheckouts() {
 	m.removedcheckouts = nil
 }
 
+// AddDetailIDs adds the details edge to FurnitureDetail by ids.
+func (m *CounterStaffMutation) AddDetailIDs(ids ...int) {
+	if m.details == nil {
+		m.details = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.details[ids[i]] = struct{}{}
+	}
+}
+
+// RemoveDetailIDs removes the details edge to FurnitureDetail by ids.
+func (m *CounterStaffMutation) RemoveDetailIDs(ids ...int) {
+	if m.removeddetails == nil {
+		m.removeddetails = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removeddetails[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedDetails returns the removed ids of details.
+func (m *CounterStaffMutation) RemovedDetailsIDs() (ids []int) {
+	for id := range m.removeddetails {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// DetailsIDs returns the details ids in the mutation.
+func (m *CounterStaffMutation) DetailsIDs() (ids []int) {
+	for id := range m.details {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetDetails reset all changes of the "details" edge.
+func (m *CounterStaffMutation) ResetDetails() {
+	m.details = nil
+	m.removeddetails = nil
+}
+
 // Op returns the operation name.
 func (m *CounterStaffMutation) Op() Op {
 	return m.op
@@ -1573,12 +1617,15 @@ func (m *CounterStaffMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *CounterStaffMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.checkins != nil {
 		edges = append(edges, counterstaff.EdgeCheckins)
 	}
 	if m.checkouts != nil {
 		edges = append(edges, counterstaff.EdgeCheckouts)
+	}
+	if m.details != nil {
+		edges = append(edges, counterstaff.EdgeDetails)
 	}
 	return edges
 }
@@ -1599,6 +1646,12 @@ func (m *CounterStaffMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case counterstaff.EdgeDetails:
+		ids := make([]ent.Value, 0, len(m.details))
+		for id := range m.details {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -1606,12 +1659,15 @@ func (m *CounterStaffMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *CounterStaffMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedcheckins != nil {
 		edges = append(edges, counterstaff.EdgeCheckins)
 	}
 	if m.removedcheckouts != nil {
 		edges = append(edges, counterstaff.EdgeCheckouts)
+	}
+	if m.removeddetails != nil {
+		edges = append(edges, counterstaff.EdgeDetails)
 	}
 	return edges
 }
@@ -1632,6 +1688,12 @@ func (m *CounterStaffMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case counterstaff.EdgeDetails:
+		ids := make([]ent.Value, 0, len(m.removeddetails))
+		for id := range m.removeddetails {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -1639,7 +1701,7 @@ func (m *CounterStaffMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *CounterStaffMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	return edges
 }
 
@@ -1669,6 +1731,9 @@ func (m *CounterStaffMutation) ResetEdge(name string) error {
 		return nil
 	case counterstaff.EdgeCheckouts:
 		m.ResetCheckouts()
+		return nil
+	case counterstaff.EdgeDetails:
+		m.ResetDetails()
 		return nil
 	}
 	return fmt.Errorf("unknown CounterStaff edge %s", name)
@@ -3965,21 +4030,23 @@ func (m *FurnitureMutation) ResetEdge(name string) error {
 // nodes in the graph.
 type FurnitureDetailMutation struct {
 	config
-	op                Op
-	typ               string
-	id                *int
-	date_add          *time.Time
-	clearedFields     map[string]struct{}
-	fixs              map[int]struct{}
-	removedfixs       map[int]struct{}
-	furnitures        *int
-	clearedfurnitures bool
-	types             *int
-	clearedtypes      bool
-	rooms             *int
-	clearedrooms      bool
-	done              bool
-	oldValue          func(context.Context) (*FurnitureDetail, error)
+	op                   Op
+	typ                  string
+	id                   *int
+	date_add             *time.Time
+	clearedFields        map[string]struct{}
+	fixs                 map[int]struct{}
+	removedfixs          map[int]struct{}
+	furnitures           *int
+	clearedfurnitures    bool
+	counterstaffs        *int
+	clearedcounterstaffs bool
+	types                *int
+	clearedtypes         bool
+	rooms                *int
+	clearedrooms         bool
+	done                 bool
+	oldValue             func(context.Context) (*FurnitureDetail, error)
 }
 
 var _ ent.Mutation = (*FurnitureDetailMutation)(nil)
@@ -4179,6 +4246,45 @@ func (m *FurnitureDetailMutation) ResetFurnitures() {
 	m.clearedfurnitures = false
 }
 
+// SetCounterstaffsID sets the counterstaffs edge to CounterStaff by id.
+func (m *FurnitureDetailMutation) SetCounterstaffsID(id int) {
+	m.counterstaffs = &id
+}
+
+// ClearCounterstaffs clears the counterstaffs edge to CounterStaff.
+func (m *FurnitureDetailMutation) ClearCounterstaffs() {
+	m.clearedcounterstaffs = true
+}
+
+// CounterstaffsCleared returns if the edge counterstaffs was cleared.
+func (m *FurnitureDetailMutation) CounterstaffsCleared() bool {
+	return m.clearedcounterstaffs
+}
+
+// CounterstaffsID returns the counterstaffs id in the mutation.
+func (m *FurnitureDetailMutation) CounterstaffsID() (id int, exists bool) {
+	if m.counterstaffs != nil {
+		return *m.counterstaffs, true
+	}
+	return
+}
+
+// CounterstaffsIDs returns the counterstaffs ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// CounterstaffsID instead. It exists only for internal usage by the builders.
+func (m *FurnitureDetailMutation) CounterstaffsIDs() (ids []int) {
+	if id := m.counterstaffs; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetCounterstaffs reset all changes of the "counterstaffs" edge.
+func (m *FurnitureDetailMutation) ResetCounterstaffs() {
+	m.counterstaffs = nil
+	m.clearedcounterstaffs = false
+}
+
 // SetTypesID sets the types edge to FurnitureType by id.
 func (m *FurnitureDetailMutation) SetTypesID(id int) {
 	m.types = &id
@@ -4372,12 +4478,15 @@ func (m *FurnitureDetailMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *FurnitureDetailMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.fixs != nil {
 		edges = append(edges, furnituredetail.EdgeFixs)
 	}
 	if m.furnitures != nil {
 		edges = append(edges, furnituredetail.EdgeFurnitures)
+	}
+	if m.counterstaffs != nil {
+		edges = append(edges, furnituredetail.EdgeCounterstaffs)
 	}
 	if m.types != nil {
 		edges = append(edges, furnituredetail.EdgeTypes)
@@ -4402,6 +4511,10 @@ func (m *FurnitureDetailMutation) AddedIDs(name string) []ent.Value {
 		if id := m.furnitures; id != nil {
 			return []ent.Value{*id}
 		}
+	case furnituredetail.EdgeCounterstaffs:
+		if id := m.counterstaffs; id != nil {
+			return []ent.Value{*id}
+		}
 	case furnituredetail.EdgeTypes:
 		if id := m.types; id != nil {
 			return []ent.Value{*id}
@@ -4417,7 +4530,7 @@ func (m *FurnitureDetailMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *FurnitureDetailMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.removedfixs != nil {
 		edges = append(edges, furnituredetail.EdgeFixs)
 	}
@@ -4441,9 +4554,12 @@ func (m *FurnitureDetailMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *FurnitureDetailMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.clearedfurnitures {
 		edges = append(edges, furnituredetail.EdgeFurnitures)
+	}
+	if m.clearedcounterstaffs {
+		edges = append(edges, furnituredetail.EdgeCounterstaffs)
 	}
 	if m.clearedtypes {
 		edges = append(edges, furnituredetail.EdgeTypes)
@@ -4460,6 +4576,8 @@ func (m *FurnitureDetailMutation) EdgeCleared(name string) bool {
 	switch name {
 	case furnituredetail.EdgeFurnitures:
 		return m.clearedfurnitures
+	case furnituredetail.EdgeCounterstaffs:
+		return m.clearedcounterstaffs
 	case furnituredetail.EdgeTypes:
 		return m.clearedtypes
 	case furnituredetail.EdgeRooms:
@@ -4474,6 +4592,9 @@ func (m *FurnitureDetailMutation) ClearEdge(name string) error {
 	switch name {
 	case furnituredetail.EdgeFurnitures:
 		m.ClearFurnitures()
+		return nil
+	case furnituredetail.EdgeCounterstaffs:
+		m.ClearCounterstaffs()
 		return nil
 	case furnituredetail.EdgeTypes:
 		m.ClearTypes()
@@ -4495,6 +4616,9 @@ func (m *FurnitureDetailMutation) ResetEdge(name string) error {
 		return nil
 	case furnituredetail.EdgeFurnitures:
 		m.ResetFurnitures()
+		return nil
+	case furnituredetail.EdgeCounterstaffs:
+		m.ResetCounterstaffs()
 		return nil
 	case furnituredetail.EdgeTypes:
 		m.ResetTypes()

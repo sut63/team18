@@ -10,6 +10,7 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
+	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/dataroom"
 	"github.com/team18/app/ent/fixroom"
 	"github.com/team18/app/ent/furniture"
@@ -70,6 +71,25 @@ func (fdu *FurnitureDetailUpdate) SetNillableFurnituresID(id *int) *FurnitureDet
 // SetFurnitures sets the furnitures edge to Furniture.
 func (fdu *FurnitureDetailUpdate) SetFurnitures(f *Furniture) *FurnitureDetailUpdate {
 	return fdu.SetFurnituresID(f.ID)
+}
+
+// SetCounterstaffsID sets the counterstaffs edge to CounterStaff by id.
+func (fdu *FurnitureDetailUpdate) SetCounterstaffsID(id int) *FurnitureDetailUpdate {
+	fdu.mutation.SetCounterstaffsID(id)
+	return fdu
+}
+
+// SetNillableCounterstaffsID sets the counterstaffs edge to CounterStaff by id if the given value is not nil.
+func (fdu *FurnitureDetailUpdate) SetNillableCounterstaffsID(id *int) *FurnitureDetailUpdate {
+	if id != nil {
+		fdu = fdu.SetCounterstaffsID(*id)
+	}
+	return fdu
+}
+
+// SetCounterstaffs sets the counterstaffs edge to CounterStaff.
+func (fdu *FurnitureDetailUpdate) SetCounterstaffs(c *CounterStaff) *FurnitureDetailUpdate {
+	return fdu.SetCounterstaffsID(c.ID)
 }
 
 // SetTypesID sets the types edge to FurnitureType by id.
@@ -133,6 +153,12 @@ func (fdu *FurnitureDetailUpdate) RemoveFixs(f ...*FixRoom) *FurnitureDetailUpda
 // ClearFurnitures clears the furnitures edge to Furniture.
 func (fdu *FurnitureDetailUpdate) ClearFurnitures() *FurnitureDetailUpdate {
 	fdu.mutation.ClearFurnitures()
+	return fdu
+}
+
+// ClearCounterstaffs clears the counterstaffs edge to CounterStaff.
+func (fdu *FurnitureDetailUpdate) ClearCounterstaffs() *FurnitureDetailUpdate {
+	fdu.mutation.ClearCounterstaffs()
 	return fdu
 }
 
@@ -298,6 +324,41 @@ func (fdu *FurnitureDetailUpdate) sqlSave(ctx context.Context) (n int, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if fdu.mutation.CounterstaffsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   furnituredetail.CounterstaffsTable,
+			Columns: []string{furnituredetail.CounterstaffsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: counterstaff.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fdu.mutation.CounterstaffsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   furnituredetail.CounterstaffsTable,
+			Columns: []string{furnituredetail.CounterstaffsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: counterstaff.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if fdu.mutation.TypesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -426,6 +487,25 @@ func (fduo *FurnitureDetailUpdateOne) SetFurnitures(f *Furniture) *FurnitureDeta
 	return fduo.SetFurnituresID(f.ID)
 }
 
+// SetCounterstaffsID sets the counterstaffs edge to CounterStaff by id.
+func (fduo *FurnitureDetailUpdateOne) SetCounterstaffsID(id int) *FurnitureDetailUpdateOne {
+	fduo.mutation.SetCounterstaffsID(id)
+	return fduo
+}
+
+// SetNillableCounterstaffsID sets the counterstaffs edge to CounterStaff by id if the given value is not nil.
+func (fduo *FurnitureDetailUpdateOne) SetNillableCounterstaffsID(id *int) *FurnitureDetailUpdateOne {
+	if id != nil {
+		fduo = fduo.SetCounterstaffsID(*id)
+	}
+	return fduo
+}
+
+// SetCounterstaffs sets the counterstaffs edge to CounterStaff.
+func (fduo *FurnitureDetailUpdateOne) SetCounterstaffs(c *CounterStaff) *FurnitureDetailUpdateOne {
+	return fduo.SetCounterstaffsID(c.ID)
+}
+
 // SetTypesID sets the types edge to FurnitureType by id.
 func (fduo *FurnitureDetailUpdateOne) SetTypesID(id int) *FurnitureDetailUpdateOne {
 	fduo.mutation.SetTypesID(id)
@@ -487,6 +567,12 @@ func (fduo *FurnitureDetailUpdateOne) RemoveFixs(f ...*FixRoom) *FurnitureDetail
 // ClearFurnitures clears the furnitures edge to Furniture.
 func (fduo *FurnitureDetailUpdateOne) ClearFurnitures() *FurnitureDetailUpdateOne {
 	fduo.mutation.ClearFurnitures()
+	return fduo
+}
+
+// ClearCounterstaffs clears the counterstaffs edge to CounterStaff.
+func (fduo *FurnitureDetailUpdateOne) ClearCounterstaffs() *FurnitureDetailUpdateOne {
+	fduo.mutation.ClearCounterstaffs()
 	return fduo
 }
 
@@ -642,6 +728,41 @@ func (fduo *FurnitureDetailUpdateOne) sqlSave(ctx context.Context) (fd *Furnitur
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: furniture.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if fduo.mutation.CounterstaffsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   furnituredetail.CounterstaffsTable,
+			Columns: []string{furnituredetail.CounterstaffsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: counterstaff.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fduo.mutation.CounterstaffsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   furnituredetail.CounterstaffsTable,
+			Columns: []string{furnituredetail.CounterstaffsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: counterstaff.FieldID,
 				},
 			},
 		}

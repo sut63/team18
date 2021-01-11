@@ -501,6 +501,34 @@ func HasCheckoutsWith(preds ...predicate.Checkout) predicate.CounterStaff {
 	})
 }
 
+// HasDetails applies the HasEdge predicate on the "details" edge.
+func HasDetails() predicate.CounterStaff {
+	return predicate.CounterStaff(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(DetailsTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, DetailsTable, DetailsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasDetailsWith applies the HasEdge predicate on the "details" edge with a given conditions (other predicates).
+func HasDetailsWith(preds ...predicate.FurnitureDetail) predicate.CounterStaff {
+	return predicate.CounterStaff(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(DetailsInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, DetailsTable, DetailsColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups list of predicates with the AND operator between them.
 func And(predicates ...predicate.CounterStaff) predicate.CounterStaff {
 	return predicate.CounterStaff(func(s *sql.Selector) {
