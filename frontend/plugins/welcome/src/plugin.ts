@@ -6,12 +6,12 @@ import SignIn from './components/SignIn'
 import { Cookies } from './Cookie'
 
 var ck = new Cookies()
-var cookie = ck.GetCookie()
+var role = ck.GetRole()
 
 export const plugin = createPlugin({
   id: 'welcome',
   register({ router }) {
-    if(cookie == undefined){
+    if(role != "customer"){
       router.registerRoute('/', SignIn);
       router.registerRoute('/reserve', SignIn);
       router.registerRoute('/fix', SignIn);

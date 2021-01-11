@@ -7,12 +7,12 @@ import checkout from './components/Checkout'
 import { Cookies } from './Cookie'
 
 var ck = new Cookies()
-var cookie = ck.GetCookie()
+var role = ck.GetRole()
 
 export const plugin = createPlugin({
   id: 'welcome',
   register({ router }) {
-    if(cookie == undefined){
+    if(role != "counterStaff"){
       router.registerRoute('/', SignIn);
       router.registerRoute('/WelcomePage', SignIn);
       router.registerRoute('/dataroom', SignIn);
