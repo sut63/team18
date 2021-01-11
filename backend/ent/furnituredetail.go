@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/facebookincubator/ent/dialect/sql"
+	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/dataroom"
 	"github.com/team18/app/ent/furniture"
 	"github.com/team18/app/ent/furnituredetail"
@@ -24,6 +25,7 @@ type FurnitureDetail struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FurnitureDetailQuery when eager-loading is set.
 	Edges        FurnitureDetailEdges `json:"edges"`
+	staff_id     *int
 	room_id      *int
 	furniture_id *int
 	type_id      *int
@@ -35,13 +37,15 @@ type FurnitureDetailEdges struct {
 	Fixs []*FixRoom
 	// Furnitures holds the value of the furnitures edge.
 	Furnitures *Furniture
+	// Counterstaffs holds the value of the counterstaffs edge.
+	Counterstaffs *CounterStaff
 	// Types holds the value of the types edge.
 	Types *FurnitureType
 	// Rooms holds the value of the rooms edge.
 	Rooms *DataRoom
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 }
 
 // FixsOrErr returns the Fixs value or an error if the edge
@@ -67,10 +71,24 @@ func (e FurnitureDetailEdges) FurnituresOrErr() (*Furniture, error) {
 	return nil, &NotLoadedError{edge: "furnitures"}
 }
 
+// CounterstaffsOrErr returns the Counterstaffs value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e FurnitureDetailEdges) CounterstaffsOrErr() (*CounterStaff, error) {
+	if e.loadedTypes[2] {
+		if e.Counterstaffs == nil {
+			// The edge counterstaffs was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: counterstaff.Label}
+		}
+		return e.Counterstaffs, nil
+	}
+	return nil, &NotLoadedError{edge: "counterstaffs"}
+}
+
 // TypesOrErr returns the Types value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e FurnitureDetailEdges) TypesOrErr() (*FurnitureType, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		if e.Types == nil {
 			// The edge types was loaded in eager-loading,
 			// but was not found.
@@ -84,7 +102,7 @@ func (e FurnitureDetailEdges) TypesOrErr() (*FurnitureType, error) {
 // RoomsOrErr returns the Rooms value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e FurnitureDetailEdges) RoomsOrErr() (*DataRoom, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		if e.Rooms == nil {
 			// The edge rooms was loaded in eager-loading,
 			// but was not found.
@@ -106,6 +124,7 @@ func (*FurnitureDetail) scanValues() []interface{} {
 // fkValues returns the types for scanning foreign-keys values from sql.Rows.
 func (*FurnitureDetail) fkValues() []interface{} {
 	return []interface{}{
+		&sql.NullInt64{}, // staff_id
 		&sql.NullInt64{}, // room_id
 		&sql.NullInt64{}, // furniture_id
 		&sql.NullInt64{}, // type_id
@@ -132,18 +151,24 @@ func (fd *FurnitureDetail) assignValues(values ...interface{}) error {
 	values = values[1:]
 	if len(values) == len(furnituredetail.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field staff_id", value)
+		} else if value.Valid {
+			fd.staff_id = new(int)
+			*fd.staff_id = int(value.Int64)
+		}
+		if value, ok := values[1].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field room_id", value)
 		} else if value.Valid {
 			fd.room_id = new(int)
 			*fd.room_id = int(value.Int64)
 		}
-		if value, ok := values[1].(*sql.NullInt64); !ok {
+		if value, ok := values[2].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field furniture_id", value)
 		} else if value.Valid {
 			fd.furniture_id = new(int)
 			*fd.furniture_id = int(value.Int64)
 		}
-		if value, ok := values[2].(*sql.NullInt64); !ok {
+		if value, ok := values[3].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field type_id", value)
 		} else if value.Valid {
 			fd.type_id = new(int)
@@ -161,6 +186,11 @@ func (fd *FurnitureDetail) QueryFixs() *FixRoomQuery {
 // QueryFurnitures queries the furnitures edge of the FurnitureDetail.
 func (fd *FurnitureDetail) QueryFurnitures() *FurnitureQuery {
 	return (&FurnitureDetailClient{config: fd.config}).QueryFurnitures(fd)
+}
+
+// QueryCounterstaffs queries the counterstaffs edge of the FurnitureDetail.
+func (fd *FurnitureDetail) QueryCounterstaffs() *CounterStaffQuery {
+	return (&FurnitureDetailClient{config: fd.config}).QueryCounterstaffs(fd)
 }
 
 // QueryTypes queries the types edge of the FurnitureDetail.

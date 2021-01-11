@@ -25,5 +25,6 @@ func (CounterStaff) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("checkins", CheckIn.Type).StorageKey(edge.Column("staff_id")),
 		edge.To("checkouts", Checkout.Type).StorageKey(edge.Column("staff_id")),
+		edge.To("details", FurnitureDetail.Type).StorageKey(edge.Column("staff_id")),
 	}
 }

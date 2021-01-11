@@ -14,6 +14,8 @@ const (
 	EdgeFixs = "fixs"
 	// EdgeFurnitures holds the string denoting the furnitures edge name in mutations.
 	EdgeFurnitures = "furnitures"
+	// EdgeCounterstaffs holds the string denoting the counterstaffs edge name in mutations.
+	EdgeCounterstaffs = "counterstaffs"
 	// EdgeTypes holds the string denoting the types edge name in mutations.
 	EdgeTypes = "types"
 	// EdgeRooms holds the string denoting the rooms edge name in mutations.
@@ -35,6 +37,13 @@ const (
 	FurnituresInverseTable = "furnitures"
 	// FurnituresColumn is the table column denoting the furnitures relation/edge.
 	FurnituresColumn = "furniture_id"
+	// CounterstaffsTable is the table the holds the counterstaffs relation/edge.
+	CounterstaffsTable = "furniture_details"
+	// CounterstaffsInverseTable is the table name for the CounterStaff entity.
+	// It exists in this package in order to avoid circular dependency with the "counterstaff" package.
+	CounterstaffsInverseTable = "counter_staffs"
+	// CounterstaffsColumn is the table column denoting the counterstaffs relation/edge.
+	CounterstaffsColumn = "staff_id"
 	// TypesTable is the table the holds the types relation/edge.
 	TypesTable = "furniture_details"
 	// TypesInverseTable is the table name for the FurnitureType entity.
@@ -59,6 +68,7 @@ var Columns = []string{
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the FurnitureDetail type.
 var ForeignKeys = []string{
+	"staff_id",
 	"room_id",
 	"furniture_id",
 	"type_id",

@@ -10,6 +10,7 @@ import (
 
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
+	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/dataroom"
 	"github.com/team18/app/ent/fixroom"
 	"github.com/team18/app/ent/furniture"
@@ -62,6 +63,25 @@ func (fdc *FurnitureDetailCreate) SetNillableFurnituresID(id *int) *FurnitureDet
 // SetFurnitures sets the furnitures edge to Furniture.
 func (fdc *FurnitureDetailCreate) SetFurnitures(f *Furniture) *FurnitureDetailCreate {
 	return fdc.SetFurnituresID(f.ID)
+}
+
+// SetCounterstaffsID sets the counterstaffs edge to CounterStaff by id.
+func (fdc *FurnitureDetailCreate) SetCounterstaffsID(id int) *FurnitureDetailCreate {
+	fdc.mutation.SetCounterstaffsID(id)
+	return fdc
+}
+
+// SetNillableCounterstaffsID sets the counterstaffs edge to CounterStaff by id if the given value is not nil.
+func (fdc *FurnitureDetailCreate) SetNillableCounterstaffsID(id *int) *FurnitureDetailCreate {
+	if id != nil {
+		fdc = fdc.SetCounterstaffsID(*id)
+	}
+	return fdc
+}
+
+// SetCounterstaffs sets the counterstaffs edge to CounterStaff.
+func (fdc *FurnitureDetailCreate) SetCounterstaffs(c *CounterStaff) *FurnitureDetailCreate {
+	return fdc.SetCounterstaffsID(c.ID)
 }
 
 // SetTypesID sets the types edge to FurnitureType by id.
@@ -210,6 +230,25 @@ func (fdc *FurnitureDetailCreate) createSpec() (*FurnitureDetail, *sqlgraph.Crea
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: furniture.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := fdc.mutation.CounterstaffsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   furnituredetail.CounterstaffsTable,
+			Columns: []string{furnituredetail.CounterstaffsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: counterstaff.FieldID,
 				},
 			},
 		}

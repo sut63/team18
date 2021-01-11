@@ -12,6 +12,7 @@ import (
 	"github.com/team18/app/ent/checkin"
 	"github.com/team18/app/ent/checkout"
 	"github.com/team18/app/ent/counterstaff"
+	"github.com/team18/app/ent/furnituredetail"
 	"github.com/team18/app/ent/predicate"
 )
 
@@ -77,6 +78,21 @@ func (csu *CounterStaffUpdate) AddCheckouts(c ...*Checkout) *CounterStaffUpdate 
 	return csu.AddCheckoutIDs(ids...)
 }
 
+// AddDetailIDs adds the details edge to FurnitureDetail by ids.
+func (csu *CounterStaffUpdate) AddDetailIDs(ids ...int) *CounterStaffUpdate {
+	csu.mutation.AddDetailIDs(ids...)
+	return csu
+}
+
+// AddDetails adds the details edges to FurnitureDetail.
+func (csu *CounterStaffUpdate) AddDetails(f ...*FurnitureDetail) *CounterStaffUpdate {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return csu.AddDetailIDs(ids...)
+}
+
 // Mutation returns the CounterStaffMutation object of the builder.
 func (csu *CounterStaffUpdate) Mutation() *CounterStaffMutation {
 	return csu.mutation
@@ -110,6 +126,21 @@ func (csu *CounterStaffUpdate) RemoveCheckouts(c ...*Checkout) *CounterStaffUpda
 		ids[i] = c[i].ID
 	}
 	return csu.RemoveCheckoutIDs(ids...)
+}
+
+// RemoveDetailIDs removes the details edge to FurnitureDetail by ids.
+func (csu *CounterStaffUpdate) RemoveDetailIDs(ids ...int) *CounterStaffUpdate {
+	csu.mutation.RemoveDetailIDs(ids...)
+	return csu
+}
+
+// RemoveDetails removes details edges to FurnitureDetail.
+func (csu *CounterStaffUpdate) RemoveDetails(f ...*FurnitureDetail) *CounterStaffUpdate {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return csu.RemoveDetailIDs(ids...)
 }
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
@@ -294,6 +325,44 @@ func (csu *CounterStaffUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if nodes := csu.mutation.RemovedDetailsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   counterstaff.DetailsTable,
+			Columns: []string{counterstaff.DetailsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: furnituredetail.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := csu.mutation.DetailsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   counterstaff.DetailsTable,
+			Columns: []string{counterstaff.DetailsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: furnituredetail.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, csu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{counterstaff.Label}
@@ -360,6 +429,21 @@ func (csuo *CounterStaffUpdateOne) AddCheckouts(c ...*Checkout) *CounterStaffUpd
 	return csuo.AddCheckoutIDs(ids...)
 }
 
+// AddDetailIDs adds the details edge to FurnitureDetail by ids.
+func (csuo *CounterStaffUpdateOne) AddDetailIDs(ids ...int) *CounterStaffUpdateOne {
+	csuo.mutation.AddDetailIDs(ids...)
+	return csuo
+}
+
+// AddDetails adds the details edges to FurnitureDetail.
+func (csuo *CounterStaffUpdateOne) AddDetails(f ...*FurnitureDetail) *CounterStaffUpdateOne {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return csuo.AddDetailIDs(ids...)
+}
+
 // Mutation returns the CounterStaffMutation object of the builder.
 func (csuo *CounterStaffUpdateOne) Mutation() *CounterStaffMutation {
 	return csuo.mutation
@@ -393,6 +477,21 @@ func (csuo *CounterStaffUpdateOne) RemoveCheckouts(c ...*Checkout) *CounterStaff
 		ids[i] = c[i].ID
 	}
 	return csuo.RemoveCheckoutIDs(ids...)
+}
+
+// RemoveDetailIDs removes the details edge to FurnitureDetail by ids.
+func (csuo *CounterStaffUpdateOne) RemoveDetailIDs(ids ...int) *CounterStaffUpdateOne {
+	csuo.mutation.RemoveDetailIDs(ids...)
+	return csuo
+}
+
+// RemoveDetails removes details edges to FurnitureDetail.
+func (csuo *CounterStaffUpdateOne) RemoveDetails(f ...*FurnitureDetail) *CounterStaffUpdateOne {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return csuo.RemoveDetailIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -567,6 +666,44 @@ func (csuo *CounterStaffUpdateOne) sqlSave(ctx context.Context) (cs *CounterStaf
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: checkout.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if nodes := csuo.mutation.RemovedDetailsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   counterstaff.DetailsTable,
+			Columns: []string{counterstaff.DetailsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: furnituredetail.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := csuo.mutation.DetailsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   counterstaff.DetailsTable,
+			Columns: []string{counterstaff.DetailsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: furnituredetail.FieldID,
 				},
 			},
 		}

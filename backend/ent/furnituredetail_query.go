@@ -12,6 +12,7 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
+	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/dataroom"
 	"github.com/team18/app/ent/fixroom"
 	"github.com/team18/app/ent/furniture"
@@ -29,11 +30,12 @@ type FurnitureDetailQuery struct {
 	unique     []string
 	predicates []predicate.FurnitureDetail
 	// eager-loading edges.
-	withFixs       *FixRoomQuery
-	withFurnitures *FurnitureQuery
-	withTypes      *FurnitureTypeQuery
-	withRooms      *DataRoomQuery
-	withFKs        bool
+	withFixs          *FixRoomQuery
+	withFurnitures    *FurnitureQuery
+	withCounterstaffs *CounterStaffQuery
+	withTypes         *FurnitureTypeQuery
+	withRooms         *DataRoomQuery
+	withFKs           bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -92,6 +94,24 @@ func (fdq *FurnitureDetailQuery) QueryFurnitures() *FurnitureQuery {
 			sqlgraph.From(furnituredetail.Table, furnituredetail.FieldID, fdq.sqlQuery()),
 			sqlgraph.To(furniture.Table, furniture.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, furnituredetail.FurnituresTable, furnituredetail.FurnituresColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(fdq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryCounterstaffs chains the current query on the counterstaffs edge.
+func (fdq *FurnitureDetailQuery) QueryCounterstaffs() *CounterStaffQuery {
+	query := &CounterStaffQuery{config: fdq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := fdq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(furnituredetail.Table, furnituredetail.FieldID, fdq.sqlQuery()),
+			sqlgraph.To(counterstaff.Table, counterstaff.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, furnituredetail.CounterstaffsTable, furnituredetail.CounterstaffsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(fdq.driver.Dialect(), step)
 		return fromU, nil
@@ -336,6 +356,17 @@ func (fdq *FurnitureDetailQuery) WithFurnitures(opts ...func(*FurnitureQuery)) *
 	return fdq
 }
 
+//  WithCounterstaffs tells the query-builder to eager-loads the nodes that are connected to
+// the "counterstaffs" edge. The optional arguments used to configure the query builder of the edge.
+func (fdq *FurnitureDetailQuery) WithCounterstaffs(opts ...func(*CounterStaffQuery)) *FurnitureDetailQuery {
+	query := &CounterStaffQuery{config: fdq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	fdq.withCounterstaffs = query
+	return fdq
+}
+
 //  WithTypes tells the query-builder to eager-loads the nodes that are connected to
 // the "types" edge. The optional arguments used to configure the query builder of the edge.
 func (fdq *FurnitureDetailQuery) WithTypes(opts ...func(*FurnitureTypeQuery)) *FurnitureDetailQuery {
@@ -425,14 +456,15 @@ func (fdq *FurnitureDetailQuery) sqlAll(ctx context.Context) ([]*FurnitureDetail
 		nodes       = []*FurnitureDetail{}
 		withFKs     = fdq.withFKs
 		_spec       = fdq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			fdq.withFixs != nil,
 			fdq.withFurnitures != nil,
+			fdq.withCounterstaffs != nil,
 			fdq.withTypes != nil,
 			fdq.withRooms != nil,
 		}
 	)
-	if fdq.withFurnitures != nil || fdq.withTypes != nil || fdq.withRooms != nil {
+	if fdq.withFurnitures != nil || fdq.withCounterstaffs != nil || fdq.withTypes != nil || fdq.withRooms != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -511,6 +543,31 @@ func (fdq *FurnitureDetailQuery) sqlAll(ctx context.Context) ([]*FurnitureDetail
 			}
 			for i := range nodes {
 				nodes[i].Edges.Furnitures = n
+			}
+		}
+	}
+
+	if query := fdq.withCounterstaffs; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*FurnitureDetail)
+		for i := range nodes {
+			if fk := nodes[i].staff_id; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(counterstaff.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "staff_id" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Counterstaffs = n
 			}
 		}
 	}

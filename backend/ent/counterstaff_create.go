@@ -12,6 +12,7 @@ import (
 	"github.com/team18/app/ent/checkin"
 	"github.com/team18/app/ent/checkout"
 	"github.com/team18/app/ent/counterstaff"
+	"github.com/team18/app/ent/furnituredetail"
 )
 
 // CounterStaffCreate is the builder for creating a CounterStaff entity.
@@ -67,6 +68,21 @@ func (csc *CounterStaffCreate) AddCheckouts(c ...*Checkout) *CounterStaffCreate 
 		ids[i] = c[i].ID
 	}
 	return csc.AddCheckoutIDs(ids...)
+}
+
+// AddDetailIDs adds the details edge to FurnitureDetail by ids.
+func (csc *CounterStaffCreate) AddDetailIDs(ids ...int) *CounterStaffCreate {
+	csc.mutation.AddDetailIDs(ids...)
+	return csc
+}
+
+// AddDetails adds the details edges to FurnitureDetail.
+func (csc *CounterStaffCreate) AddDetails(f ...*FurnitureDetail) *CounterStaffCreate {
+	ids := make([]int, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return csc.AddDetailIDs(ids...)
 }
 
 // Mutation returns the CounterStaffMutation object of the builder.
@@ -214,6 +230,25 @@ func (csc *CounterStaffCreate) createSpec() (*CounterStaff, *sqlgraph.CreateSpec
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: checkout.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := csc.mutation.DetailsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   counterstaff.DetailsTable,
+			Columns: []string{counterstaff.DetailsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: furnituredetail.FieldID,
 				},
 			},
 		}

@@ -15,6 +15,7 @@ import (
 	"github.com/team18/app/ent/checkin"
 	"github.com/team18/app/ent/checkout"
 	"github.com/team18/app/ent/counterstaff"
+	"github.com/team18/app/ent/furnituredetail"
 	"github.com/team18/app/ent/predicate"
 )
 
@@ -29,6 +30,7 @@ type CounterStaffQuery struct {
 	// eager-loading edges.
 	withCheckins  *CheckInQuery
 	withCheckouts *CheckoutQuery
+	withDetails   *FurnitureDetailQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -87,6 +89,24 @@ func (csq *CounterStaffQuery) QueryCheckouts() *CheckoutQuery {
 			sqlgraph.From(counterstaff.Table, counterstaff.FieldID, csq.sqlQuery()),
 			sqlgraph.To(checkout.Table, checkout.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, counterstaff.CheckoutsTable, counterstaff.CheckoutsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(csq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryDetails chains the current query on the details edge.
+func (csq *CounterStaffQuery) QueryDetails() *FurnitureDetailQuery {
+	query := &FurnitureDetailQuery{config: csq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := csq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(counterstaff.Table, counterstaff.FieldID, csq.sqlQuery()),
+			sqlgraph.To(furnituredetail.Table, furnituredetail.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, counterstaff.DetailsTable, counterstaff.DetailsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(csq.driver.Dialect(), step)
 		return fromU, nil
@@ -295,6 +315,17 @@ func (csq *CounterStaffQuery) WithCheckouts(opts ...func(*CheckoutQuery)) *Count
 	return csq
 }
 
+//  WithDetails tells the query-builder to eager-loads the nodes that are connected to
+// the "details" edge. The optional arguments used to configure the query builder of the edge.
+func (csq *CounterStaffQuery) WithDetails(opts ...func(*FurnitureDetailQuery)) *CounterStaffQuery {
+	query := &FurnitureDetailQuery{config: csq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	csq.withDetails = query
+	return csq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -361,9 +392,10 @@ func (csq *CounterStaffQuery) sqlAll(ctx context.Context) ([]*CounterStaff, erro
 	var (
 		nodes       = []*CounterStaff{}
 		_spec       = csq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			csq.withCheckins != nil,
 			csq.withCheckouts != nil,
+			csq.withDetails != nil,
 		}
 	)
 	_spec.ScanValues = func() []interface{} {
@@ -440,6 +472,34 @@ func (csq *CounterStaffQuery) sqlAll(ctx context.Context) ([]*CounterStaff, erro
 				return nil, fmt.Errorf(`unexpected foreign-key "staff_id" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Checkouts = append(node.Edges.Checkouts, n)
+		}
+	}
+
+	if query := csq.withDetails; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*CounterStaff)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+		}
+		query.withFKs = true
+		query.Where(predicate.FurnitureDetail(func(s *sql.Selector) {
+			s.Where(sql.InValues(counterstaff.DetailsColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.staff_id
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "staff_id" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "staff_id" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Details = append(node.Edges.Details, n)
 		}
 	}
 

@@ -232,6 +232,34 @@ func HasFurnituresWith(preds ...predicate.Furniture) predicate.FurnitureDetail {
 	})
 }
 
+// HasCounterstaffs applies the HasEdge predicate on the "counterstaffs" edge.
+func HasCounterstaffs() predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(CounterstaffsTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, CounterstaffsTable, CounterstaffsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasCounterstaffsWith applies the HasEdge predicate on the "counterstaffs" edge with a given conditions (other predicates).
+func HasCounterstaffsWith(preds ...predicate.CounterStaff) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(CounterstaffsInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, CounterstaffsTable, CounterstaffsColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasTypes applies the HasEdge predicate on the "types" edge.
 func HasTypes() predicate.FurnitureDetail {
 	return predicate.FurnitureDetail(func(s *sql.Selector) {

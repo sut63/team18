@@ -209,6 +209,7 @@ var (
 	FurnitureDetailsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "date_add", Type: field.TypeTime},
+		{Name: "staff_id", Type: field.TypeInt, Nullable: true},
 		{Name: "room_id", Type: field.TypeInt, Nullable: true},
 		{Name: "furniture_id", Type: field.TypeInt, Nullable: true},
 		{Name: "type_id", Type: field.TypeInt, Nullable: true},
@@ -220,22 +221,29 @@ var (
 		PrimaryKey: []*schema.Column{FurnitureDetailsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:  "furniture_details_data_rooms_details",
+				Symbol:  "furniture_details_counter_staffs_details",
 				Columns: []*schema.Column{FurnitureDetailsColumns[2]},
+
+				RefColumns: []*schema.Column{CounterStaffsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "furniture_details_data_rooms_details",
+				Columns: []*schema.Column{FurnitureDetailsColumns[3]},
 
 				RefColumns: []*schema.Column{DataRoomsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "furniture_details_furnitures_details",
-				Columns: []*schema.Column{FurnitureDetailsColumns[3]},
+				Columns: []*schema.Column{FurnitureDetailsColumns[4]},
 
 				RefColumns: []*schema.Column{FurnituresColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "furniture_details_furniture_types_details",
-				Columns: []*schema.Column{FurnitureDetailsColumns[4]},
+				Columns: []*schema.Column{FurnitureDetailsColumns[5]},
 
 				RefColumns: []*schema.Column{FurnitureTypesColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -396,9 +404,10 @@ func init() {
 	FixRoomsTable.ForeignKeys[0].RefTable = CustomersTable
 	FixRoomsTable.ForeignKeys[1].RefTable = DataRoomsTable
 	FixRoomsTable.ForeignKeys[2].RefTable = FurnitureDetailsTable
-	FurnitureDetailsTable.ForeignKeys[0].RefTable = DataRoomsTable
-	FurnitureDetailsTable.ForeignKeys[1].RefTable = FurnituresTable
-	FurnitureDetailsTable.ForeignKeys[2].RefTable = FurnitureTypesTable
+	FurnitureDetailsTable.ForeignKeys[0].RefTable = CounterStaffsTable
+	FurnitureDetailsTable.ForeignKeys[1].RefTable = DataRoomsTable
+	FurnitureDetailsTable.ForeignKeys[2].RefTable = FurnituresTable
+	FurnitureDetailsTable.ForeignKeys[3].RefTable = FurnitureTypesTable
 	ReserveRoomsTable.ForeignKeys[0].RefTable = CustomersTable
 	ReserveRoomsTable.ForeignKeys[1].RefTable = DataRoomsTable
 	ReserveRoomsTable.ForeignKeys[2].RefTable = PromotionsTable
