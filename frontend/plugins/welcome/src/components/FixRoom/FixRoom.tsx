@@ -22,6 +22,7 @@ import {
 import { DefaultApi } from '../../api/apis'; // Api Gennerate From Command
 import { EntDataRoom } from '../../api/models/EntDataRoom';
 import { EntCustomer } from '../../api/models/EntCustomer';
+import { EntReserveRoom } from '../../api/models/EntReserveRoom';
 import { EntFurnitureDetail } from '../../api/models/EntFurnitureDetail';
 import { Cookies } from '../../Cookie'
 
@@ -62,40 +63,37 @@ interface FixRoom {
   // create_by: number;
 }
 
-
-
 const FixRoom: FC<{}> = () => {
   const classes = useStyles();
   const api = new DefaultApi();
 
-   // ดึงคุกกี้
-   var ck = new Cookies()
-   var cookieName = ck.GetCookie()
-   var cookieID = ck.GetID()
+  // ดึงคุกกี้
+  var ck = new Cookies()
+  var cookieName = ck.GetCookie()
+  var cookieID = ck.GetID()
 
-   //อันหลักสำหรับสร้าง การ reserve_room
+  //อันหลักสำหรับสร้าง การ reserve_room
   const [FixRoom, setFixRoom] = React.useState<Partial<FixRoom>>({});
 
-  // data room List
-  const [DataRoom, setDataRoom] = React.useState<EntDataRoom[]>([]);
+  // DataRoom 
+  const [DataRoom, setDataRoom] = React.useState<EntDataRoom[]>([])
+  const [dids, setDIds] = React.useState<number>(0)
   const getDataRoom = async () => {
-    const res = await api.listDataroom({ limit: 10, offset: 0 });
-    setDataRoom(res);
-  };
-  
-  
+    const res = await api.listDataroom({ limit: 10, offset: 0 })
+    setDataRoom(res)
+  }
 
   // furnituredetail List
   const [FurnitureDetail, setFurnitureDetails] = React.useState<EntFurnitureDetail[]>([]);
   const getFurnitureDetail = async () => {
-    const res = await api.listFurnituredetail({ limit: 10, offset: 0 });
+    const res = await api.listFurnitureDetailRoom({ limit: 10, offset: 0,id: dids});
     setFurnitureDetails(res);
   };
 
   //customer
   const [customer, setCustomer] = React.useState<EntCustomer>();
   const getCustomer = async () => {
-    const res = await api.getCustomer({id: Number(cookieID)});
+    const res = await api.getCustomer({ id: Number(cookieID) });
     setCustomer(res);
   };
 
@@ -120,6 +118,10 @@ const FixRoom: FC<{}> = () => {
   }, []);
 
   useEffect(() => {
+    getFurnitureDetail();
+  }, [FixRoom.Room]);
+
+  useEffect(() => {
     setFixRoom({ ...FixRoom, ['Customer']: customer?.id });
   }, [customer]);
 
@@ -130,21 +132,21 @@ const FixRoom: FC<{}> = () => {
     const name = event.target.name as keyof typeof FixRoom;
     const { value } = event.target;
     setFixRoom({ ...FixRoom, [name]: value });
+    setDIds(event.target.value);
     console.log(FixRoom);
   };
 
   // clear input form
   function clear() {
     setFixRoom({});
-    
   }
 
-   // clear cookies
+  // clear cookies
   function Clears() {
     ck.ClearCookie()
     window.location.reload(false)
   }
-  
+
   // function save data
   function save() {
     const apiUrl = 'http://localhost:8080/api/v1/fixrooms';
@@ -153,13 +155,13 @@ const FixRoom: FC<{}> = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(FixRoom),
     };
-   
+
     console.log(FixRoom); // log ดูข้อมูล สามารถ Inspect ดูข้อมูลได้ F12 เลือก Tab Console
 
     fetch(apiUrl, requestOptions)
       .then(response => response.json())
       .then(data => {
-        console.log(data);
+        console.log(data.status);
         if (data.status === true) {
           clear();
           Toast.fire({
@@ -178,13 +180,13 @@ const FixRoom: FC<{}> = () => {
   return (
     <Page theme={pageTheme.home}>
       <Header style={HeaderCustom} title={`ระบบแจ้งซ่อม`}>
-        <div style={{ marginLeft: 10, marginRight:20 }}>{cookieName}</div>
+        <div style={{ marginLeft: 10, marginRight: 20 }}>{cookieName}</div>
         <Button
           variant="outlined"
           color="secondary"
           size="large"
           onClick={Clears}
-          >
+        >
           Logout
         </Button>
       </Header>
@@ -196,9 +198,9 @@ const FixRoom: FC<{}> = () => {
               <div className={classes.paper}>ลูกค้า</div>
             </Grid>
             <Grid item xs={9}>
-            <FormControl variant="outlined" className={classes.formControl}>
+              <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
-                  disabled 
+                  disabled
                   name="Customer"
                   variant="outlined"
                   value={customer?.name}
@@ -214,7 +216,7 @@ const FixRoom: FC<{}> = () => {
                 <InputLabel>เลือกห้อง</InputLabel>
                 <Select
                   name="Room"
-                  value={FixRoom.Room|| ''} // (undefined || '') = ''
+                  value={FixRoom.Room || ''} // (undefined || '') = ''
                   onChange={handleChange}
                 >
                   {DataRoom.map(item => {
@@ -242,7 +244,7 @@ const FixRoom: FC<{}> = () => {
                   {FurnitureDetail.map(item => {
                     return (
                       <MenuItem key={item.id} value={item.id}>
-                        {item.id}
+                        {item.edges?.furnitures?.furnitureName}
                       </MenuItem>
                     );
                   })}
@@ -256,12 +258,10 @@ const FixRoom: FC<{}> = () => {
             <Grid item xs={9}>
               <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
-                  id="standard-multiline-static"
-                  label="Multiline"
                   multiline
                   rows={4}
-                  defaultValue="Default Value"
-                  name = " FixDetail "
+                  name="FixDetail"
+                  value={FixRoom.FixDetail || ''}
                   onChange={handleChange}
                 />
               </FormControl>

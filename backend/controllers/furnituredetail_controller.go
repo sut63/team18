@@ -180,6 +180,60 @@ func (ctl *FurnitureDetailController) ListFurnitureDetail(c *gin.Context) {
 	c.JSON(200, furnituredetails)
 }
 
+// ListFurnitureDetailRoom handles request to get a list of FurnitureDetailRoom entities
+// @Summary List FurnitureDetailRoom entities
+// @Description list FurnitureDetailRoom entities
+// @ID list-FurnitureDetailRoom
+// @Produce json
+// @Param limit  query int false "Limit"
+// @Param offset query int false "Offset"
+// @Param id path int true "FurnitureDetailRooms ID"
+// @Success 200 {array} ent.FurnitureDetail
+// @Failure 400 {object} gin.H
+// @Failure 500 {object} gin.H
+// @Router /FurnitureDetailRooms/{id} [get]
+func (ctl *FurnitureDetailController) ListFurnitureDetailRooms(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	limitQuery := c.Query("limit")
+	limit := 10
+	if limitQuery != "" {
+		limit64, err := strconv.ParseInt(limitQuery, 10, 64)
+		if err == nil {
+			limit = int(limit64)
+		}
+	}
+
+	offsetQuery := c.Query("offset")
+	offset := 0
+	if offsetQuery != "" {
+		offset64, err := strconv.ParseInt(offsetQuery, 10, 64)
+		if err == nil {
+			offset = int(offset64)
+		}
+	}
+
+	furnituredetails, err := ctl.client.FurnitureDetail.
+		Query().
+		WithFurnitures().
+		Limit(limit).
+		Offset(offset).
+		Where(furnituredetail.HasRoomsWith(dataroom.IDEQ(int(id)))).
+		All(context.Background())
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, furnituredetails)
+}
+
 // NewFurnitureDetailController creates and registers handles for the furnituredetail controller
 func NewFurnitureDetailController(router gin.IRouter, client *ent.Client) *FurnitureDetailController {
 	pc := &FurnitureDetailController{
@@ -193,7 +247,10 @@ func NewFurnitureDetailController(router gin.IRouter, client *ent.Client) *Furni
 // InitFurnitureDetailController registers routes to the main engine
 func (ctl *FurnitureDetailController) register() {
 	furnituredetails := ctl.router.Group("/furnituredetails")
+	furnituredetailrooms := ctl.router.Group("/FurnitureDetailRooms")
+
 	furnituredetails.GET("", ctl.ListFurnitureDetail)
+	furnituredetailrooms.GET(":id", ctl.ListFurnitureDetailRooms)
 	// CRUD
 	furnituredetails.POST("", ctl.CreateFurnitureDetail)
 	furnituredetails.GET(":id", ctl.GetFurnitureDetail)
