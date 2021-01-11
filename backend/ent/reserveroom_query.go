@@ -18,6 +18,7 @@ import (
 	"github.com/team18/app/ent/predicate"
 	"github.com/team18/app/ent/promotion"
 	"github.com/team18/app/ent/reserveroom"
+	"github.com/team18/app/ent/statusreserve"
 )
 
 // ReserveRoomQuery is the builder for querying ReserveRoom entities.
@@ -32,6 +33,7 @@ type ReserveRoomQuery struct {
 	withCustomer  *CustomerQuery
 	withPromotion *PromotionQuery
 	withRoom      *DataRoomQuery
+	withStatus    *StatusReserveQuery
 	withCheckins  *CheckInQuery
 	withFKs       bool
 	// intermediate query (i.e. traversal path).
@@ -110,6 +112,24 @@ func (rrq *ReserveRoomQuery) QueryRoom() *DataRoomQuery {
 			sqlgraph.From(reserveroom.Table, reserveroom.FieldID, rrq.sqlQuery()),
 			sqlgraph.To(dataroom.Table, dataroom.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, reserveroom.RoomTable, reserveroom.RoomColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(rrq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryStatus chains the current query on the status edge.
+func (rrq *ReserveRoomQuery) QueryStatus() *StatusReserveQuery {
+	query := &StatusReserveQuery{config: rrq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rrq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(reserveroom.Table, reserveroom.FieldID, rrq.sqlQuery()),
+			sqlgraph.To(statusreserve.Table, statusreserve.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, reserveroom.StatusTable, reserveroom.StatusColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(rrq.driver.Dialect(), step)
 		return fromU, nil
@@ -347,6 +367,17 @@ func (rrq *ReserveRoomQuery) WithRoom(opts ...func(*DataRoomQuery)) *ReserveRoom
 	return rrq
 }
 
+//  WithStatus tells the query-builder to eager-loads the nodes that are connected to
+// the "status" edge. The optional arguments used to configure the query builder of the edge.
+func (rrq *ReserveRoomQuery) WithStatus(opts ...func(*StatusReserveQuery)) *ReserveRoomQuery {
+	query := &StatusReserveQuery{config: rrq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	rrq.withStatus = query
+	return rrq
+}
+
 //  WithCheckins tells the query-builder to eager-loads the nodes that are connected to
 // the "checkins" edge. The optional arguments used to configure the query builder of the edge.
 func (rrq *ReserveRoomQuery) WithCheckins(opts ...func(*CheckInQuery)) *ReserveRoomQuery {
@@ -425,14 +456,15 @@ func (rrq *ReserveRoomQuery) sqlAll(ctx context.Context) ([]*ReserveRoom, error)
 		nodes       = []*ReserveRoom{}
 		withFKs     = rrq.withFKs
 		_spec       = rrq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			rrq.withCustomer != nil,
 			rrq.withPromotion != nil,
 			rrq.withRoom != nil,
+			rrq.withStatus != nil,
 			rrq.withCheckins != nil,
 		}
 	)
-	if rrq.withCustomer != nil || rrq.withPromotion != nil || rrq.withRoom != nil {
+	if rrq.withCustomer != nil || rrq.withPromotion != nil || rrq.withRoom != nil || rrq.withStatus != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -533,6 +565,31 @@ func (rrq *ReserveRoomQuery) sqlAll(ctx context.Context) ([]*ReserveRoom, error)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Room = n
+			}
+		}
+	}
+
+	if query := rrq.withStatus; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*ReserveRoom)
+		for i := range nodes {
+			if fk := nodes[i].status_id; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(statusreserve.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "status_id" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Status = n
 			}
 		}
 	}

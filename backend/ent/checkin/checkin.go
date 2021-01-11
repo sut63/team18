@@ -2,10 +2,6 @@
 
 package checkin
 
-import (
-	"time"
-)
-
 const (
 	// Label holds the string label denoting the checkin type in the database.
 	Label = "check_in"
@@ -20,6 +16,8 @@ const (
 	EdgeCounter = "counter"
 	// EdgeReserveroom holds the string denoting the reserveroom edge name in mutations.
 	EdgeReserveroom = "reserveroom"
+	// EdgeDataroom holds the string denoting the dataroom edge name in mutations.
+	EdgeDataroom = "dataroom"
 	// EdgeCheckouts holds the string denoting the checkouts edge name in mutations.
 	EdgeCheckouts = "checkouts"
 
@@ -46,6 +44,13 @@ const (
 	ReserveroomInverseTable = "reserve_rooms"
 	// ReserveroomColumn is the table column denoting the reserveroom relation/edge.
 	ReserveroomColumn = "reserves_id"
+	// DataroomTable is the table the holds the dataroom relation/edge.
+	DataroomTable = "check_ins"
+	// DataroomInverseTable is the table name for the DataRoom entity.
+	// It exists in this package in order to avoid circular dependency with the "dataroom" package.
+	DataroomInverseTable = "data_rooms"
+	// DataroomColumn is the table column denoting the dataroom relation/edge.
+	DataroomColumn = "room_id"
 	// CheckoutsTable is the table the holds the checkouts relation/edge.
 	CheckoutsTable = "checkouts"
 	// CheckoutsInverseTable is the table name for the Checkout entity.
@@ -65,10 +70,6 @@ var Columns = []string{
 var ForeignKeys = []string{
 	"staff_id",
 	"customer_id",
+	"room_id",
 	"reserves_id",
 }
-
-var (
-	// DefaultCheckinDate holds the default value on creation for the checkin_date field.
-	DefaultCheckinDate func() time.Time
-)

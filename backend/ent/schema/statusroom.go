@@ -14,7 +14,7 @@ type StatusRoom struct {
 // Fields of the StatusRoom.
 func (StatusRoom) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("status_name").NotEmpty(),
+		field.String("status_name").NotEmpty().Unique(),
 	}
 }
 

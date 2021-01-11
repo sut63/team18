@@ -12,6 +12,7 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
+	"github.com/team18/app/ent/checkin"
 	"github.com/team18/app/ent/dataroom"
 	"github.com/team18/app/ent/fixroom"
 	"github.com/team18/app/ent/furnituredetail"
@@ -34,6 +35,7 @@ type DataRoomQuery struct {
 	withReserves   *ReserveRoomQuery
 	withFixs       *FixRoomQuery
 	withDetails    *FurnitureDetailQuery
+	withCheckins   *CheckInQuery
 	withPromotion  *PromotionQuery
 	withStatusroom *StatusRoomQuery
 	withTyperoom   *TypeRoomQuery
@@ -114,6 +116,24 @@ func (drq *DataRoomQuery) QueryDetails() *FurnitureDetailQuery {
 			sqlgraph.From(dataroom.Table, dataroom.FieldID, drq.sqlQuery()),
 			sqlgraph.To(furnituredetail.Table, furnituredetail.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, dataroom.DetailsTable, dataroom.DetailsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(drq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryCheckins chains the current query on the checkins edge.
+func (drq *DataRoomQuery) QueryCheckins() *CheckInQuery {
+	query := &CheckInQuery{config: drq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := drq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(dataroom.Table, dataroom.FieldID, drq.sqlQuery()),
+			sqlgraph.To(checkin.Table, checkin.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, dataroom.CheckinsTable, dataroom.CheckinsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(drq.driver.Dialect(), step)
 		return fromU, nil
@@ -387,6 +407,17 @@ func (drq *DataRoomQuery) WithDetails(opts ...func(*FurnitureDetailQuery)) *Data
 	return drq
 }
 
+//  WithCheckins tells the query-builder to eager-loads the nodes that are connected to
+// the "checkins" edge. The optional arguments used to configure the query builder of the edge.
+func (drq *DataRoomQuery) WithCheckins(opts ...func(*CheckInQuery)) *DataRoomQuery {
+	query := &CheckInQuery{config: drq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	drq.withCheckins = query
+	return drq
+}
+
 //  WithPromotion tells the query-builder to eager-loads the nodes that are connected to
 // the "promotion" edge. The optional arguments used to configure the query builder of the edge.
 func (drq *DataRoomQuery) WithPromotion(opts ...func(*PromotionQuery)) *DataRoomQuery {
@@ -487,10 +518,11 @@ func (drq *DataRoomQuery) sqlAll(ctx context.Context) ([]*DataRoom, error) {
 		nodes       = []*DataRoom{}
 		withFKs     = drq.withFKs
 		_spec       = drq.querySpec()
-		loadedTypes = [6]bool{
+		loadedTypes = [7]bool{
 			drq.withReserves != nil,
 			drq.withFixs != nil,
 			drq.withDetails != nil,
+			drq.withCheckins != nil,
 			drq.withPromotion != nil,
 			drq.withStatusroom != nil,
 			drq.withTyperoom != nil,
@@ -607,6 +639,34 @@ func (drq *DataRoomQuery) sqlAll(ctx context.Context) ([]*DataRoom, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "room_id" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Details = append(node.Edges.Details, n)
+		}
+	}
+
+	if query := drq.withCheckins; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*DataRoom)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+		}
+		query.withFKs = true
+		query.Where(predicate.CheckIn(func(s *sql.Selector) {
+			s.Where(sql.InValues(dataroom.CheckinsColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.room_id
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "room_id" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "room_id" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Checkins = append(node.Edges.Checkins, n)
 		}
 	}
 

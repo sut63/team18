@@ -26,6 +26,7 @@ func (ReserveRoom) Edges() []ent.Edge {
 		edge.From("customer", Customer.Type).Ref("reserves").Unique(),
 		edge.From("promotion", Promotion.Type).Ref("reserves").Unique(),
 		edge.From("room", DataRoom.Type).Ref("reserves").Unique(),
+		edge.From("status", StatusReserve.Type).Ref("reserves").Unique(),
 
 		edge.To("checkins", CheckIn.Type).StorageKey(edge.Column("reserves_id")),
 	}

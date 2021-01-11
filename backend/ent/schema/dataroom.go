@@ -25,6 +25,7 @@ func (DataRoom) Edges() []ent.Edge {
 		edge.To("reserves", ReserveRoom.Type).StorageKey(edge.Column("room_id")),
 		edge.To("fixs", FixRoom.Type).StorageKey(edge.Column("room_id")),
 		edge.To("details", FurnitureDetail.Type).StorageKey(edge.Column("room_id")),
+		edge.To("checkins", CheckIn.Type).StorageKey(edge.Column("room_id")),
 
 		edge.From("promotion", Promotion.Type).Ref("datarooms").Unique(),
 		edge.From("statusroom", StatusRoom.Type).Ref("datarooms").Unique(),

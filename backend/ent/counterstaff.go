@@ -17,6 +17,8 @@ type CounterStaff struct {
 	ID int `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// Email holds the value of the "email" field.
+	Email string `json:"email,omitempty"`
 	// Password holds the value of the "password" field.
 	Password string `json:"password,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -58,6 +60,7 @@ func (*CounterStaff) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{},  // id
 		&sql.NullString{}, // name
+		&sql.NullString{}, // email
 		&sql.NullString{}, // password
 	}
 }
@@ -80,7 +83,12 @@ func (cs *CounterStaff) assignValues(values ...interface{}) error {
 		cs.Name = value.String
 	}
 	if value, ok := values[1].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field password", values[1])
+		return fmt.Errorf("unexpected type %T for field email", values[1])
+	} else if value.Valid {
+		cs.Email = value.String
+	}
+	if value, ok := values[2].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field password", values[2])
 	} else if value.Valid {
 		cs.Password = value.String
 	}
@@ -122,6 +130,8 @@ func (cs *CounterStaff) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v", cs.ID))
 	builder.WriteString(", name=")
 	builder.WriteString(cs.Name)
+	builder.WriteString(", email=")
+	builder.WriteString(cs.Email)
 	builder.WriteString(", password=")
 	builder.WriteString(cs.Password)
 	builder.WriteByte(')')

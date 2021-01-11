@@ -42,6 +42,12 @@ func (cu *CustomerUpdate) SetEmail(s string) *CustomerUpdate {
 	return cu
 }
 
+// SetPassword sets the password field.
+func (cu *CustomerUpdate) SetPassword(s string) *CustomerUpdate {
+	cu.mutation.SetPassword(s)
+	return cu
+}
+
 // AddReserfIDs adds the reserves edge to ReserveRoom by ids.
 func (cu *CustomerUpdate) AddReserfIDs(ids ...int) *CustomerUpdate {
 	cu.mutation.AddReserfIDs(ids...)
@@ -149,6 +155,11 @@ func (cu *CustomerUpdate) Save(ctx context.Context) (int, error) {
 			return 0, &ValidationError{Name: "email", err: fmt.Errorf("ent: validator failed for field \"email\": %w", err)}
 		}
 	}
+	if v, ok := cu.mutation.Password(); ok {
+		if err := customer.PasswordValidator(v); err != nil {
+			return 0, &ValidationError{Name: "password", err: fmt.Errorf("ent: validator failed for field \"password\": %w", err)}
+		}
+	}
 
 	var (
 		err      error
@@ -229,6 +240,13 @@ func (cu *CustomerUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeString,
 			Value:  value,
 			Column: customer.FieldEmail,
+		})
+	}
+	if value, ok := cu.mutation.Password(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: customer.FieldPassword,
 		})
 	}
 	if nodes := cu.mutation.RemovedReservesIDs(); len(nodes) > 0 {
@@ -375,6 +393,12 @@ func (cuo *CustomerUpdateOne) SetEmail(s string) *CustomerUpdateOne {
 	return cuo
 }
 
+// SetPassword sets the password field.
+func (cuo *CustomerUpdateOne) SetPassword(s string) *CustomerUpdateOne {
+	cuo.mutation.SetPassword(s)
+	return cuo
+}
+
 // AddReserfIDs adds the reserves edge to ReserveRoom by ids.
 func (cuo *CustomerUpdateOne) AddReserfIDs(ids ...int) *CustomerUpdateOne {
 	cuo.mutation.AddReserfIDs(ids...)
@@ -482,6 +506,11 @@ func (cuo *CustomerUpdateOne) Save(ctx context.Context) (*Customer, error) {
 			return nil, &ValidationError{Name: "email", err: fmt.Errorf("ent: validator failed for field \"email\": %w", err)}
 		}
 	}
+	if v, ok := cuo.mutation.Password(); ok {
+		if err := customer.PasswordValidator(v); err != nil {
+			return nil, &ValidationError{Name: "password", err: fmt.Errorf("ent: validator failed for field \"password\": %w", err)}
+		}
+	}
 
 	var (
 		err  error
@@ -560,6 +589,13 @@ func (cuo *CustomerUpdateOne) sqlSave(ctx context.Context) (c *Customer, err err
 			Type:   field.TypeString,
 			Value:  value,
 			Column: customer.FieldEmail,
+		})
+	}
+	if value, ok := cuo.mutation.Password(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: customer.FieldPassword,
 		})
 	}
 	if nodes := cuo.mutation.RemovedReservesIDs(); len(nodes) > 0 {

@@ -19,6 +19,8 @@ type Customer struct {
 	Name string `json:"name,omitempty"`
 	// Email holds the value of the "email" field.
 	Email string `json:"email,omitempty"`
+	// Password holds the value of the "password" field.
+	Password string `json:"password,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the CustomerQuery when eager-loading is set.
 	Edges CustomerEdges `json:"edges"`
@@ -70,6 +72,7 @@ func (*Customer) scanValues() []interface{} {
 		&sql.NullInt64{},  // id
 		&sql.NullString{}, // name
 		&sql.NullString{}, // email
+		&sql.NullString{}, // password
 	}
 }
 
@@ -94,6 +97,11 @@ func (c *Customer) assignValues(values ...interface{}) error {
 		return fmt.Errorf("unexpected type %T for field email", values[1])
 	} else if value.Valid {
 		c.Email = value.String
+	}
+	if value, ok := values[2].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field password", values[2])
+	} else if value.Valid {
+		c.Password = value.String
 	}
 	return nil
 }
@@ -140,6 +148,8 @@ func (c *Customer) String() string {
 	builder.WriteString(c.Name)
 	builder.WriteString(", email=")
 	builder.WriteString(c.Email)
+	builder.WriteString(", password=")
+	builder.WriteString(c.Password)
 	builder.WriteByte(')')
 	return builder.String()
 }

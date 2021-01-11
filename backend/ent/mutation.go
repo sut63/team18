@@ -20,6 +20,7 @@ import (
 	"github.com/team18/app/ent/promotion"
 	"github.com/team18/app/ent/reserveroom"
 	"github.com/team18/app/ent/status"
+	"github.com/team18/app/ent/statusreserve"
 	"github.com/team18/app/ent/statusroom"
 	"github.com/team18/app/ent/typeroom"
 
@@ -47,6 +48,7 @@ const (
 	TypePromotion       = "Promotion"
 	TypeReserveRoom     = "ReserveRoom"
 	TypeStatus          = "Status"
+	TypeStatusReserve   = "StatusReserve"
 	TypeStatusRoom      = "StatusRoom"
 	TypeTypeRoom        = "TypeRoom"
 )
@@ -66,6 +68,8 @@ type CheckInMutation struct {
 	clearedcounter     bool
 	reserveroom        *int
 	clearedreserveroom bool
+	dataroom           *int
+	cleareddataroom    bool
 	checkouts          *int
 	clearedcheckouts   bool
 	done               bool
@@ -305,6 +309,45 @@ func (m *CheckInMutation) ResetReserveroom() {
 	m.clearedreserveroom = false
 }
 
+// SetDataroomID sets the dataroom edge to DataRoom by id.
+func (m *CheckInMutation) SetDataroomID(id int) {
+	m.dataroom = &id
+}
+
+// ClearDataroom clears the dataroom edge to DataRoom.
+func (m *CheckInMutation) ClearDataroom() {
+	m.cleareddataroom = true
+}
+
+// DataroomCleared returns if the edge dataroom was cleared.
+func (m *CheckInMutation) DataroomCleared() bool {
+	return m.cleareddataroom
+}
+
+// DataroomID returns the dataroom id in the mutation.
+func (m *CheckInMutation) DataroomID() (id int, exists bool) {
+	if m.dataroom != nil {
+		return *m.dataroom, true
+	}
+	return
+}
+
+// DataroomIDs returns the dataroom ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// DataroomID instead. It exists only for internal usage by the builders.
+func (m *CheckInMutation) DataroomIDs() (ids []int) {
+	if id := m.dataroom; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetDataroom reset all changes of the "dataroom" edge.
+func (m *CheckInMutation) ResetDataroom() {
+	m.dataroom = nil
+	m.cleareddataroom = false
+}
+
 // SetCheckoutsID sets the checkouts edge to Checkout by id.
 func (m *CheckInMutation) SetCheckoutsID(id int) {
 	m.checkouts = &id
@@ -459,7 +502,7 @@ func (m *CheckInMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *CheckInMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.customer != nil {
 		edges = append(edges, checkin.EdgeCustomer)
 	}
@@ -468,6 +511,9 @@ func (m *CheckInMutation) AddedEdges() []string {
 	}
 	if m.reserveroom != nil {
 		edges = append(edges, checkin.EdgeReserveroom)
+	}
+	if m.dataroom != nil {
+		edges = append(edges, checkin.EdgeDataroom)
 	}
 	if m.checkouts != nil {
 		edges = append(edges, checkin.EdgeCheckouts)
@@ -491,6 +537,10 @@ func (m *CheckInMutation) AddedIDs(name string) []ent.Value {
 		if id := m.reserveroom; id != nil {
 			return []ent.Value{*id}
 		}
+	case checkin.EdgeDataroom:
+		if id := m.dataroom; id != nil {
+			return []ent.Value{*id}
+		}
 	case checkin.EdgeCheckouts:
 		if id := m.checkouts; id != nil {
 			return []ent.Value{*id}
@@ -502,7 +552,7 @@ func (m *CheckInMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *CheckInMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	return edges
 }
 
@@ -517,7 +567,7 @@ func (m *CheckInMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *CheckInMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.clearedcustomer {
 		edges = append(edges, checkin.EdgeCustomer)
 	}
@@ -526,6 +576,9 @@ func (m *CheckInMutation) ClearedEdges() []string {
 	}
 	if m.clearedreserveroom {
 		edges = append(edges, checkin.EdgeReserveroom)
+	}
+	if m.cleareddataroom {
+		edges = append(edges, checkin.EdgeDataroom)
 	}
 	if m.clearedcheckouts {
 		edges = append(edges, checkin.EdgeCheckouts)
@@ -543,6 +596,8 @@ func (m *CheckInMutation) EdgeCleared(name string) bool {
 		return m.clearedcounter
 	case checkin.EdgeReserveroom:
 		return m.clearedreserveroom
+	case checkin.EdgeDataroom:
+		return m.cleareddataroom
 	case checkin.EdgeCheckouts:
 		return m.clearedcheckouts
 	}
@@ -561,6 +616,9 @@ func (m *CheckInMutation) ClearEdge(name string) error {
 		return nil
 	case checkin.EdgeReserveroom:
 		m.ClearReserveroom()
+		return nil
+	case checkin.EdgeDataroom:
+		m.ClearDataroom()
 		return nil
 	case checkin.EdgeCheckouts:
 		m.ClearCheckouts()
@@ -582,6 +640,9 @@ func (m *CheckInMutation) ResetEdge(name string) error {
 		return nil
 	case checkin.EdgeReserveroom:
 		m.ResetReserveroom()
+		return nil
+	case checkin.EdgeDataroom:
+		m.ResetDataroom()
 		return nil
 	case checkin.EdgeCheckouts:
 		m.ResetCheckouts()
@@ -1078,6 +1139,7 @@ type CounterStaffMutation struct {
 	typ              string
 	id               *int
 	name             *string
+	email            *string
 	password         *string
 	clearedFields    map[string]struct{}
 	checkins         map[int]struct{}
@@ -1202,6 +1264,43 @@ func (m *CounterStaffMutation) OldName(ctx context.Context) (v string, err error
 // ResetName reset all changes of the "name" field.
 func (m *CounterStaffMutation) ResetName() {
 	m.name = nil
+}
+
+// SetEmail sets the email field.
+func (m *CounterStaffMutation) SetEmail(s string) {
+	m.email = &s
+}
+
+// Email returns the email value in the mutation.
+func (m *CounterStaffMutation) Email() (r string, exists bool) {
+	v := m.email
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEmail returns the old email value of the CounterStaff.
+// If the CounterStaff object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *CounterStaffMutation) OldEmail(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEmail is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEmail requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEmail: %w", err)
+	}
+	return oldValue.Email, nil
+}
+
+// ResetEmail reset all changes of the "email" field.
+func (m *CounterStaffMutation) ResetEmail() {
+	m.email = nil
 }
 
 // SetPassword sets the password field.
@@ -1339,9 +1438,12 @@ func (m *CounterStaffMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *CounterStaffMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 3)
 	if m.name != nil {
 		fields = append(fields, counterstaff.FieldName)
+	}
+	if m.email != nil {
+		fields = append(fields, counterstaff.FieldEmail)
 	}
 	if m.password != nil {
 		fields = append(fields, counterstaff.FieldPassword)
@@ -1356,6 +1458,8 @@ func (m *CounterStaffMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case counterstaff.FieldName:
 		return m.Name()
+	case counterstaff.FieldEmail:
+		return m.Email()
 	case counterstaff.FieldPassword:
 		return m.Password()
 	}
@@ -1369,6 +1473,8 @@ func (m *CounterStaffMutation) OldField(ctx context.Context, name string) (ent.V
 	switch name {
 	case counterstaff.FieldName:
 		return m.OldName(ctx)
+	case counterstaff.FieldEmail:
+		return m.OldEmail(ctx)
 	case counterstaff.FieldPassword:
 		return m.OldPassword(ctx)
 	}
@@ -1386,6 +1492,13 @@ func (m *CounterStaffMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
+		return nil
+	case counterstaff.FieldEmail:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEmail(v)
 		return nil
 	case counterstaff.FieldPassword:
 		v, ok := value.(string)
@@ -1446,6 +1559,9 @@ func (m *CounterStaffMutation) ResetField(name string) error {
 	switch name {
 	case counterstaff.FieldName:
 		m.ResetName()
+		return nil
+	case counterstaff.FieldEmail:
+		m.ResetEmail()
 		return nil
 	case counterstaff.FieldPassword:
 		m.ResetPassword()
@@ -1567,6 +1683,7 @@ type CustomerMutation struct {
 	id              *int
 	name            *string
 	email           *string
+	password        *string
 	clearedFields   map[string]struct{}
 	reserves        map[int]struct{}
 	removedreserves map[int]struct{}
@@ -1731,6 +1848,43 @@ func (m *CustomerMutation) ResetEmail() {
 	m.email = nil
 }
 
+// SetPassword sets the password field.
+func (m *CustomerMutation) SetPassword(s string) {
+	m.password = &s
+}
+
+// Password returns the password value in the mutation.
+func (m *CustomerMutation) Password() (r string, exists bool) {
+	v := m.password
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPassword returns the old password value of the Customer.
+// If the Customer object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *CustomerMutation) OldPassword(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldPassword is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldPassword requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPassword: %w", err)
+	}
+	return oldValue.Password, nil
+}
+
+// ResetPassword reset all changes of the "password" field.
+func (m *CustomerMutation) ResetPassword() {
+	m.password = nil
+}
+
 // AddReserfIDs adds the reserves edge to ReserveRoom by ids.
 func (m *CustomerMutation) AddReserfIDs(ids ...int) {
 	if m.reserves == nil {
@@ -1871,12 +2025,15 @@ func (m *CustomerMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *CustomerMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 3)
 	if m.name != nil {
 		fields = append(fields, customer.FieldName)
 	}
 	if m.email != nil {
 		fields = append(fields, customer.FieldEmail)
+	}
+	if m.password != nil {
+		fields = append(fields, customer.FieldPassword)
 	}
 	return fields
 }
@@ -1890,6 +2047,8 @@ func (m *CustomerMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case customer.FieldEmail:
 		return m.Email()
+	case customer.FieldPassword:
+		return m.Password()
 	}
 	return nil, false
 }
@@ -1903,6 +2062,8 @@ func (m *CustomerMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldName(ctx)
 	case customer.FieldEmail:
 		return m.OldEmail(ctx)
+	case customer.FieldPassword:
+		return m.OldPassword(ctx)
 	}
 	return nil, fmt.Errorf("unknown Customer field %s", name)
 }
@@ -1925,6 +2086,13 @@ func (m *CustomerMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEmail(v)
+		return nil
+	case customer.FieldPassword:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPassword(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Customer field %s", name)
@@ -1981,6 +2149,9 @@ func (m *CustomerMutation) ResetField(name string) error {
 		return nil
 	case customer.FieldEmail:
 		m.ResetEmail()
+		return nil
+	case customer.FieldPassword:
+		m.ResetPassword()
 		return nil
 	}
 	return fmt.Errorf("unknown Customer field %s", name)
@@ -2128,6 +2299,8 @@ type DataRoomMutation struct {
 	removedfixs       map[int]struct{}
 	details           map[int]struct{}
 	removeddetails    map[int]struct{}
+	checkins          map[int]struct{}
+	removedcheckins   map[int]struct{}
 	promotion         *int
 	clearedpromotion  bool
 	statusroom        *int
@@ -2437,6 +2610,48 @@ func (m *DataRoomMutation) ResetDetails() {
 	m.removeddetails = nil
 }
 
+// AddCheckinIDs adds the checkins edge to CheckIn by ids.
+func (m *DataRoomMutation) AddCheckinIDs(ids ...int) {
+	if m.checkins == nil {
+		m.checkins = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.checkins[ids[i]] = struct{}{}
+	}
+}
+
+// RemoveCheckinIDs removes the checkins edge to CheckIn by ids.
+func (m *DataRoomMutation) RemoveCheckinIDs(ids ...int) {
+	if m.removedcheckins == nil {
+		m.removedcheckins = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedcheckins[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedCheckins returns the removed ids of checkins.
+func (m *DataRoomMutation) RemovedCheckinsIDs() (ids []int) {
+	for id := range m.removedcheckins {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// CheckinsIDs returns the checkins ids in the mutation.
+func (m *DataRoomMutation) CheckinsIDs() (ids []int) {
+	for id := range m.checkins {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetCheckins reset all changes of the "checkins" edge.
+func (m *DataRoomMutation) ResetCheckins() {
+	m.checkins = nil
+	m.removedcheckins = nil
+}
+
 // SetPromotionID sets the promotion edge to Promotion by id.
 func (m *DataRoomMutation) SetPromotionID(id int) {
 	m.promotion = &id
@@ -2701,7 +2916,7 @@ func (m *DataRoomMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *DataRoomMutation) AddedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.reserves != nil {
 		edges = append(edges, dataroom.EdgeReserves)
 	}
@@ -2710,6 +2925,9 @@ func (m *DataRoomMutation) AddedEdges() []string {
 	}
 	if m.details != nil {
 		edges = append(edges, dataroom.EdgeDetails)
+	}
+	if m.checkins != nil {
+		edges = append(edges, dataroom.EdgeCheckins)
 	}
 	if m.promotion != nil {
 		edges = append(edges, dataroom.EdgePromotion)
@@ -2745,6 +2963,12 @@ func (m *DataRoomMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case dataroom.EdgeCheckins:
+		ids := make([]ent.Value, 0, len(m.checkins))
+		for id := range m.checkins {
+			ids = append(ids, id)
+		}
+		return ids
 	case dataroom.EdgePromotion:
 		if id := m.promotion; id != nil {
 			return []ent.Value{*id}
@@ -2764,7 +2988,7 @@ func (m *DataRoomMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *DataRoomMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.removedreserves != nil {
 		edges = append(edges, dataroom.EdgeReserves)
 	}
@@ -2773,6 +2997,9 @@ func (m *DataRoomMutation) RemovedEdges() []string {
 	}
 	if m.removeddetails != nil {
 		edges = append(edges, dataroom.EdgeDetails)
+	}
+	if m.removedcheckins != nil {
+		edges = append(edges, dataroom.EdgeCheckins)
 	}
 	return edges
 }
@@ -2799,6 +3026,12 @@ func (m *DataRoomMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case dataroom.EdgeCheckins:
+		ids := make([]ent.Value, 0, len(m.removedcheckins))
+		for id := range m.removedcheckins {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -2806,7 +3039,7 @@ func (m *DataRoomMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *DataRoomMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.clearedpromotion {
 		edges = append(edges, dataroom.EdgePromotion)
 	}
@@ -2863,6 +3096,9 @@ func (m *DataRoomMutation) ResetEdge(name string) error {
 		return nil
 	case dataroom.EdgeDetails:
 		m.ResetDetails()
+		return nil
+	case dataroom.EdgeCheckins:
+		m.ResetCheckins()
 		return nil
 	case dataroom.EdgePromotion:
 		m.ResetPromotion()
@@ -5180,6 +5416,8 @@ type ReserveRoomMutation struct {
 	clearedpromotion bool
 	room             *int
 	clearedroom      bool
+	status           *int
+	clearedstatus    bool
 	checkins         map[int]struct{}
 	removedcheckins  map[int]struct{}
 	done             bool
@@ -5513,6 +5751,45 @@ func (m *ReserveRoomMutation) ResetRoom() {
 	m.clearedroom = false
 }
 
+// SetStatusID sets the status edge to StatusReserve by id.
+func (m *ReserveRoomMutation) SetStatusID(id int) {
+	m.status = &id
+}
+
+// ClearStatus clears the status edge to StatusReserve.
+func (m *ReserveRoomMutation) ClearStatus() {
+	m.clearedstatus = true
+}
+
+// StatusCleared returns if the edge status was cleared.
+func (m *ReserveRoomMutation) StatusCleared() bool {
+	return m.clearedstatus
+}
+
+// StatusID returns the status id in the mutation.
+func (m *ReserveRoomMutation) StatusID() (id int, exists bool) {
+	if m.status != nil {
+		return *m.status, true
+	}
+	return
+}
+
+// StatusIDs returns the status ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// StatusID instead. It exists only for internal usage by the builders.
+func (m *ReserveRoomMutation) StatusIDs() (ids []int) {
+	if id := m.status; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetStatus reset all changes of the "status" edge.
+func (m *ReserveRoomMutation) ResetStatus() {
+	m.status = nil
+	m.clearedstatus = false
+}
+
 // AddCheckinIDs adds the checkins edge to CheckIn by ids.
 func (m *ReserveRoomMutation) AddCheckinIDs(ids ...int) {
 	if m.checkins == nil {
@@ -5719,7 +5996,7 @@ func (m *ReserveRoomMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *ReserveRoomMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.customer != nil {
 		edges = append(edges, reserveroom.EdgeCustomer)
 	}
@@ -5728,6 +6005,9 @@ func (m *ReserveRoomMutation) AddedEdges() []string {
 	}
 	if m.room != nil {
 		edges = append(edges, reserveroom.EdgeRoom)
+	}
+	if m.status != nil {
+		edges = append(edges, reserveroom.EdgeStatus)
 	}
 	if m.checkins != nil {
 		edges = append(edges, reserveroom.EdgeCheckins)
@@ -5751,6 +6031,10 @@ func (m *ReserveRoomMutation) AddedIDs(name string) []ent.Value {
 		if id := m.room; id != nil {
 			return []ent.Value{*id}
 		}
+	case reserveroom.EdgeStatus:
+		if id := m.status; id != nil {
+			return []ent.Value{*id}
+		}
 	case reserveroom.EdgeCheckins:
 		ids := make([]ent.Value, 0, len(m.checkins))
 		for id := range m.checkins {
@@ -5764,7 +6048,7 @@ func (m *ReserveRoomMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *ReserveRoomMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.removedcheckins != nil {
 		edges = append(edges, reserveroom.EdgeCheckins)
 	}
@@ -5788,7 +6072,7 @@ func (m *ReserveRoomMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *ReserveRoomMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.clearedcustomer {
 		edges = append(edges, reserveroom.EdgeCustomer)
 	}
@@ -5797,6 +6081,9 @@ func (m *ReserveRoomMutation) ClearedEdges() []string {
 	}
 	if m.clearedroom {
 		edges = append(edges, reserveroom.EdgeRoom)
+	}
+	if m.clearedstatus {
+		edges = append(edges, reserveroom.EdgeStatus)
 	}
 	return edges
 }
@@ -5811,6 +6098,8 @@ func (m *ReserveRoomMutation) EdgeCleared(name string) bool {
 		return m.clearedpromotion
 	case reserveroom.EdgeRoom:
 		return m.clearedroom
+	case reserveroom.EdgeStatus:
+		return m.clearedstatus
 	}
 	return false
 }
@@ -5827,6 +6116,9 @@ func (m *ReserveRoomMutation) ClearEdge(name string) error {
 		return nil
 	case reserveroom.EdgeRoom:
 		m.ClearRoom()
+		return nil
+	case reserveroom.EdgeStatus:
+		m.ClearStatus()
 		return nil
 	}
 	return fmt.Errorf("unknown ReserveRoom unique edge %s", name)
@@ -5845,6 +6137,9 @@ func (m *ReserveRoomMutation) ResetEdge(name string) error {
 		return nil
 	case reserveroom.EdgeRoom:
 		m.ResetRoom()
+		return nil
+	case reserveroom.EdgeStatus:
+		m.ResetStatus()
 		return nil
 	case reserveroom.EdgeCheckins:
 		m.ResetCheckins()
@@ -6219,6 +6514,374 @@ func (m *StatusMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Status edge %s", name)
+}
+
+// StatusReserveMutation represents an operation that mutate the StatusReserves
+// nodes in the graph.
+type StatusReserveMutation struct {
+	config
+	op              Op
+	typ             string
+	id              *int
+	status_name     *string
+	clearedFields   map[string]struct{}
+	reserves        map[int]struct{}
+	removedreserves map[int]struct{}
+	done            bool
+	oldValue        func(context.Context) (*StatusReserve, error)
+}
+
+var _ ent.Mutation = (*StatusReserveMutation)(nil)
+
+// statusreserveOption allows to manage the mutation configuration using functional options.
+type statusreserveOption func(*StatusReserveMutation)
+
+// newStatusReserveMutation creates new mutation for $n.Name.
+func newStatusReserveMutation(c config, op Op, opts ...statusreserveOption) *StatusReserveMutation {
+	m := &StatusReserveMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeStatusReserve,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withStatusReserveID sets the id field of the mutation.
+func withStatusReserveID(id int) statusreserveOption {
+	return func(m *StatusReserveMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *StatusReserve
+		)
+		m.oldValue = func(ctx context.Context) (*StatusReserve, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().StatusReserve.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withStatusReserve sets the old StatusReserve of the mutation.
+func withStatusReserve(node *StatusReserve) statusreserveOption {
+	return func(m *StatusReserveMutation) {
+		m.oldValue = func(context.Context) (*StatusReserve, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m StatusReserveMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m StatusReserveMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *StatusReserveMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetStatusName sets the status_name field.
+func (m *StatusReserveMutation) SetStatusName(s string) {
+	m.status_name = &s
+}
+
+// StatusName returns the status_name value in the mutation.
+func (m *StatusReserveMutation) StatusName() (r string, exists bool) {
+	v := m.status_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatusName returns the old status_name value of the StatusReserve.
+// If the StatusReserve object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *StatusReserveMutation) OldStatusName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStatusName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStatusName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatusName: %w", err)
+	}
+	return oldValue.StatusName, nil
+}
+
+// ResetStatusName reset all changes of the "status_name" field.
+func (m *StatusReserveMutation) ResetStatusName() {
+	m.status_name = nil
+}
+
+// AddReserfIDs adds the reserves edge to ReserveRoom by ids.
+func (m *StatusReserveMutation) AddReserfIDs(ids ...int) {
+	if m.reserves == nil {
+		m.reserves = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.reserves[ids[i]] = struct{}{}
+	}
+}
+
+// RemoveReserfIDs removes the reserves edge to ReserveRoom by ids.
+func (m *StatusReserveMutation) RemoveReserfIDs(ids ...int) {
+	if m.removedreserves == nil {
+		m.removedreserves = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedreserves[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedReserves returns the removed ids of reserves.
+func (m *StatusReserveMutation) RemovedReservesIDs() (ids []int) {
+	for id := range m.removedreserves {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ReservesIDs returns the reserves ids in the mutation.
+func (m *StatusReserveMutation) ReservesIDs() (ids []int) {
+	for id := range m.reserves {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetReserves reset all changes of the "reserves" edge.
+func (m *StatusReserveMutation) ResetReserves() {
+	m.reserves = nil
+	m.removedreserves = nil
+}
+
+// Op returns the operation name.
+func (m *StatusReserveMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (StatusReserve).
+func (m *StatusReserveMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *StatusReserveMutation) Fields() []string {
+	fields := make([]string, 0, 1)
+	if m.status_name != nil {
+		fields = append(fields, statusreserve.FieldStatusName)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *StatusReserveMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case statusreserve.FieldStatusName:
+		return m.StatusName()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *StatusReserveMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case statusreserve.FieldStatusName:
+		return m.OldStatusName(ctx)
+	}
+	return nil, fmt.Errorf("unknown StatusReserve field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *StatusReserveMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case statusreserve.FieldStatusName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatusName(v)
+		return nil
+	}
+	return fmt.Errorf("unknown StatusReserve field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *StatusReserveMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *StatusReserveMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *StatusReserveMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown StatusReserve numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *StatusReserveMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *StatusReserveMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *StatusReserveMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown StatusReserve nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *StatusReserveMutation) ResetField(name string) error {
+	switch name {
+	case statusreserve.FieldStatusName:
+		m.ResetStatusName()
+		return nil
+	}
+	return fmt.Errorf("unknown StatusReserve field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *StatusReserveMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.reserves != nil {
+		edges = append(edges, statusreserve.EdgeReserves)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *StatusReserveMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case statusreserve.EdgeReserves:
+		ids := make([]ent.Value, 0, len(m.reserves))
+		for id := range m.reserves {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *StatusReserveMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedreserves != nil {
+		edges = append(edges, statusreserve.EdgeReserves)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *StatusReserveMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case statusreserve.EdgeReserves:
+		ids := make([]ent.Value, 0, len(m.removedreserves))
+		for id := range m.removedreserves {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *StatusReserveMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *StatusReserveMutation) EdgeCleared(name string) bool {
+	switch name {
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *StatusReserveMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown StatusReserve unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *StatusReserveMutation) ResetEdge(name string) error {
+	switch name {
+	case statusreserve.EdgeReserves:
+		m.ResetReserves()
+		return nil
+	}
+	return fmt.Errorf("unknown StatusReserve edge %s", name)
 }
 
 // StatusRoomMutation represents an operation that mutate the StatusRooms

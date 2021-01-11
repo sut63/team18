@@ -3,9 +3,6 @@
 package ent
 
 import (
-	"time"
-
-	"github.com/team18/app/ent/checkin"
 	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/customer"
 	"github.com/team18/app/ent/dataroom"
@@ -13,6 +10,7 @@ import (
 	"github.com/team18/app/ent/promotion"
 	"github.com/team18/app/ent/reserveroom"
 	"github.com/team18/app/ent/schema"
+	"github.com/team18/app/ent/statusreserve"
 	"github.com/team18/app/ent/statusroom"
 	"github.com/team18/app/ent/typeroom"
 )
@@ -21,20 +19,18 @@ import (
 // code (default values, validators or hooks) and stitches it
 // to their package variables.
 func init() {
-	checkinFields := schema.CheckIn{}.Fields()
-	_ = checkinFields
-	// checkinDescCheckinDate is the schema descriptor for checkin_date field.
-	checkinDescCheckinDate := checkinFields[0].Descriptor()
-	// checkin.DefaultCheckinDate holds the default value on creation for the checkin_date field.
-	checkin.DefaultCheckinDate = checkinDescCheckinDate.Default.(func() time.Time)
 	counterstaffFields := schema.CounterStaff{}.Fields()
 	_ = counterstaffFields
 	// counterstaffDescName is the schema descriptor for name field.
 	counterstaffDescName := counterstaffFields[0].Descriptor()
 	// counterstaff.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	counterstaff.NameValidator = counterstaffDescName.Validators[0].(func(string) error)
+	// counterstaffDescEmail is the schema descriptor for email field.
+	counterstaffDescEmail := counterstaffFields[1].Descriptor()
+	// counterstaff.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	counterstaff.EmailValidator = counterstaffDescEmail.Validators[0].(func(string) error)
 	// counterstaffDescPassword is the schema descriptor for password field.
-	counterstaffDescPassword := counterstaffFields[1].Descriptor()
+	counterstaffDescPassword := counterstaffFields[2].Descriptor()
 	// counterstaff.PasswordValidator is a validator for the "password" field. It is called by the builders before save.
 	counterstaff.PasswordValidator = counterstaffDescPassword.Validators[0].(func(string) error)
 	customerFields := schema.Customer{}.Fields()
@@ -47,6 +43,10 @@ func init() {
 	customerDescEmail := customerFields[1].Descriptor()
 	// customer.EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	customer.EmailValidator = customerDescEmail.Validators[0].(func(string) error)
+	// customerDescPassword is the schema descriptor for password field.
+	customerDescPassword := customerFields[2].Descriptor()
+	// customer.PasswordValidator is a validator for the "password" field. It is called by the builders before save.
+	customer.PasswordValidator = customerDescPassword.Validators[0].(func(string) error)
 	dataroomFields := schema.DataRoom{}.Fields()
 	_ = dataroomFields
 	// dataroomDescPrice is the schema descriptor for price field.
@@ -79,6 +79,12 @@ func init() {
 	reserveroomDescNetPrice := reserveroomFields[2].Descriptor()
 	// reserveroom.NetPriceValidator is a validator for the "net_price" field. It is called by the builders before save.
 	reserveroom.NetPriceValidator = reserveroomDescNetPrice.Validators[0].(func(float64) error)
+	statusreserveFields := schema.StatusReserve{}.Fields()
+	_ = statusreserveFields
+	// statusreserveDescStatusName is the schema descriptor for status_name field.
+	statusreserveDescStatusName := statusreserveFields[0].Descriptor()
+	// statusreserve.StatusNameValidator is a validator for the "status_name" field. It is called by the builders before save.
+	statusreserve.StatusNameValidator = statusreserveDescStatusName.Validators[0].(func(string) error)
 	statusroomFields := schema.StatusRoom{}.Fields()
 	_ = statusroomFields
 	// statusroomDescStatusName is the schema descriptor for status_name field.

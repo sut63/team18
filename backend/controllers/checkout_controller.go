@@ -8,7 +8,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/team18/app/ent"
+	"github.com/team18/app/ent/checkin"
 	"github.com/team18/app/ent/checkout"
+	"github.com/team18/app/ent/counterstaff"
+	"github.com/team18/app/ent/status"
 )
 
 // CheckoutController defines the struct for the checkout controller
@@ -47,12 +50,49 @@ func (ctl *CheckoutController) CreateCheckout(c *gin.Context) {
 	t1 := time.Now()
 	t2 := t1.Format("2006-01-02T15:04:05Z07:00")
 	time, err := time.Parse(time.RFC3339, t2)
+
+	cou, err := ctl.client.CounterStaff.
+		Query().
+		Where(counterstaff.IDEQ(int(obj.CounterstaffsID))).
+		Only(context.Background())
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "CounterStaff not found",
+		})
+		return
+	}
+
+	st, err := ctl.client.Status.
+		Query().
+		Where(status.IDEQ(int(obj.CounterstaffsID))).
+		Only(context.Background())
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "Status not found",
+		})
+		return
+	}
+
+	ci, err := ctl.client.CheckIn.
+		Query().
+		Where(checkin.IDEQ(int(obj.CheckinsID))).
+		Only(context.Background())
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "CounterStaff not found",
+		})
+		return
+	}
+
 	u, err := ctl.client.Checkout.
 		Create().
 		SetCheckoutDate(time).
-		SetStatussID(obj.StatussID).
-		SetCounterstaffsID(obj.CounterstaffsID).
-		SetCheckinsID(obj.CheckinsID).
+		SetStatuss(st).
+		SetCounterstaffs(cou).
+		SetCheckins(ci).
 		Save(context.Background())
 	if err != nil {
 		c.JSON(400, gin.H{

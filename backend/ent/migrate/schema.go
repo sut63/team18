@@ -14,6 +14,7 @@ var (
 		{Name: "checkin_date", Type: field.TypeTime},
 		{Name: "staff_id", Type: field.TypeInt, Nullable: true},
 		{Name: "customer_id", Type: field.TypeInt, Nullable: true},
+		{Name: "room_id", Type: field.TypeInt, Nullable: true},
 		{Name: "reserves_id", Type: field.TypeInt, Nullable: true},
 	}
 	// CheckInsTable holds the schema information for the "check_ins" table.
@@ -37,8 +38,15 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:  "check_ins_reserve_rooms_checkins",
+				Symbol:  "check_ins_data_rooms_checkins",
 				Columns: []*schema.Column{CheckInsColumns[4]},
+
+				RefColumns: []*schema.Column{DataRoomsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "check_ins_reserve_rooms_checkins",
+				Columns: []*schema.Column{CheckInsColumns[5]},
 
 				RefColumns: []*schema.Column{ReserveRoomsColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -86,6 +94,7 @@ var (
 	CounterStaffsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "email", Type: field.TypeString, Unique: true},
 		{Name: "password", Type: field.TypeString, Unique: true},
 	}
 	// CounterStaffsTable holds the schema information for the "counter_staffs" table.
@@ -100,6 +109,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "email", Type: field.TypeString, Unique: true},
+		{Name: "password", Type: field.TypeString, Unique: true},
 	}
 	// CustomersTable holds the schema information for the "customers" table.
 	CustomersTable = &schema.Table{
@@ -266,6 +276,7 @@ var (
 		{Name: "customer_id", Type: field.TypeInt, Nullable: true},
 		{Name: "room_id", Type: field.TypeInt, Nullable: true},
 		{Name: "promotion_id", Type: field.TypeInt, Nullable: true},
+		{Name: "status_id", Type: field.TypeInt, Nullable: true},
 	}
 	// ReserveRoomsTable holds the schema information for the "reserve_rooms" table.
 	ReserveRoomsTable = &schema.Table{
@@ -294,6 +305,13 @@ var (
 				RefColumns: []*schema.Column{PromotionsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
+			{
+				Symbol:  "reserve_rooms_status_reserves_reserves",
+				Columns: []*schema.Column{ReserveRoomsColumns[7]},
+
+				RefColumns: []*schema.Column{StatusReservesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
 		},
 	}
 	// StatusColumns holds the columns for the "status" table.
@@ -308,10 +326,22 @@ var (
 		PrimaryKey:  []*schema.Column{StatusColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// StatusReservesColumns holds the columns for the "status_reserves" table.
+	StatusReservesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "status_name", Type: field.TypeString, Unique: true},
+	}
+	// StatusReservesTable holds the schema information for the "status_reserves" table.
+	StatusReservesTable = &schema.Table{
+		Name:        "status_reserves",
+		Columns:     StatusReservesColumns,
+		PrimaryKey:  []*schema.Column{StatusReservesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// StatusRoomsColumns holds the columns for the "status_rooms" table.
 	StatusRoomsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "status_name", Type: field.TypeString},
+		{Name: "status_name", Type: field.TypeString, Unique: true},
 	}
 	// StatusRoomsTable holds the schema information for the "status_rooms" table.
 	StatusRoomsTable = &schema.Table{
@@ -323,7 +353,7 @@ var (
 	// TypeRoomsColumns holds the columns for the "type_rooms" table.
 	TypeRoomsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "type_name", Type: field.TypeString},
+		{Name: "type_name", Type: field.TypeString, Unique: true},
 	}
 	// TypeRoomsTable holds the schema information for the "type_rooms" table.
 	TypeRoomsTable = &schema.Table{
@@ -346,6 +376,7 @@ var (
 		PromotionsTable,
 		ReserveRoomsTable,
 		StatusTable,
+		StatusReservesTable,
 		StatusRoomsTable,
 		TypeRoomsTable,
 	}
@@ -354,7 +385,8 @@ var (
 func init() {
 	CheckInsTable.ForeignKeys[0].RefTable = CounterStaffsTable
 	CheckInsTable.ForeignKeys[1].RefTable = CustomersTable
-	CheckInsTable.ForeignKeys[2].RefTable = ReserveRoomsTable
+	CheckInsTable.ForeignKeys[2].RefTable = DataRoomsTable
+	CheckInsTable.ForeignKeys[3].RefTable = ReserveRoomsTable
 	CheckoutsTable.ForeignKeys[0].RefTable = CheckInsTable
 	CheckoutsTable.ForeignKeys[1].RefTable = CounterStaffsTable
 	CheckoutsTable.ForeignKeys[2].RefTable = StatusTable
@@ -370,4 +402,5 @@ func init() {
 	ReserveRoomsTable.ForeignKeys[0].RefTable = CustomersTable
 	ReserveRoomsTable.ForeignKeys[1].RefTable = DataRoomsTable
 	ReserveRoomsTable.ForeignKeys[2].RefTable = PromotionsTable
+	ReserveRoomsTable.ForeignKeys[3].RefTable = StatusReservesTable
 }

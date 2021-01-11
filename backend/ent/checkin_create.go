@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/team18/app/ent/checkout"
 	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/customer"
+	"github.com/team18/app/ent/dataroom"
 	"github.com/team18/app/ent/reserveroom"
 )
 
@@ -26,14 +28,6 @@ type CheckInCreate struct {
 // SetCheckinDate sets the checkin_date field.
 func (cic *CheckInCreate) SetCheckinDate(t time.Time) *CheckInCreate {
 	cic.mutation.SetCheckinDate(t)
-	return cic
-}
-
-// SetNillableCheckinDate sets the checkin_date field if the given value is not nil.
-func (cic *CheckInCreate) SetNillableCheckinDate(t *time.Time) *CheckInCreate {
-	if t != nil {
-		cic.SetCheckinDate(*t)
-	}
 	return cic
 }
 
@@ -94,6 +88,25 @@ func (cic *CheckInCreate) SetReserveroom(r *ReserveRoom) *CheckInCreate {
 	return cic.SetReserveroomID(r.ID)
 }
 
+// SetDataroomID sets the dataroom edge to DataRoom by id.
+func (cic *CheckInCreate) SetDataroomID(id int) *CheckInCreate {
+	cic.mutation.SetDataroomID(id)
+	return cic
+}
+
+// SetNillableDataroomID sets the dataroom edge to DataRoom by id if the given value is not nil.
+func (cic *CheckInCreate) SetNillableDataroomID(id *int) *CheckInCreate {
+	if id != nil {
+		cic = cic.SetDataroomID(*id)
+	}
+	return cic
+}
+
+// SetDataroom sets the dataroom edge to DataRoom.
+func (cic *CheckInCreate) SetDataroom(d *DataRoom) *CheckInCreate {
+	return cic.SetDataroomID(d.ID)
+}
+
 // SetCheckoutsID sets the checkouts edge to Checkout by id.
 func (cic *CheckInCreate) SetCheckoutsID(id int) *CheckInCreate {
 	cic.mutation.SetCheckoutsID(id)
@@ -121,8 +134,7 @@ func (cic *CheckInCreate) Mutation() *CheckInMutation {
 // Save creates the CheckIn in the database.
 func (cic *CheckInCreate) Save(ctx context.Context) (*CheckIn, error) {
 	if _, ok := cic.mutation.CheckinDate(); !ok {
-		v := checkin.DefaultCheckinDate()
-		cic.mutation.SetCheckinDate(v)
+		return nil, &ValidationError{Name: "checkin_date", err: errors.New("ent: missing required field \"checkin_date\"")}
 	}
 	var (
 		err  error
@@ -241,6 +253,25 @@ func (cic *CheckInCreate) createSpec() (*CheckIn, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: reserveroom.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := cic.mutation.DataroomIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   checkin.DataroomTable,
+			Columns: []string{checkin.DataroomColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: dataroom.FieldID,
 				},
 			},
 		}

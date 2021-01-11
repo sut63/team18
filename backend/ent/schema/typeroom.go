@@ -14,7 +14,7 @@ type TypeRoom struct {
 // Fields of the TypeRoom.
 func (TypeRoom) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("type_name").NotEmpty(),
+		field.String("type_name").NotEmpty().Unique(),
 	}
 }
 

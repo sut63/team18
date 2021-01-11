@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC , useEffect } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,6 +12,11 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { Cookies } from '../../Cookie';
+import { DefaultApi } from '../../api/apis'; 
+import { EntCounterStaff, EntCustomer } from '../../api';
+import { ApiProvider } from '@backstage/core';
+import { Link as RouterLink } from 'react-router-dom';
 
 function Copyright() {
   return (
@@ -47,7 +52,52 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const SignIn: FC<{}> = () => {
+
   const classes = useStyles();
+  const api = new DefaultApi();
+  var ck = new Cookies();
+  var check : boolean
+  const [path, setPath] = React.useState("");
+
+  // list CounterStaff
+  const [counter,setCounter] = React.useState<EntCustomer[]>([])
+  const listCounter = async() => {
+        const res = await api.listCustomer({})
+        setCounter(res)
+  }
+
+  // setEmail
+  const [email, setEmail] = React.useState()
+  const handleEmail = (event : any) => {
+      setEmail(event.target.value)
+  }
+
+  // setPassword
+  const [password, setPassword] = React.useState()
+  const handlePassword = (event : any) => {
+      setPassword(event.target.value)
+  }
+
+  // handleCookies
+  function handleCookies() {
+    check = ck.CheckLogin(counter,email,password)
+    console.log("check => "+check)
+    if(check === true){
+      setPath("/WelcomePage")
+      ck.SetCookie("user_email",email,30)
+      ck.SetCookie("user_id",ck.SetID(counter,email,password),30)
+      ck.SetCookie("user_role","customer",30)
+      window.location.reload(false)
+    }else if(check === false){
+      alert("The wrong password or email was entered.!!!")
+      setPath("/")
+    }
+  }
+  // useEffect
+  useEffect(() => {
+      listCounter()
+  },[])
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -69,6 +119,7 @@ const SignIn: FC<{}> = () => {
             name="email"
             autoComplete="email"
             autoFocus
+            onChange={handleEmail}
           />
           <TextField
             variant="outlined"
@@ -80,10 +131,7 @@ const SignIn: FC<{}> = () => {
             type="password"
             id="password"
             autoComplete="current-password"
-          />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
+            onChange={handlePassword}
           />
           <Button
             type="submit"
@@ -91,26 +139,14 @@ const SignIn: FC<{}> = () => {
             variant="contained"
             color="primary"
             className={classes.submit}
+            onClick={handleCookies}
+            component={RouterLink}
+            to={path}
           >
             Sign In
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link href="#" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
-          </Grid>
         </form>
       </div>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
     </Container>
   );
 };

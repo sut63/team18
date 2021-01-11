@@ -9,6 +9,7 @@ import (
 	"github.com/facebookincubator/ent/dialect/sql"
 	"github.com/facebookincubator/ent/dialect/sql/sqlgraph"
 	"github.com/facebookincubator/ent/schema/field"
+	"github.com/team18/app/ent/checkin"
 	"github.com/team18/app/ent/dataroom"
 	"github.com/team18/app/ent/fixroom"
 	"github.com/team18/app/ent/furnituredetail"
@@ -95,6 +96,21 @@ func (dru *DataRoomUpdate) AddDetails(f ...*FurnitureDetail) *DataRoomUpdate {
 		ids[i] = f[i].ID
 	}
 	return dru.AddDetailIDs(ids...)
+}
+
+// AddCheckinIDs adds the checkins edge to CheckIn by ids.
+func (dru *DataRoomUpdate) AddCheckinIDs(ids ...int) *DataRoomUpdate {
+	dru.mutation.AddCheckinIDs(ids...)
+	return dru
+}
+
+// AddCheckins adds the checkins edges to CheckIn.
+func (dru *DataRoomUpdate) AddCheckins(c ...*CheckIn) *DataRoomUpdate {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return dru.AddCheckinIDs(ids...)
 }
 
 // SetPromotionID sets the promotion edge to Promotion by id.
@@ -202,6 +218,21 @@ func (dru *DataRoomUpdate) RemoveDetails(f ...*FurnitureDetail) *DataRoomUpdate 
 		ids[i] = f[i].ID
 	}
 	return dru.RemoveDetailIDs(ids...)
+}
+
+// RemoveCheckinIDs removes the checkins edge to CheckIn by ids.
+func (dru *DataRoomUpdate) RemoveCheckinIDs(ids ...int) *DataRoomUpdate {
+	dru.mutation.RemoveCheckinIDs(ids...)
+	return dru
+}
+
+// RemoveCheckins removes checkins edges to CheckIn.
+func (dru *DataRoomUpdate) RemoveCheckins(c ...*CheckIn) *DataRoomUpdate {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return dru.RemoveCheckinIDs(ids...)
 }
 
 // ClearPromotion clears the promotion edge to Promotion.
@@ -437,6 +468,44 @@ func (dru *DataRoomUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if nodes := dru.mutation.RemovedCheckinsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   dataroom.CheckinsTable,
+			Columns: []string{dataroom.CheckinsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: checkin.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := dru.mutation.CheckinsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   dataroom.CheckinsTable,
+			Columns: []string{dataroom.CheckinsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: checkin.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if dru.mutation.PromotionCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -624,6 +693,21 @@ func (druo *DataRoomUpdateOne) AddDetails(f ...*FurnitureDetail) *DataRoomUpdate
 	return druo.AddDetailIDs(ids...)
 }
 
+// AddCheckinIDs adds the checkins edge to CheckIn by ids.
+func (druo *DataRoomUpdateOne) AddCheckinIDs(ids ...int) *DataRoomUpdateOne {
+	druo.mutation.AddCheckinIDs(ids...)
+	return druo
+}
+
+// AddCheckins adds the checkins edges to CheckIn.
+func (druo *DataRoomUpdateOne) AddCheckins(c ...*CheckIn) *DataRoomUpdateOne {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return druo.AddCheckinIDs(ids...)
+}
+
 // SetPromotionID sets the promotion edge to Promotion by id.
 func (druo *DataRoomUpdateOne) SetPromotionID(id int) *DataRoomUpdateOne {
 	druo.mutation.SetPromotionID(id)
@@ -729,6 +813,21 @@ func (druo *DataRoomUpdateOne) RemoveDetails(f ...*FurnitureDetail) *DataRoomUpd
 		ids[i] = f[i].ID
 	}
 	return druo.RemoveDetailIDs(ids...)
+}
+
+// RemoveCheckinIDs removes the checkins edge to CheckIn by ids.
+func (druo *DataRoomUpdateOne) RemoveCheckinIDs(ids ...int) *DataRoomUpdateOne {
+	druo.mutation.RemoveCheckinIDs(ids...)
+	return druo
+}
+
+// RemoveCheckins removes checkins edges to CheckIn.
+func (druo *DataRoomUpdateOne) RemoveCheckins(c ...*CheckIn) *DataRoomUpdateOne {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return druo.RemoveCheckinIDs(ids...)
 }
 
 // ClearPromotion clears the promotion edge to Promotion.
@@ -954,6 +1053,44 @@ func (druo *DataRoomUpdateOne) sqlSave(ctx context.Context) (dr *DataRoom, err e
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: furnituredetail.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if nodes := druo.mutation.RemovedCheckinsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   dataroom.CheckinsTable,
+			Columns: []string{dataroom.CheckinsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: checkin.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := druo.mutation.CheckinsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   dataroom.CheckinsTable,
+			Columns: []string{dataroom.CheckinsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: checkin.FieldID,
 				},
 			},
 		}

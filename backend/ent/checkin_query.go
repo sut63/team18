@@ -16,6 +16,7 @@ import (
 	"github.com/team18/app/ent/checkout"
 	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/customer"
+	"github.com/team18/app/ent/dataroom"
 	"github.com/team18/app/ent/predicate"
 	"github.com/team18/app/ent/reserveroom"
 )
@@ -32,6 +33,7 @@ type CheckInQuery struct {
 	withCustomer    *CustomerQuery
 	withCounter     *CounterStaffQuery
 	withReserveroom *ReserveRoomQuery
+	withDataroom    *DataRoomQuery
 	withCheckouts   *CheckoutQuery
 	withFKs         bool
 	// intermediate query (i.e. traversal path).
@@ -110,6 +112,24 @@ func (ciq *CheckInQuery) QueryReserveroom() *ReserveRoomQuery {
 			sqlgraph.From(checkin.Table, checkin.FieldID, ciq.sqlQuery()),
 			sqlgraph.To(reserveroom.Table, reserveroom.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, checkin.ReserveroomTable, checkin.ReserveroomColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(ciq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryDataroom chains the current query on the dataroom edge.
+func (ciq *CheckInQuery) QueryDataroom() *DataRoomQuery {
+	query := &DataRoomQuery{config: ciq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ciq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(checkin.Table, checkin.FieldID, ciq.sqlQuery()),
+			sqlgraph.To(dataroom.Table, dataroom.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, checkin.DataroomTable, checkin.DataroomColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(ciq.driver.Dialect(), step)
 		return fromU, nil
@@ -347,6 +367,17 @@ func (ciq *CheckInQuery) WithReserveroom(opts ...func(*ReserveRoomQuery)) *Check
 	return ciq
 }
 
+//  WithDataroom tells the query-builder to eager-loads the nodes that are connected to
+// the "dataroom" edge. The optional arguments used to configure the query builder of the edge.
+func (ciq *CheckInQuery) WithDataroom(opts ...func(*DataRoomQuery)) *CheckInQuery {
+	query := &DataRoomQuery{config: ciq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	ciq.withDataroom = query
+	return ciq
+}
+
 //  WithCheckouts tells the query-builder to eager-loads the nodes that are connected to
 // the "checkouts" edge. The optional arguments used to configure the query builder of the edge.
 func (ciq *CheckInQuery) WithCheckouts(opts ...func(*CheckoutQuery)) *CheckInQuery {
@@ -425,14 +456,15 @@ func (ciq *CheckInQuery) sqlAll(ctx context.Context) ([]*CheckIn, error) {
 		nodes       = []*CheckIn{}
 		withFKs     = ciq.withFKs
 		_spec       = ciq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			ciq.withCustomer != nil,
 			ciq.withCounter != nil,
 			ciq.withReserveroom != nil,
+			ciq.withDataroom != nil,
 			ciq.withCheckouts != nil,
 		}
 	)
-	if ciq.withCustomer != nil || ciq.withCounter != nil || ciq.withReserveroom != nil {
+	if ciq.withCustomer != nil || ciq.withCounter != nil || ciq.withReserveroom != nil || ciq.withDataroom != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -533,6 +565,31 @@ func (ciq *CheckInQuery) sqlAll(ctx context.Context) ([]*CheckIn, error) {
 			}
 			for i := range nodes {
 				nodes[i].Edges.Reserveroom = n
+			}
+		}
+	}
+
+	if query := ciq.withDataroom; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*CheckIn)
+		for i := range nodes {
+			if fk := nodes[i].room_id; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(dataroom.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "room_id" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Dataroom = n
 			}
 		}
 	}

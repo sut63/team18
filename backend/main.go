@@ -22,6 +22,14 @@ type StatusRoom struct {
 	StatusName string
 }
 
+type StatusReserves struct {
+	StatusReserve []StatusReserve
+}
+
+type StatusReserve struct {
+	Status string
+}
+
 type TypeRooms struct {
 	TypeRoom []TypeRoom
 }
@@ -39,7 +47,27 @@ type Promotion struct {
 	Discount      float64
 }
 
-// @title SUT SA Example API
+type Customers struct {
+	Customer []Customer
+}
+
+type Customer struct {
+	name     string
+	email    string
+	password string
+}
+
+type CounterStaffs struct {
+	CounterStaff []CounterStaff
+}
+
+type CounterStaff struct {
+	name     string
+	email    string
+	password string
+}
+
+// @title SUT SE Example API
 // @version 1.0
 // @description This is a sample server for SUT SE 2563
 // @termsOfService http://swagger.io/terms/
@@ -83,7 +111,7 @@ func main() {
 	router := gin.Default()
 	router.Use(cors.Default())
 
-	client, err := ent.Open("sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+	client, err := ent.Open("sqlite3", "file:ent.db?cache=shared&_fk=1")
 	if err != nil {
 		log.Fatalf("fail to open sqlite3: %v", err)
 	}
@@ -94,11 +122,17 @@ func main() {
 	}
 
 	v1 := router.Group("/api/v1")
+	controllers.NewCheckinController(v1, client)
+	controllers.NewCheckoutController(v1, client)
+	controllers.NewCustomerController(v1, client)
 	controllers.NewDataRoomController(v1, client)
 	controllers.NewPromotionController(v1, client)
-	controllers.NewTypeRoomController(v1, client)
+	controllers.NewReserveRoomController(v1, client)
+	controllers.NewStatusController(v1, client)
+	controllers.NewStatusReserveController(v1, client)
 	controllers.NewStatusRoomController(v1, client)
-
+	controllers.NewTypeRoomController(v1, client)
+	controllers.NewCounterStaffController(v1, client)
 	// Set StatusRoom Data
 	statusrooms := StatusRooms{
 		StatusRoom: []StatusRoom{
@@ -133,7 +167,9 @@ func main() {
 	// Set Promotion Data
 	promotions := Promotions{
 		Promotion: []Promotion{
-			Promotion{"ปีใหม่", 120.50},
+			Promotion{"ปีใหม่", 1200.50},
+			Promotion{"สงกรานต์", 500},
+			Promotion{"ฮาโลวีน", 350},
 		},
 	}
 
@@ -142,6 +178,57 @@ func main() {
 			Create().
 			SetPromotionName(p.PromotionName).
 			SetDiscount(p.Discount).
+			Save(context.Background())
+	}
+
+	// Set Customers Data
+	customer := Customers{
+		Customer: []Customer{
+			Customer{"Bos", "bos@gmail.com", "bos123"},
+			Customer{"Noi", "noi@gmail.com", "noi666"},
+			Customer{"Best", "best@gmail.com", "best33"},
+			Customer{"Tongkong", "tongkong@gmail.com", "tong456"},
+			Customer{"Ta", "ta@gmail.com", "ta007"},
+			Customer{"Film", "film@gmail.com", "film89"},
+		},
+	}
+
+	for _, c := range customer.Customer {
+		client.Customer.
+			Create().
+			SetName(c.name).
+			SetEmail(c.email).
+			SetPassword(c.password).
+			Save(context.Background())
+	}
+
+	// Set StatusReserve Data
+	statusreserves := StatusReserves{
+		StatusReserve: []StatusReserve{
+			StatusReserve{"ยังไม่เข้าพัก"},
+			StatusReserve{"เข้าพัก"},
+		},
+	}
+	for _, sr := range statusreserves.StatusReserve {
+		client.StatusReserve.
+			Create().
+			SetStatusName(sr.Status).
+			Save(context.Background())
+	}
+
+	// Set CounterStaff Data
+	counterstaffs := CounterStaffs{
+		CounterStaff: []CounterStaff{
+			CounterStaff{"Staff No.1", "staff1@gmail.com", "1234"},
+			CounterStaff{"Staff No.2", "staff2@gmail.con", "abcd"},
+		},
+	}
+	for _, ct := range counterstaffs.CounterStaff {
+		client.CounterStaff.
+			Create().
+			SetName(ct.name).
+			SetEmail(ct.email).
+			SetPassword(ct.password).
 			Save(context.Background())
 	}
 
