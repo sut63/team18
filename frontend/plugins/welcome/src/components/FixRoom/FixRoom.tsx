@@ -21,9 +21,9 @@ import {
 } from '@material-ui/core';
 import { DefaultApi } from '../../api/apis'; // Api Gennerate From Command
 import { EntDataRoom } from '../../api/models/EntDataRoom';
-import { EntPromotion } from '../../api/models/EntPromotion';
 import { EntCustomer } from '../../api/models/EntCustomer';
-import { EntStatusReserve } from '../../api/models/EntStatusReserve';
+import { EntFurnitureDetail } from '../../api/models/EntFurnitureDetail';
+import { Cookies } from '../../Cookie'
 
 // header css
 const HeaderCustom = {
@@ -54,42 +54,50 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-interface reserve {
-  Rooms: number;
-  Promotions: number;
-  Customers: number;
-  Status: number;
-  ReserveDate: Date;
-  OutDate: Date;
-  NetPrice: number;
+interface FixRoom {
+  Room: number;
+  FurnitureDetail: number;
+  Customer: number;
+  FixDetail: string;
   // create_by: number;
 }
 
-const ReserveRoom: FC<{}> = () => {
+
+
+const FixRoom: FC<{}> = () => {
   const classes = useStyles();
   const api = new DefaultApi();
 
-  const [reserve_room, setReserveroom] = React.useState<Partial<reserve>>({});
+   // ดึงคุกกี้
+   var ck = new Cookies()
+   var cookieName = ck.GetCookie()
+   var cookieID = ck.GetID()
 
-  const [dataroom, setdataroom] = React.useState<EntDataRoom[]>([]);
-  const [room, setroom] = React.useState<EntDataRoom>();
+   //อันหลักสำหรับสร้าง การ reserve_room
+  const [FixRoom, setFixRoom] = React.useState<Partial<FixRoom>>({});
 
-  const [promotions, setPromotions] = React.useState<EntPromotion[]>([]);
-  const [promo, setPromo] = React.useState<EntPromotion>();
+  // data room List
+  const [DataRoom, setDataRoom] = React.useState<EntDataRoom[]>([]);
+  const getDataRoom = async () => {
+    const res = await api.listDataroom({ limit: 10, offset: 0 });
+    setDataRoom(res);
+  };
+  
+  
 
-  const [customers, setCustomers] = React.useState<EntCustomer[]>([]);
+  // furnituredetail List
+  const [FurnitureDetail, setFurnitureDetails] = React.useState<EntFurnitureDetail[]>([]);
+  const getFurnitureDetail = async () => {
+    const res = await api.listFurnituredetail({ limit: 10, offset: 0 });
+    setFurnitureDetails(res);
+  };
 
-  const [status, setStatus] = React.useState<EntStatusReserve>();
-
-  const [price, setPrice] = React.useState<any>(0)
-  const [discount, setDiscount] = React.useState<any>(0)
-  const [netprice, setNetprice] = React.useState<any>(0)
-
-  const [timeIn, setTimeIn] = React.useState<any>(0)
-  const [timeOut, setTimeOut] = React.useState<any>(0)
-
-  const [ids, setIds] = React.useState<number>(0)
-  const [dids, setDIds] = React.useState<number>(0)
+  //customer
+  const [customer, setCustomer] = React.useState<EntCustomer>();
+  const getCustomer = async () => {
+    const res = await api.getCustomer({id: Number(cookieID)});
+    setCustomer(res);
+  };
 
   // alert setting
   const Toast = Swal.mixin({
@@ -104,127 +112,49 @@ const ReserveRoom: FC<{}> = () => {
     },
   });
 
-  const getCustomes = async () => {
-    const res = await api.listCustomer({ limit: 10, offset: 0 });
-    setCustomers(res);
-  };
-
-  const getDataRoom = async () => {
-    const res = await api.listDataRoomPromo({ id: ids });
-    setdataroom(res);
-  };
-
-  const getPromotion = async () => {
-    const res = await api.listPromotion({ limit: 10, offset: 0 });
-    setPromotions(res);
-  };
-
-  const getRoom = async () => {
-    const res = await api.getDataroom({ id: dids })
-    setroom(res);
-    setPrice(res.price);
-  }
-
-  const getStatus = async () => {
-    const res = await api.getStatusReserve({ id: 1 })
-    setStatus(res);
-  }
-
-  const getPromo = async () => {
-    const res = await api.getPromotion({ id: ids })
-    setPromo(res);
-    setDiscount(res.discount);
-    setPrice(0);
-    clearNet();
-  }
-
-  const getNetprice = async () => {
-    setNetprice(price - discount);
-  };
-
   // Lifecycle Hooks
   useEffect(() => {
-    getCustomes();
-    getPromotion();
-    getStatus();
+    getCustomer();
+    getDataRoom();
+    getFurnitureDetail();
   }, []);
 
   useEffect(() => {
-    getPromo();
-    getDataRoom();
-  }, [reserve_room.Promotions]);
+    setFixRoom({ ...FixRoom, ['Customer']: customer?.id });
+  }, [customer]);
 
-  useEffect(() => {
-    getRoom();
-  }, [reserve_room.Rooms]);
-
-  useEffect(() => {
-    getNetprice();
-  }, [price]);
-
-  useEffect(() => {
-    setReserveroom({ ...reserve_room, ['NetPrice']: netprice });
-  }, [netprice]);
-
-  useEffect(() => {
-    setReserveroom({ ...reserve_room, ['Status']: status?.id });
-  }, [status]);
-
-
-  // set data to object playlist_video
+  // set data to object reserve_room
   const handleChange = (
     event: React.ChangeEvent<{ name?: string; value: any }>,
   ) => {
-    const name = event.target.name as keyof typeof ReserveRoom;
+    const name = event.target.name as keyof typeof FixRoom;
     const { value } = event.target;
-    setReserveroom({ ...reserve_room, [name]: value });
-    setIds(event.target.value);
-    setDIds(event.target.value);
-    console.log(reserve_room);
-  };
-
-  const handleChangeTimeIN = (
-    event: React.ChangeEvent<{ name?: string; value: any }>,
-  ) => {
-    const name = event.target.name as keyof typeof ReserveRoom;
-    const { value } = event.target;
-    const time = value + ":00+07:00"
-    setReserveroom({ ...reserve_room, [name]: time });
-    setTimeIn(value);
-    console.log(reserve_room);
-  };
-
-  const handleChangeTimeOut = (
-    event: React.ChangeEvent<{ name?: string; value: any }>,
-  ) => {
-    const name = event.target.name as keyof typeof ReserveRoom;
-    const { value } = event.target;
-    const time = value + ":00+07:00"
-    setReserveroom({ ...reserve_room, [name]: time });
-    setTimeOut(value);
-    console.log(reserve_room);
+    setFixRoom({ ...FixRoom, [name]: value });
+    console.log(FixRoom);
   };
 
   // clear input form
   function clear() {
-    setReserveroom({});
+    setFixRoom({});
+    
   }
 
-  // clear netprice form
-  function clearNet() {
-    setNetprice(0);
+   // clear cookies
+  function Clears() {
+    ck.ClearCookie()
+    window.location.reload(false)
   }
-
+  
   // function save data
   function save() {
-    const apiUrl = 'http://localhost:8080/api/v1/ReserveRooms';
+    const apiUrl = 'http://localhost:8080/api/v1/fixrooms';
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(reserve_room),
+      body: JSON.stringify(FixRoom),
     };
-
-    console.log(reserve_room); // log ดูข้อมูล สามารถ Inspect ดูข้อมูลได้ F12 เลือก Tab Console
+   
+    console.log(FixRoom); // log ดูข้อมูล สามารถ Inspect ดูข้อมูลได้ F12 เลือก Tab Console
 
     fetch(apiUrl, requestOptions)
       .then(response => response.json())
@@ -248,11 +178,112 @@ const ReserveRoom: FC<{}> = () => {
   return (
     <Page theme={pageTheme.home}>
       <Header style={HeaderCustom} title={`ระบบแจ้งซ่อม`}>
-        <Avatar alt="Remy Sharp" src="../../image/account.jpg" />
-        <div style={{ marginLeft: 10 }}>รอทำ login</div>
+        <div style={{ marginLeft: 10, marginRight:20 }}>{cookieName}</div>
+        <Button
+          variant="outlined"
+          color="secondary"
+          size="large"
+          onClick={Clears}
+          >
+          Logout
+        </Button>
       </Header>
+      <Content>
+        <Container maxWidth="sm">
+          <Grid container spacing={3}>
+            <Grid item xs={12}></Grid>
+            <Grid item xs={3}>
+              <div className={classes.paper}>ลูกค้า</div>
+            </Grid>
+            <Grid item xs={9}>
+            <FormControl variant="outlined" className={classes.formControl}>
+                <TextField
+                  disabled 
+                  name="Customer"
+                  variant="outlined"
+                  value={customer?.name}
+                />
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={3}>
+              <div className={classes.paper}>Room</div>
+            </Grid>
+            <Grid item xs={9}>
+              <FormControl variant="outlined" className={classes.formControl}>
+                <InputLabel>เลือกห้อง</InputLabel>
+                <Select
+                  name="Room"
+                  value={FixRoom.Room|| ''} // (undefined || '') = ''
+                  onChange={handleChange}
+                >
+                  {DataRoom.map(item => {
+                    return (
+                      <MenuItem key={item.id} value={item.id}>
+                        {item.roomnumber}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={3}>
+              <div className={classes.paper}>อุปกรณ์ที่ชำรุด</div>
+            </Grid>
+            <Grid item xs={9}>
+              <FormControl variant="outlined" className={classes.formControl}>
+                <InputLabel>อุปกรณ์ที่ชำรุด</InputLabel>
+                <Select
+                  name="FurnitureDetail"
+                  value={FixRoom.FurnitureDetail || ''} // (undefined || '') = ''
+                  onChange={handleChange}
+                >
+                  {FurnitureDetail.map(item => {
+                    return (
+                      <MenuItem key={item.id} value={item.id}>
+                        {item.id}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={3}>
+              <div className={classes.paper}>รายละเอียดอุปกรณ์ที่ชำรุด</div>
+            </Grid>
+            <Grid item xs={9}>
+              <FormControl variant="outlined" className={classes.formControl}>
+                <TextField
+                  id="standard-multiline-static"
+                  label="Multiline"
+                  multiline
+                  rows={4}
+                  defaultValue="Default Value"
+                  name = " FixDetail "
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={3}></Grid>
+            <Grid item xs={9}>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                startIcon={<SaveIcon />}
+                onClick={save}
+              >
+                บันทึกการดู
+              </Button>
+            </Grid>
+
+          </Grid>
+        </Container>
+      </Content>
     </Page>
   );
 };
 
-export default ReserveRoom;
+export default FixRoom;

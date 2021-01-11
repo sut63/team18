@@ -30,6 +30,18 @@ import {
     EntDataRoom,
     EntDataRoomFromJSON,
     EntDataRoomToJSON,
+    EntFixRoom,
+    EntFixRoomFromJSON,
+    EntFixRoomToJSON,
+    EntFurniture,
+    EntFurnitureFromJSON,
+    EntFurnitureToJSON,
+    EntFurnitureDetail,
+    EntFurnitureDetailFromJSON,
+    EntFurnitureDetailToJSON,
+    EntFurnitureType,
+    EntFurnitureTypeFromJSON,
+    EntFurnitureTypeToJSON,
     EntPromotion,
     EntPromotionFromJSON,
     EntPromotionToJSON,
@@ -64,6 +76,14 @@ export interface CreateCounterStaffRequest {
 
 export interface CreateDataroomRequest {
     dataroom: EntDataRoom;
+}
+
+export interface CreateFixroomRequest {
+    fixroom: EntFixRoom;
+}
+
+export interface CreateFurnituredetailRequest {
+    furnituredetail: EntFurnitureDetail;
 }
 
 export interface CreatePromotionRequest {
@@ -102,6 +122,10 @@ export interface DeleteCounterStaffRequest {
     id: number;
 }
 
+export interface DeleteFixroomRequest {
+    id: number;
+}
+
 export interface DeleteReserveRoomRequest {
     id: number;
 }
@@ -135,6 +159,22 @@ export interface GetDataroomRequest {
 }
 
 export interface GetDataroomcustomerRequest {
+    id: number;
+}
+
+export interface GetFixroomRequest {
+    id: number;
+}
+
+export interface GetFurnitureRequest {
+    id: number;
+}
+
+export interface GetFurnituredetailRequest {
+    id: number;
+}
+
+export interface GetFurnituretypeRequest {
     id: number;
 }
 
@@ -193,6 +233,26 @@ export interface ListDataRoomPromoRequest {
 }
 
 export interface ListDataroomRequest {
+    limit?: number;
+    offset?: number;
+}
+
+export interface ListFixroomRequest {
+    limit?: number;
+    offset?: number;
+}
+
+export interface ListFurnitureRequest {
+    limit?: number;
+    offset?: number;
+}
+
+export interface ListFurnituredetailRequest {
+    limit?: number;
+    offset?: number;
+}
+
+export interface ListFurnituretypeRequest {
     limit?: number;
     offset?: number;
 }
@@ -389,6 +449,76 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async createDataroom(requestParameters: CreateDataroomRequest): Promise<EntDataRoom> {
         const response = await this.createDataroomRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * Create fixroom
+     * Create fixroom
+     */
+    async createFixroomRaw(requestParameters: CreateFixroomRequest): Promise<runtime.ApiResponse<EntFixRoom>> {
+        if (requestParameters.fixroom === null || requestParameters.fixroom === undefined) {
+            throw new runtime.RequiredError('fixroom','Required parameter requestParameters.fixroom was null or undefined when calling createFixroom.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/fixrooms`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: EntFixRoomToJSON(requestParameters.fixroom),
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntFixRoomFromJSON(jsonValue));
+    }
+
+    /**
+     * Create fixroom
+     * Create fixroom
+     */
+    async createFixroom(requestParameters: CreateFixroomRequest): Promise<EntFixRoom> {
+        const response = await this.createFixroomRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * Create furnituredetail
+     * Create furnituredetail
+     */
+    async createFurnituredetailRaw(requestParameters: CreateFurnituredetailRequest): Promise<runtime.ApiResponse<EntFurnitureDetail>> {
+        if (requestParameters.furnituredetail === null || requestParameters.furnituredetail === undefined) {
+            throw new runtime.RequiredError('furnituredetail','Required parameter requestParameters.furnituredetail was null or undefined when calling createFurnituredetail.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/furnituredetails`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: EntFurnitureDetailToJSON(requestParameters.furnituredetail),
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntFurnitureDetailFromJSON(jsonValue));
+    }
+
+    /**
+     * Create furnituredetail
+     * Create furnituredetail
+     */
+    async createFurnituredetail(requestParameters: CreateFurnituredetailRequest): Promise<EntFurnitureDetail> {
+        const response = await this.createFurnituredetailRaw(requestParameters);
         return await response.value();
     }
 
@@ -699,6 +829,38 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * get fixroom by ID
+     * Delete a fixroom entity by ID
+     */
+    async deleteFixroomRaw(requestParameters: DeleteFixroomRequest): Promise<runtime.ApiResponse<object>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteFixroom.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/fixrooms/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * get fixroom by ID
+     * Delete a fixroom entity by ID
+     */
+    async deleteFixroom(requestParameters: DeleteFixroomRequest): Promise<object> {
+        const response = await this.deleteFixroomRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
      * get ReserveRoom by ID
      * Delete a ReserveRoom entity by ID
      */
@@ -983,6 +1145,134 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getDataroomcustomer(requestParameters: GetDataroomcustomerRequest): Promise<Array<EntDataRoom>> {
         const response = await this.getDataroomcustomerRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * get fixroom by ID
+     * Get a fixroom entity by ID
+     */
+    async getFixroomRaw(requestParameters: GetFixroomRequest): Promise<runtime.ApiResponse<EntFixRoom>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getFixroom.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/fixrooms/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntFixRoomFromJSON(jsonValue));
+    }
+
+    /**
+     * get fixroom by ID
+     * Get a fixroom entity by ID
+     */
+    async getFixroom(requestParameters: GetFixroomRequest): Promise<EntFixRoom> {
+        const response = await this.getFixroomRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * get furniture by ID
+     * Get a furniture entity by ID
+     */
+    async getFurnitureRaw(requestParameters: GetFurnitureRequest): Promise<runtime.ApiResponse<EntFurniture>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getFurniture.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/furnitures/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntFurnitureFromJSON(jsonValue));
+    }
+
+    /**
+     * get furniture by ID
+     * Get a furniture entity by ID
+     */
+    async getFurniture(requestParameters: GetFurnitureRequest): Promise<EntFurniture> {
+        const response = await this.getFurnitureRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * get furnituredetail by ID
+     * Get a furnituredetail entity by ID
+     */
+    async getFurnituredetailRaw(requestParameters: GetFurnituredetailRequest): Promise<runtime.ApiResponse<EntFurnitureDetail>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getFurnituredetail.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/furnituredetails/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntFurnitureDetailFromJSON(jsonValue));
+    }
+
+    /**
+     * get furnituredetail by ID
+     * Get a furnituredetail entity by ID
+     */
+    async getFurnituredetail(requestParameters: GetFurnituredetailRequest): Promise<EntFurnitureDetail> {
+        const response = await this.getFurnituredetailRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * get furnituretype by ID
+     * Get a furnituretype entity by ID
+     */
+    async getFurnituretypeRaw(requestParameters: GetFurnituretypeRequest): Promise<runtime.ApiResponse<EntFurnitureType>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getFurnituretype.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/furnituretypes/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntFurnitureTypeFromJSON(jsonValue));
+    }
+
+    /**
+     * get furnituretype by ID
+     * Get a furnituretype entity by ID
+     */
+    async getFurnituretype(requestParameters: GetFurnituretypeRequest): Promise<EntFurnitureType> {
+        const response = await this.getFurnituretypeRaw(requestParameters);
         return await response.value();
     }
 
@@ -1427,6 +1717,150 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async listDataroom(requestParameters: ListDataroomRequest): Promise<Array<EntDataRoom>> {
         const response = await this.listDataroomRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * list fixroom entities
+     * List fixroom entities
+     */
+    async listFixroomRaw(requestParameters: ListFixroomRequest): Promise<runtime.ApiResponse<Array<EntFixRoom>>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.offset !== undefined) {
+            queryParameters['offset'] = requestParameters.offset;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/fixrooms`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntFixRoomFromJSON));
+    }
+
+    /**
+     * list fixroom entities
+     * List fixroom entities
+     */
+    async listFixroom(requestParameters: ListFixroomRequest): Promise<Array<EntFixRoom>> {
+        const response = await this.listFixroomRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * list furniture entities
+     * List furniture entities
+     */
+    async listFurnitureRaw(requestParameters: ListFurnitureRequest): Promise<runtime.ApiResponse<Array<EntFurniture>>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.offset !== undefined) {
+            queryParameters['offset'] = requestParameters.offset;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/furnitures`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntFurnitureFromJSON));
+    }
+
+    /**
+     * list furniture entities
+     * List furniture entities
+     */
+    async listFurniture(requestParameters: ListFurnitureRequest): Promise<Array<EntFurniture>> {
+        const response = await this.listFurnitureRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * list furnituredetail entities
+     * List furnituredetail entities
+     */
+    async listFurnituredetailRaw(requestParameters: ListFurnituredetailRequest): Promise<runtime.ApiResponse<Array<EntFurnitureDetail>>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.offset !== undefined) {
+            queryParameters['offset'] = requestParameters.offset;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/furnituredetails`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntFurnitureDetailFromJSON));
+    }
+
+    /**
+     * list furnituredetail entities
+     * List furnituredetail entities
+     */
+    async listFurnituredetail(requestParameters: ListFurnituredetailRequest): Promise<Array<EntFurnitureDetail>> {
+        const response = await this.listFurnituredetailRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * list furnituretype entities
+     * List furnituretype entities
+     */
+    async listFurnituretypeRaw(requestParameters: ListFurnituretypeRequest): Promise<runtime.ApiResponse<Array<EntFurnitureType>>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.offset !== undefined) {
+            queryParameters['offset'] = requestParameters.offset;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/furnituretypes`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntFurnitureTypeFromJSON));
+    }
+
+    /**
+     * list furnituretype entities
+     * List furnituretype entities
+     */
+    async listFurnituretype(requestParameters: ListFurnituretypeRequest): Promise<Array<EntFurnitureType>> {
+        const response = await this.listFurnituretypeRaw(requestParameters);
         return await response.value();
     }
 
