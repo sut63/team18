@@ -22,6 +22,10 @@ import {
     EntCheckoutFromJSON,
     EntCheckoutFromJSONTyped,
     EntCheckoutToJSON,
+    EntFurnitureDetail,
+    EntFurnitureDetailFromJSON,
+    EntFurnitureDetailFromJSONTyped,
+    EntFurnitureDetailToJSON,
 } from './';
 
 /**
@@ -42,6 +46,12 @@ export interface EntCounterStaffEdges {
      * @memberof EntCounterStaffEdges
      */
     checkouts?: Array<EntCheckout>;
+    /**
+     * Details holds the value of the details edge.
+     * @type {Array<EntFurnitureDetail>}
+     * @memberof EntCounterStaffEdges
+     */
+    details?: Array<EntFurnitureDetail>;
 }
 
 export function EntCounterStaffEdgesFromJSON(json: any): EntCounterStaffEdges {
@@ -56,6 +66,7 @@ export function EntCounterStaffEdgesFromJSONTyped(json: any, ignoreDiscriminator
         
         'checkins': !exists(json, 'checkins') ? undefined : ((json['checkins'] as Array<any>).map(EntCheckInFromJSON)),
         'checkouts': !exists(json, 'checkouts') ? undefined : ((json['checkouts'] as Array<any>).map(EntCheckoutFromJSON)),
+        'details': !exists(json, 'details') ? undefined : ((json['details'] as Array<any>).map(EntFurnitureDetailFromJSON)),
     };
 }
 
@@ -70,6 +81,7 @@ export function EntCounterStaffEdgesToJSON(value?: EntCounterStaffEdges | null):
         
         'checkins': value.checkins === undefined ? undefined : ((value.checkins as Array<any>).map(EntCheckInToJSON)),
         'checkouts': value.checkouts === undefined ? undefined : ((value.checkouts as Array<any>).map(EntCheckoutToJSON)),
+        'details': value.details === undefined ? undefined : ((value.details as Array<any>).map(EntFurnitureDetailToJSON)),
     };
 }
 

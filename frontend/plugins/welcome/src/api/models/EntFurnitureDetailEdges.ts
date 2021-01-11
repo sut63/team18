@@ -14,6 +14,10 @@
 
 import { exists, mapValues } from '../runtime';
 import {
+    EntCounterStaff,
+    EntCounterStaffFromJSON,
+    EntCounterStaffFromJSONTyped,
+    EntCounterStaffToJSON,
     EntDataRoom,
     EntDataRoomFromJSON,
     EntDataRoomFromJSONTyped,
@@ -38,6 +42,12 @@ import {
  * @interface EntFurnitureDetailEdges
  */
 export interface EntFurnitureDetailEdges {
+    /**
+     * 
+     * @type {EntCounterStaff}
+     * @memberof EntFurnitureDetailEdges
+     */
+    counterstaffs?: EntCounterStaff;
     /**
      * Fixs holds the value of the fixs edge.
      * @type {Array<EntFixRoom>}
@@ -74,8 +84,9 @@ export function EntFurnitureDetailEdgesFromJSONTyped(json: any, ignoreDiscrimina
     }
     return {
         
+        'counterstaffs': !exists(json, 'counterstaffs') ? undefined : EntCounterStaffFromJSON(json['counterstaffs']),
         'fixs': !exists(json, 'fixs') ? undefined : ((json['fixs'] as Array<any>).map(EntFixRoomFromJSON)),
-        'furnitures': !exists(json, 'furnitures') ? undefined : EntFurnitureFromJSON(json['furnitures']),
+        'furnitures': !exists(json, 'Furnitures') ? undefined : EntFurnitureFromJSON(json['Furnitures']),
         'rooms': !exists(json, 'rooms') ? undefined : EntDataRoomFromJSON(json['rooms']),
         'types': !exists(json, 'types') ? undefined : EntFurnitureTypeFromJSON(json['types']),
     };
@@ -90,8 +101,9 @@ export function EntFurnitureDetailEdgesToJSON(value?: EntFurnitureDetailEdges | 
     }
     return {
         
+        'counterstaffs': EntCounterStaffToJSON(value.counterstaffs),
         'fixs': value.fixs === undefined ? undefined : ((value.fixs as Array<any>).map(EntFixRoomToJSON)),
-        'furnitures': EntFurnitureToJSON(value.furnitures),
+        'Furnitures': EntFurnitureToJSON(value.furnitures),
         'rooms': EntDataRoomToJSON(value.rooms),
         'types': EntFurnitureTypeToJSON(value.types),
     };
