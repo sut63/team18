@@ -6,9 +6,9 @@ import Log from './Log';
 import { Cookies } from 'plugin-welcome/src/Cookie'
 
 var ck = new Cookies()
-var cookie = ck.GetCookie()
+var role = ck.GetRole()
 
-if(cookie == undefined){
+if(role != "counterStaff"){
     ReactDOM.render(<Log />, document.getElementById('root'));
 }
 else{
