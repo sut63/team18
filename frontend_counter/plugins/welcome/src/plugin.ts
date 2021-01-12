@@ -4,6 +4,7 @@ import SignIn from './components/SignIn'
 import Dataroom from './components/DataRoom'
 import CheckIn from './components/CheckIn'
 import checkout from './components/Checkout'
+import FurnitureDetail from './components/FurnitureDetail'
 import { Cookies } from './Cookie'
 
 var ck = new Cookies()
@@ -18,12 +19,14 @@ export const plugin = createPlugin({
       router.registerRoute('/dataroom', SignIn);
       router.registerRoute('/CheckIn', SignIn);
       router.registerRoute('/checkout', SignIn);
+      router.registerRoute('/FurnitureDetail', SignIn);
     }else{
       router.registerRoute('/', WelcomePage);
       router.registerRoute('/WelcomePage', WelcomePage);
       router.registerRoute('/dataroom', Dataroom);
       router.registerRoute('/CheckIn', CheckIn);
       router.registerRoute('/checkout', checkout);
+      router.registerRoute('/FurnitureDetail', FurnitureDetail);
     }
   },
 });
