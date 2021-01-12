@@ -13,10 +13,12 @@ import {
   Avatar,
   Button,
 } from '@material-ui/core';
-import { DefaultApi } from '../../api/apis'; 
+import { DefaultApi } from '../../api/apis';
 import { EntCounterStaff, EntCustomer, EntDataRoom, EntReserveRoom } from '../../api';
 import { Cookies } from '../../Cookie'
 import { Link as RouterLink } from 'react-router-dom';
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
 
 // header css
 const HeaderCustom = {
@@ -57,106 +59,100 @@ interface CheckIn {
 }
 
 const CheckIn: FC<{}> = () => {
-    
-    const classes = useStyles();
-    const api = new DefaultApi();
 
-    // ดึงคุกกี้
-    var ck = new Cookies()
-    var cookieName = ck.GetCookie()
+  const classes = useStyles();
+  const api = new DefaultApi();
 
-    //อันหลักสำหรับสร้าง การ Check_in
-    const [CheckIn, setCheckIn] = React.useState<Partial<CheckIn>>({})
-  
-    // Customer
-    const [idcustomer,setIdcustomer] = React.useState<number>(0)
-    const [customer,setCustomer] = React.useState<EntCustomer[]>([])
-    const getCustomer = async () => {
-        const res = await api.listCustomer({})
-        setCustomer(res)
+  // ดึงคุกกี้
+  var ck = new Cookies()
+  var cookieName = ck.GetCookie()
+
+  //อันหลักสำหรับสร้าง การ Check_in
+  const [CheckIn, setCheckIn] = React.useState<Partial<CheckIn>>({})
+
+  // Customer
+  const [idcustomer, setIdcustomer] = React.useState<number>(0)
+  const [customer, setCustomer] = React.useState<EntCustomer[]>([])
+  const getCustomer = async () => {
+    const res = await api.listCustomer({})
+    setCustomer(res)
+  }
+
+  // ReserveRoom  
+  const [idreserveroom, setIdreserveroom] = React.useState<number>(0)
+  const [reserveroom, setReserveroom] = React.useState<EntReserveRoom[]>([])
+  const getReseveroom = async () => {
+    const res = await api.getReserveRoomCustomer({ id: idcustomer })
+    setReserveroom(res)
+  }
+
+  // DataRoom 
+  const [dataroom, setDataroom] = React.useState<EntDataRoom[]>([])
+  const getDataroom = async () => {
+    const res = await api.getDataroomcustomer({ id: idreserveroom })
+    setDataroom(res)
+  }
+
+  // CounterStaff
+  const [counter, setCounter] = React.useState<EntCounterStaff[]>([])
+  const getCounterStaff = async () => {
+    const res = await api.listCounterStaff({})
+    setCounter(res)
+  }
+
+  // handleChange
+  const handleChange = (event: React.ChangeEvent<{ name?: string; value: any }>) => {
+    const name = event.target.name as keyof typeof CheckIn
+    const { value } = event.target
+    setCheckIn({ ...CheckIn, [name]: value })
+    setIdcustomer(event.target.value)
+    setIdreserveroom(event.target.value)
+  }
+
+  // alert setting
+  const [open, setOpen] = React.useState(false);
+  const [fail, setFail] = React.useState(false);
+
+  //close alert 
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
     }
- 
-    // ReserveRoom  
-    const [idreserveroom,setIdreserveroom] = React.useState<number>(0)
-    const [reserveroom,setReserveroom] = React.useState<EntReserveRoom[]>([])
-    const getReseveroom = async () => {
-        const res = await api.getReserveRoomCustomer({id : idcustomer})
-        setReserveroom(res)    
-    }
+    setFail(false);
+    setOpen(false);
+  };
 
-    // DataRoom 
-    const [dataroom,setDataroom] = React.useState<EntDataRoom[]>([])
-    const getDataroom = async () => {
-        const res = await api.getDataroomcustomer({id : idreserveroom})
-        setDataroom(res)    
-    }
+  // Lifecycle Hooks
+  useEffect(() => {
+    getCustomer()
+    getCounterStaff()
+  }, [])
+  useEffect(() => {
+    getReseveroom()
+  }, [CheckIn.Customer])
+  useEffect(() => {
+    getDataroom()
+  }, [CheckIn.Reserveroom])
 
-  
-    // CounterStaff
-    const [counter,setCounter] = React.useState<EntCounterStaff[]>([])
-    const getCounterStaff = async () => {
-        const res = await api.listCounterStaff({})
-        setCounter(res)
-    }
 
-    // handleChange
-    const handleChange = (event: React.ChangeEvent<{ name?: string; value: any }>) => {
-      const name = event.target.name as keyof typeof CheckIn
-      const { value } = event.target
-      setCheckIn({ ...CheckIn, [name]: value }) 
-      setIdcustomer(event.target.value)
-      setIdreserveroom(event.target.value)
-    }
-
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: toast => {
-        toast.addEventListener('mouseenter', Swal.stopTimer);
-        toast.addEventListener('mouseleave', Swal.resumeTimer);
-        },
-    });
-  
-    // Lifecycle Hooks
-    useEffect(() => {
-        getCustomer()
-        getCounterStaff()
-    }, [])
-    useEffect(() => {
-        getReseveroom()
-    },[CheckIn.Customer]) 
-    useEffect(() => {
-        getDataroom()
-    }, [CheckIn.Reserveroom]) 
-    
-
-    // function save data
-    function save() {
-        const apiUrl = 'http://localhost:8080/api/v1/checkins';
-        const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(CheckIn),
+  // function save data
+  function save() {
+    const apiUrl = 'http://localhost:8080/api/v1/checkins';
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(CheckIn),
     };
 
     fetch(apiUrl, requestOptions)
       .then(response => response.json())
       .then(data => {
-        console.log(data);
+        console.log(data.status);
         if (data.id != null) {
           clear();
-          Toast.fire({
-            icon: 'success',
-            title: 'Ckeck in สำเร็จ',
-          });
+          setOpen(true);
         } else {
-          Toast.fire({
-            icon: 'error',
-            title: 'error',
-          });
+          setFail(true);
         }
       });
   }
@@ -170,18 +166,18 @@ const CheckIn: FC<{}> = () => {
   function clear() {
     setCheckIn({});
   }
- 
+
   return (
     <Page theme={pageTheme.home}>
       <Header style={HeaderCustom} title={`ระบบย่อย Check In`}>
         <Avatar alt="Remy Sharp" src="../../image/account.jpg" />
-        <div style={{ marginLeft: 10, marginRight:20 }}>{cookieName}</div>
+        <div style={{ marginLeft: 10, marginRight: 20 }}>{cookieName}</div>
         <Button
           variant="outlined"
           color="secondary"
           size="large"
           onClick={Clears}
-          >
+        >
           Logout
         </Button>
       </Header>
@@ -189,7 +185,7 @@ const CheckIn: FC<{}> = () => {
         <Container maxWidth="sm">
           <Grid container spacing={3}>
             <Grid item xs={12}></Grid>
-                      
+
             <Grid item xs={3}>
               <div className={classes.paper}>customer</div>
             </Grid>
@@ -238,7 +234,7 @@ const CheckIn: FC<{}> = () => {
               <div className={classes.paper}>Room Number</div>
             </Grid>
             <Grid item xs={9}>
-            <FormControl variant="outlined" className={classes.formControl}>
+              <FormControl variant="outlined" className={classes.formControl}>
                 <InputLabel>Data Room</InputLabel>
                 <Select
                   name="Dataroom"
@@ -255,12 +251,12 @@ const CheckIn: FC<{}> = () => {
                 </Select>
               </FormControl>
             </Grid>
-            
+
             <Grid item xs={3}>
               <div className={classes.paper}>Counter staff</div>
             </Grid>
             <Grid item xs={9}>
-            <FormControl variant="outlined" className={classes.formControl}>
+              <FormControl variant="outlined" className={classes.formControl}>
                 <InputLabel>Counter staff</InputLabel>
                 <Select
                   name="Counter"
@@ -276,8 +272,8 @@ const CheckIn: FC<{}> = () => {
                   })}
                 </Select>
               </FormControl>
-           </Grid>
-           <Grid item xs={3}></Grid>
+            </Grid>
+            <Grid item xs={3}></Grid>
             <Grid item xs={9}>
               <Button
                 variant="contained"
@@ -289,6 +285,19 @@ const CheckIn: FC<{}> = () => {
               </Button>
             </Grid>
           </Grid>
+
+          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="success">
+              This is a success message!
+        </Alert>
+          </Snackbar>
+
+          <Snackbar open={fail} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="error">
+              This is a error message!
+        </Alert>
+          </Snackbar>
+          
         </Container>
       </Content>
     </Page>

@@ -25,6 +25,8 @@ import { EntPromotion } from '../../api/models/EntPromotion';
 import { EntCustomer } from '../../api/models/EntCustomer';
 import { EntStatusReserve } from '../../api/models/EntStatusReserve';
 import { Cookies } from '../../Cookie'
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
 
 // header css
 const HeaderCustom = {
@@ -67,7 +69,7 @@ interface reserve {
 }
 
 interface room {
-	StatusRoom: number;
+  StatusRoom: number;
   // create_by: number;
 }
 
@@ -75,12 +77,12 @@ const ReserveRoom: FC<{}> = () => {
   const classes = useStyles();
   const api = new DefaultApi();
 
-   // ดึงคุกกี้
-   var ck = new Cookies()
-   var cookieName = ck.GetCookie()
-   var cookieID = ck.GetID()
+  // ดึงคุกกี้
+  var ck = new Cookies()
+  var cookieName = ck.GetCookie()
+  var cookieID = ck.GetID()
 
-   //อันหลักสำหรับสร้าง การ reserve_room
+  //อันหลักสำหรับสร้าง การ reserve_room
   const [reserve_room, setReserveroom] = React.useState<Partial<reserve>>({});
 
   // data room List
@@ -116,7 +118,7 @@ const ReserveRoom: FC<{}> = () => {
   //customer
   const [customers, setCustomers] = React.useState<EntCustomer>();
   const getCustomes = async () => {
-    const res = await api.getCustomer({id: Number(cookieID)});
+    const res = await api.getCustomer({ id: Number(cookieID) });
     setCustomers(res);
   };
 
@@ -144,17 +146,8 @@ const ReserveRoom: FC<{}> = () => {
   const [dids, setDIds] = React.useState<number>(0)
 
   // alert setting
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    didOpen: toast => {
-      toast.addEventListener('mouseenter', Swal.stopTimer);
-      toast.addEventListener('mouseleave', Swal.resumeTimer);
-    },
-  });
+  const [open, setOpen] = React.useState(false);
+  const [fail, setFail] = React.useState(false);
 
   // Lifecycle Hooks
   useEffect(() => {
@@ -162,7 +155,7 @@ const ReserveRoom: FC<{}> = () => {
     getPromotion();
     getStatus();
   }, []);
-  
+
   useEffect(() => {
     getPromo();
     getDataRoom();
@@ -224,6 +217,15 @@ const ReserveRoom: FC<{}> = () => {
     console.log(reserve_room);
   };
 
+  //close alert 
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setFail(false);
+    setOpen(false);
+  };
+
   // clear input form
   function clear() {
     setReserveroom({});
@@ -234,6 +236,7 @@ const ReserveRoom: FC<{}> = () => {
     setNetprice(0);
     setTimeIn({});
     setTimeOut({});
+    getCustomes();
   }
 
   // clear netprice form
@@ -246,7 +249,7 @@ const ReserveRoom: FC<{}> = () => {
     ck.ClearCookie()
     window.location.reload(false)
   }
-  
+
   // function save data
   function save() {
     const apiUrl = 'http://localhost:8080/api/v1/ReserveRooms';
@@ -255,24 +258,18 @@ const ReserveRoom: FC<{}> = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(reserve_room),
     };
-   
+
     console.log(reserve_room); // log ดูข้อมูล สามารถ Inspect ดูข้อมูลได้ F12 เลือก Tab Console
 
     fetch(apiUrl, requestOptions)
       .then(response => response.json())
       .then(data => {
-        console.log(data);
+        console.log(data.status);
         if (data.status === true) {
           clear();
-          Toast.fire({
-            icon: 'success',
-            title: 'บันทึกข้อมูลสำเร็จ',
-          });
+          setOpen(true);
         } else {
-          Toast.fire({
-            icon: 'error',
-            title: 'บันทึกข้อมูลไม่สำเร็จ',
-          });
+          setFail(true);
         }
       });
   }
@@ -281,13 +278,13 @@ const ReserveRoom: FC<{}> = () => {
     <Page theme={pageTheme.home}>
       <Header style={HeaderCustom} title={`ระบบจองห้องพัก`}>
         <Avatar alt="Remy Sharp" src="../../image/account.jpg" />
-        <div style={{ marginLeft: 10, marginRight:20 }}>{cookieName}</div>
+        <div style={{ marginLeft: 10, marginRight: 20 }}>{cookieName}</div>
         <Button
           variant="outlined"
           color="secondary"
           size="large"
           onClick={Clears}
-          >
+        >
           Logout
         </Button>
       </Header>
@@ -299,9 +296,9 @@ const ReserveRoom: FC<{}> = () => {
               <div className={classes.paper}>ลูกค้า</div>
             </Grid>
             <Grid item xs={9}>
-            <FormControl variant="outlined" className={classes.formControl}>
+              <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
-                  disabled 
+                  disabled
                   name="Customer"
                   variant="outlined"
                   value={customers?.name}
@@ -395,7 +392,7 @@ const ReserveRoom: FC<{}> = () => {
             <Grid item xs={9}>
               <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
-                  disabled 
+                  disabled
                   name="Price"
                   variant="outlined"
                   value={price}
@@ -409,7 +406,7 @@ const ReserveRoom: FC<{}> = () => {
             <Grid item xs={9}>
               <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
-                  disabled 
+                  disabled
                   name="Discount"
                   variant="outlined"
                   value={discount}
@@ -423,7 +420,7 @@ const ReserveRoom: FC<{}> = () => {
             <Grid item xs={9}>
               <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
-                  disabled 
+                  disabled
                   name="NetPrice"
                   variant="outlined"
                   value={netprice}
@@ -438,7 +435,7 @@ const ReserveRoom: FC<{}> = () => {
             <Grid item xs={9}>
               <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
-                  disabled 
+                  disabled
                   name="Status"
                   variant="outlined"
                   value={status?.statusName}
@@ -461,6 +458,19 @@ const ReserveRoom: FC<{}> = () => {
             </Grid>
 
           </Grid>
+
+          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="success">
+              This is a success message!
+        </Alert>
+          </Snackbar>
+
+          <Snackbar open={fail} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="error">
+              This is a error message!
+        </Alert>
+          </Snackbar>
+
         </Container>
       </Content>
     </Page>
