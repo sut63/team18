@@ -11,8 +11,9 @@ import (
 	"github.com/team18/app/ent/checkin"
 	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/customer"
-	"github.com/team18/app/ent/reserveroom"
 	"github.com/team18/app/ent/dataroom"
+	"github.com/team18/app/ent/reserveroom"
+	"github.com/team18/app/ent/statuscheckin"
 )
 
 // CheckinController defines the struct for the checkin controller
@@ -20,13 +21,15 @@ type CheckinController struct {
 	client *ent.Client
 	router gin.IRouter
 }
+
 // CheckIn struct
 type CheckIn struct {
-	CheckinDate	string
-	Customer	int
-	Counter		int
-	Reserveroom	int
-	Dataroom	int
+	CheckinDate string
+	Statusname  string
+	Customer    int
+	Counter     int
+	Reserveroom int
+	Dataroom    int
 }
 
 // CreateCheckIn handles POST requests for adding checkin entities
@@ -51,7 +54,14 @@ func (ctl *CheckinController) CreateCheckIn(c *gin.Context) {
 
 	settime := time.Now().Format("2006-01-02T15:04:05Z07:00")
 	time, err := time.Parse(time.RFC3339, settime)
-	
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "time not found",
+		})
+		return
+	}
+
 	cus, err := ctl.client.Customer.
 		Query().
 		Where(customer.IDEQ(int(obj.Customer))).
@@ -73,20 +83,20 @@ func (ctl *CheckinController) CreateCheckIn(c *gin.Context) {
 		c.JSON(400, gin.H{
 			"error": "CounterStaff not found",
 		})
-			return
-		}
+		return
+	}
 
 	r, err := ctl.client.ReserveRoom.
 		Query().
 		Where(reserveroom.IDEQ(int(obj.Reserveroom))).
-		Only(context.Background()) 
+		Only(context.Background())
 
 	if err != nil {
 		c.JSON(400, gin.H{
 			"error": "CounterStaff not found",
 		})
-			return
-		}	
+		return
+	}
 
 	dr, err := ctl.client.DataRoom.
 		Query().
@@ -95,37 +105,38 @@ func (ctl *CheckinController) CreateCheckIn(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(400, gin.H{
-			"error" : "DataRoom not found",
+			"error": "DataRoom not found",
 		})
 	}
 
 	ch, err := ctl.client.CheckIn.
-	Create().
-	SetCheckinDate(time).
-	SetCustomer(cus).
-	SetCounter(cou).
-	SetReserveroom(r).
-	SetDataroom(dr).
-	Save(context.Background())	
+		Create().
+		SetCheckinDate(time).
+		SetCustomer(cus).
+		SetCounter(cou).
+		SetReserveroom(r).
+		SetDataroom(dr).
+		SetStatusID(1).
+		Save(context.Background())
 
 	if err != nil {
 		c.JSON(400, gin.H{
 			"error": "Create CheckIn error",
 		})
-			return
-		}	
+		return
+	}
 
-		ci, err := ctl.client.ReserveRoom.
+	ci, err := ctl.client.ReserveRoom.
 		UpdateOne(r).
 		SetStatusID(2).
 		Save(context.Background())
 
-		if err != nil {
-			c.JSON(400, gin.H{
-				"error": "Update status re CheckIn error",
-			})
-			return
-		}
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "Update status re CheckIn error",
+		})
+		return
+	}
 	fmt.Print(ci)
 
 	c.JSON(200, ch)
@@ -208,6 +219,32 @@ func (ctl *CheckinController) GetCheckIn(c *gin.Context) {
 	c.JSON(200, ch)
 }
 
+// GetCheckInStatus handles request to get a list of  GetCheckInStatus entities
+// @Summary List  GetCheckInStatus entities
+// @Description list  GetCheckInStatus entities
+// @ID list-GetCheckInStatus
+// @Produce json
+// @Success 200 {array} ent.CheckIn
+// @Failure 400 {object} gin.H
+// @Failure 500 {object} gin.H
+// @Router /checkinstatuss [get]
+func (ctl *CheckinController) GetCheckInStatus(c *gin.Context) {
+
+	ch, err := ctl.client.CheckIn.
+		Query().
+		Where(checkin.HasStatusWith(statuscheckin.StatusNameEQ("พักอยู่"))).
+		All(context.Background())
+
+	if err != nil {
+		c.JSON(404, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, ch)
+}
+
 // DeleteCheckIn handles DELETE requests to delete a checkin entity
 // @Summary Delete a checkin entity by ID
 // @Description get checkin by ID
@@ -240,6 +277,7 @@ func (ctl *CheckinController) DeleteCheckIn(c *gin.Context) {
 
 	c.JSON(200, gin.H{"result": fmt.Sprintf("ok deleted %v", id)})
 }
+
 // UpdateCheckIn handles PUT requests to update a Checkin entity
 // @Summary Update a Checkin entity by ID
 // @Description update Checkin by ID
@@ -296,6 +334,7 @@ func NewCheckinController(router gin.IRouter, client *ent.Client) *CheckinContro
 // InitCheckinController registers routes to the main engine
 func (ctl *CheckinController) register() {
 	checkins := ctl.router.Group("/checkins")
+	checkinstatuss := ctl.router.Group("/checkinstatuss")
 
 	checkins.GET("", ctl.ListCheckIn)
 
@@ -303,5 +342,6 @@ func (ctl *CheckinController) register() {
 	checkins.POST("", ctl.CreateCheckIn)
 	checkins.PUT(":id", ctl.UpdateCheckIn)
 	checkins.GET(":id", ctl.GetCheckIn)
+	checkinstatuss.GET("", ctl.GetCheckInStatus)
 	checkins.DELETE(":id", ctl.DeleteCheckIn)
 }

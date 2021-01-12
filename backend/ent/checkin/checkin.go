@@ -18,6 +18,8 @@ const (
 	EdgeReserveroom = "reserveroom"
 	// EdgeDataroom holds the string denoting the dataroom edge name in mutations.
 	EdgeDataroom = "dataroom"
+	// EdgeStatus holds the string denoting the status edge name in mutations.
+	EdgeStatus = "status"
 	// EdgeCheckouts holds the string denoting the checkouts edge name in mutations.
 	EdgeCheckouts = "checkouts"
 
@@ -51,6 +53,13 @@ const (
 	DataroomInverseTable = "data_rooms"
 	// DataroomColumn is the table column denoting the dataroom relation/edge.
 	DataroomColumn = "room_id"
+	// StatusTable is the table the holds the status relation/edge.
+	StatusTable = "check_ins"
+	// StatusInverseTable is the table name for the StatusCheckIn entity.
+	// It exists in this package in order to avoid circular dependency with the "statuscheckin" package.
+	StatusInverseTable = "status_check_ins"
+	// StatusColumn is the table column denoting the status relation/edge.
+	StatusColumn = "status_id"
 	// CheckoutsTable is the table the holds the checkouts relation/edge.
 	CheckoutsTable = "checkouts"
 	// CheckoutsInverseTable is the table name for the Checkout entity.
@@ -72,4 +81,5 @@ var ForeignKeys = []string{
 	"customer_id",
 	"room_id",
 	"reserves_id",
+	"status_id",
 }

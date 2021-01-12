@@ -84,7 +84,7 @@ const SignIn: FC<{}> = () => {
     console.log("check => "+check)
     if(check === true){
       setPath("/WelcomePage")
-      ck.SetCookie("user_email",email,30)
+      ck.SetCookie("customer",email,30)
       ck.SetCookie("user_id",ck.SetID(counter,email,password),30)
       ck.SetCookie("user_role","counterStaff",30)
       window.location.reload(false)

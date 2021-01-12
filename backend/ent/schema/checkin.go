@@ -25,6 +25,7 @@ func (CheckIn) Edges() []ent.Edge {
 		edge.From("counter", CounterStaff.Type).Ref("checkins").Unique(),
 		edge.From("reserveroom", ReserveRoom.Type).Ref("checkins").Unique(),
 		edge.From("dataroom", DataRoom.Type).Ref("checkins").Unique(),
+		edge.From("status", StatusCheckIn.Type).Ref("checkins").Unique(),
 
 		edge.To("checkouts", Checkout.Type).Unique(),
 	}

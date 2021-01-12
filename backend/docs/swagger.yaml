@@ -37,6 +37,10 @@ definitions:
         $ref: '#/definitions/ent.ReserveRoom'
         description: Reserveroom holds the value of the reserveroom edge.
         type: object
+      status:
+        $ref: '#/definitions/ent.StatusCheckIn'
+        description: Status holds the value of the status edge.
+        type: object
     type: object
   ent.Checkout:
     properties:
@@ -404,6 +408,29 @@ definitions:
       id:
         description: ID of the ent.
         type: integer
+    type: object
+  ent.StatusCheckIn:
+    properties:
+      edges:
+        $ref: '#/definitions/ent.StatusCheckInEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the StatusCheckInQuery when eager-loading is set.
+        type: object
+      id:
+        description: ID of the ent.
+        type: integer
+      status_name:
+        description: StatusName holds the value of the "status_name" field.
+        type: string
+    type: object
+  ent.StatusCheckInEdges:
+    properties:
+      checkins:
+        description: Checkins holds the value of the checkins edge.
+        items:
+          $ref: '#/definitions/ent.CheckIn'
+        type: array
     type: object
   ent.StatusEdges:
     properties:
@@ -1081,6 +1108,28 @@ paths:
           schema:
             $ref: '#/definitions/gin.H'
       summary: Update a Checkin entity by ID
+  /checkinstatuss:
+    get:
+      description: list  GetCheckInStatus entities
+      operationId: list-GetCheckInStatus
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/ent.CheckIn'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: List  GetCheckInStatus entities
   /checkouts:
     get:
       description: list checkout entities
@@ -1925,6 +1974,124 @@ paths:
           schema:
             $ref: '#/definitions/gin.H'
       summary: Get a statusReserve entity by ID
+  /statuscheckins:
+    get:
+      description: list statuscheckin entities
+      operationId: list-statuscheckin
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/ent.StatusCheckIn'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: List statuscheckin entities
+    post:
+      consumes:
+      - application/json
+      description: Create statuscheckin
+      operationId: create-statuscheckin
+      parameters:
+      - description: StatusCheckin entity
+        in: body
+        name: statuscheckin
+        required: true
+        schema:
+          $ref: '#/definitions/ent.Status'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ent.StatusCheckIn'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: Create statuscheckin
+  /statuscheckins/{id}:
+    delete:
+      description: get statuscheckin by ID
+      operationId: delete-statuscheckin
+      parameters:
+      - description: statuscheckin ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/gin.H'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: Delete a statuscheckin entity by ID
+    get:
+      description: get statuscheckin by ID
+      operationId: get-statuscheckin
+      parameters:
+      - description: statuscheckin ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ent.StatusCheckIn'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: Get a statuscheckin entity by ID
   /statusrooms:
     get:
       description: list statusroom entities

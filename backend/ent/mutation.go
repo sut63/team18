@@ -20,6 +20,7 @@ import (
 	"github.com/team18/app/ent/promotion"
 	"github.com/team18/app/ent/reserveroom"
 	"github.com/team18/app/ent/status"
+	"github.com/team18/app/ent/statuscheckin"
 	"github.com/team18/app/ent/statusreserve"
 	"github.com/team18/app/ent/statusroom"
 	"github.com/team18/app/ent/typeroom"
@@ -48,6 +49,7 @@ const (
 	TypePromotion       = "Promotion"
 	TypeReserveRoom     = "ReserveRoom"
 	TypeStatus          = "Status"
+	TypeStatusCheckIn   = "StatusCheckIn"
 	TypeStatusReserve   = "StatusReserve"
 	TypeStatusRoom      = "StatusRoom"
 	TypeTypeRoom        = "TypeRoom"
@@ -70,6 +72,8 @@ type CheckInMutation struct {
 	clearedreserveroom bool
 	dataroom           *int
 	cleareddataroom    bool
+	status             *int
+	clearedstatus      bool
 	checkouts          *int
 	clearedcheckouts   bool
 	done               bool
@@ -348,6 +352,45 @@ func (m *CheckInMutation) ResetDataroom() {
 	m.cleareddataroom = false
 }
 
+// SetStatusID sets the status edge to StatusCheckIn by id.
+func (m *CheckInMutation) SetStatusID(id int) {
+	m.status = &id
+}
+
+// ClearStatus clears the status edge to StatusCheckIn.
+func (m *CheckInMutation) ClearStatus() {
+	m.clearedstatus = true
+}
+
+// StatusCleared returns if the edge status was cleared.
+func (m *CheckInMutation) StatusCleared() bool {
+	return m.clearedstatus
+}
+
+// StatusID returns the status id in the mutation.
+func (m *CheckInMutation) StatusID() (id int, exists bool) {
+	if m.status != nil {
+		return *m.status, true
+	}
+	return
+}
+
+// StatusIDs returns the status ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// StatusID instead. It exists only for internal usage by the builders.
+func (m *CheckInMutation) StatusIDs() (ids []int) {
+	if id := m.status; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetStatus reset all changes of the "status" edge.
+func (m *CheckInMutation) ResetStatus() {
+	m.status = nil
+	m.clearedstatus = false
+}
+
 // SetCheckoutsID sets the checkouts edge to Checkout by id.
 func (m *CheckInMutation) SetCheckoutsID(id int) {
 	m.checkouts = &id
@@ -502,7 +545,7 @@ func (m *CheckInMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *CheckInMutation) AddedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.customer != nil {
 		edges = append(edges, checkin.EdgeCustomer)
 	}
@@ -514,6 +557,9 @@ func (m *CheckInMutation) AddedEdges() []string {
 	}
 	if m.dataroom != nil {
 		edges = append(edges, checkin.EdgeDataroom)
+	}
+	if m.status != nil {
+		edges = append(edges, checkin.EdgeStatus)
 	}
 	if m.checkouts != nil {
 		edges = append(edges, checkin.EdgeCheckouts)
@@ -541,6 +587,10 @@ func (m *CheckInMutation) AddedIDs(name string) []ent.Value {
 		if id := m.dataroom; id != nil {
 			return []ent.Value{*id}
 		}
+	case checkin.EdgeStatus:
+		if id := m.status; id != nil {
+			return []ent.Value{*id}
+		}
 	case checkin.EdgeCheckouts:
 		if id := m.checkouts; id != nil {
 			return []ent.Value{*id}
@@ -552,7 +602,7 @@ func (m *CheckInMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *CheckInMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	return edges
 }
 
@@ -567,7 +617,7 @@ func (m *CheckInMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *CheckInMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.clearedcustomer {
 		edges = append(edges, checkin.EdgeCustomer)
 	}
@@ -579,6 +629,9 @@ func (m *CheckInMutation) ClearedEdges() []string {
 	}
 	if m.cleareddataroom {
 		edges = append(edges, checkin.EdgeDataroom)
+	}
+	if m.clearedstatus {
+		edges = append(edges, checkin.EdgeStatus)
 	}
 	if m.clearedcheckouts {
 		edges = append(edges, checkin.EdgeCheckouts)
@@ -598,6 +651,8 @@ func (m *CheckInMutation) EdgeCleared(name string) bool {
 		return m.clearedreserveroom
 	case checkin.EdgeDataroom:
 		return m.cleareddataroom
+	case checkin.EdgeStatus:
+		return m.clearedstatus
 	case checkin.EdgeCheckouts:
 		return m.clearedcheckouts
 	}
@@ -619,6 +674,9 @@ func (m *CheckInMutation) ClearEdge(name string) error {
 		return nil
 	case checkin.EdgeDataroom:
 		m.ClearDataroom()
+		return nil
+	case checkin.EdgeStatus:
+		m.ClearStatus()
 		return nil
 	case checkin.EdgeCheckouts:
 		m.ClearCheckouts()
@@ -643,6 +701,9 @@ func (m *CheckInMutation) ResetEdge(name string) error {
 		return nil
 	case checkin.EdgeDataroom:
 		m.ResetDataroom()
+		return nil
+	case checkin.EdgeStatus:
+		m.ResetStatus()
 		return nil
 	case checkin.EdgeCheckouts:
 		m.ResetCheckouts()
@@ -6638,6 +6699,374 @@ func (m *StatusMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Status edge %s", name)
+}
+
+// StatusCheckInMutation represents an operation that mutate the StatusCheckIns
+// nodes in the graph.
+type StatusCheckInMutation struct {
+	config
+	op              Op
+	typ             string
+	id              *int
+	status_name     *string
+	clearedFields   map[string]struct{}
+	checkins        map[int]struct{}
+	removedcheckins map[int]struct{}
+	done            bool
+	oldValue        func(context.Context) (*StatusCheckIn, error)
+}
+
+var _ ent.Mutation = (*StatusCheckInMutation)(nil)
+
+// statuscheckinOption allows to manage the mutation configuration using functional options.
+type statuscheckinOption func(*StatusCheckInMutation)
+
+// newStatusCheckInMutation creates new mutation for $n.Name.
+func newStatusCheckInMutation(c config, op Op, opts ...statuscheckinOption) *StatusCheckInMutation {
+	m := &StatusCheckInMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeStatusCheckIn,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withStatusCheckInID sets the id field of the mutation.
+func withStatusCheckInID(id int) statuscheckinOption {
+	return func(m *StatusCheckInMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *StatusCheckIn
+		)
+		m.oldValue = func(ctx context.Context) (*StatusCheckIn, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().StatusCheckIn.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withStatusCheckIn sets the old StatusCheckIn of the mutation.
+func withStatusCheckIn(node *StatusCheckIn) statuscheckinOption {
+	return func(m *StatusCheckInMutation) {
+		m.oldValue = func(context.Context) (*StatusCheckIn, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m StatusCheckInMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m StatusCheckInMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *StatusCheckInMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetStatusName sets the status_name field.
+func (m *StatusCheckInMutation) SetStatusName(s string) {
+	m.status_name = &s
+}
+
+// StatusName returns the status_name value in the mutation.
+func (m *StatusCheckInMutation) StatusName() (r string, exists bool) {
+	v := m.status_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatusName returns the old status_name value of the StatusCheckIn.
+// If the StatusCheckIn object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *StatusCheckInMutation) OldStatusName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldStatusName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldStatusName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatusName: %w", err)
+	}
+	return oldValue.StatusName, nil
+}
+
+// ResetStatusName reset all changes of the "status_name" field.
+func (m *StatusCheckInMutation) ResetStatusName() {
+	m.status_name = nil
+}
+
+// AddCheckinIDs adds the checkins edge to CheckIn by ids.
+func (m *StatusCheckInMutation) AddCheckinIDs(ids ...int) {
+	if m.checkins == nil {
+		m.checkins = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.checkins[ids[i]] = struct{}{}
+	}
+}
+
+// RemoveCheckinIDs removes the checkins edge to CheckIn by ids.
+func (m *StatusCheckInMutation) RemoveCheckinIDs(ids ...int) {
+	if m.removedcheckins == nil {
+		m.removedcheckins = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedcheckins[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedCheckins returns the removed ids of checkins.
+func (m *StatusCheckInMutation) RemovedCheckinsIDs() (ids []int) {
+	for id := range m.removedcheckins {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// CheckinsIDs returns the checkins ids in the mutation.
+func (m *StatusCheckInMutation) CheckinsIDs() (ids []int) {
+	for id := range m.checkins {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetCheckins reset all changes of the "checkins" edge.
+func (m *StatusCheckInMutation) ResetCheckins() {
+	m.checkins = nil
+	m.removedcheckins = nil
+}
+
+// Op returns the operation name.
+func (m *StatusCheckInMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (StatusCheckIn).
+func (m *StatusCheckInMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *StatusCheckInMutation) Fields() []string {
+	fields := make([]string, 0, 1)
+	if m.status_name != nil {
+		fields = append(fields, statuscheckin.FieldStatusName)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *StatusCheckInMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case statuscheckin.FieldStatusName:
+		return m.StatusName()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *StatusCheckInMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case statuscheckin.FieldStatusName:
+		return m.OldStatusName(ctx)
+	}
+	return nil, fmt.Errorf("unknown StatusCheckIn field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *StatusCheckInMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case statuscheckin.FieldStatusName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatusName(v)
+		return nil
+	}
+	return fmt.Errorf("unknown StatusCheckIn field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *StatusCheckInMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *StatusCheckInMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *StatusCheckInMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown StatusCheckIn numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *StatusCheckInMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *StatusCheckInMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *StatusCheckInMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown StatusCheckIn nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *StatusCheckInMutation) ResetField(name string) error {
+	switch name {
+	case statuscheckin.FieldStatusName:
+		m.ResetStatusName()
+		return nil
+	}
+	return fmt.Errorf("unknown StatusCheckIn field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *StatusCheckInMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.checkins != nil {
+		edges = append(edges, statuscheckin.EdgeCheckins)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *StatusCheckInMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case statuscheckin.EdgeCheckins:
+		ids := make([]ent.Value, 0, len(m.checkins))
+		for id := range m.checkins {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *StatusCheckInMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedcheckins != nil {
+		edges = append(edges, statuscheckin.EdgeCheckins)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *StatusCheckInMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case statuscheckin.EdgeCheckins:
+		ids := make([]ent.Value, 0, len(m.removedcheckins))
+		for id := range m.removedcheckins {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *StatusCheckInMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *StatusCheckInMutation) EdgeCleared(name string) bool {
+	switch name {
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *StatusCheckInMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown StatusCheckIn unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *StatusCheckInMutation) ResetEdge(name string) error {
+	switch name {
+	case statuscheckin.EdgeCheckins:
+		m.ResetCheckins()
+		return nil
+	}
+	return fmt.Errorf("unknown StatusCheckIn edge %s", name)
 }
 
 // StatusReserveMutation represents an operation that mutate the StatusReserves

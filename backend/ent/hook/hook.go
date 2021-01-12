@@ -165,6 +165,19 @@ func (f StatusFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, erro
 	return f(ctx, mv)
 }
 
+// The StatusCheckInFunc type is an adapter to allow the use of ordinary
+// function as StatusCheckIn mutator.
+type StatusCheckInFunc func(context.Context, *ent.StatusCheckInMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f StatusCheckInFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.StatusCheckInMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StatusCheckInMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The StatusReserveFunc type is an adapter to allow the use of ordinary
 // function as StatusReserve mutator.
 type StatusReserveFunc func(context.Context, *ent.StatusReserveMutation) (ent.Value, error)

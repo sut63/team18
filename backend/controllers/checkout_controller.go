@@ -51,6 +51,13 @@ func (ctl *CheckoutController) CreateCheckout(c *gin.Context) {
 	t2 := t1.Format("2006-01-02T15:04:05Z07:00")
 	time, err := time.Parse(time.RFC3339, t2)
 
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "time not found",
+		})
+		return
+	}
+
 	cou, err := ctl.client.CounterStaff.
 		Query().
 		Where(counterstaff.IDEQ(int(obj.CounterstaffsID))).
@@ -65,7 +72,7 @@ func (ctl *CheckoutController) CreateCheckout(c *gin.Context) {
 
 	st, err := ctl.client.Status.
 		Query().
-		Where(status.IDEQ(int(obj.CounterstaffsID))).
+		Where(status.IDEQ(int(obj.StatussID))).
 		Only(context.Background())
 
 	if err != nil {
@@ -101,6 +108,31 @@ func (ctl *CheckoutController) CreateCheckout(c *gin.Context) {
 		return
 	}
 
+	upc, err := ctl.client.CheckIn.
+		UpdateOne(ci).
+		SetStatusID(2).
+		Save(context.Background())
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "update chackin failed",
+		})
+		return
+	}
+
+	di, err := ctl.client.DataRoom.
+		UpdateOne(ci.Edges.Dataroom).
+		SetStatusroomID(1).
+		Save(context.Background())
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "update Dataroom failed",
+		})
+		return
+	}
+
+	fmt.Print(upc, di)
 	c.JSON(200, u)
 }
 

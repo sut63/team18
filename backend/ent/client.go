@@ -21,6 +21,7 @@ import (
 	"github.com/team18/app/ent/promotion"
 	"github.com/team18/app/ent/reserveroom"
 	"github.com/team18/app/ent/status"
+	"github.com/team18/app/ent/statuscheckin"
 	"github.com/team18/app/ent/statusreserve"
 	"github.com/team18/app/ent/statusroom"
 	"github.com/team18/app/ent/typeroom"
@@ -59,6 +60,8 @@ type Client struct {
 	ReserveRoom *ReserveRoomClient
 	// Status is the client for interacting with the Status builders.
 	Status *StatusClient
+	// StatusCheckIn is the client for interacting with the StatusCheckIn builders.
+	StatusCheckIn *StatusCheckInClient
 	// StatusReserve is the client for interacting with the StatusReserve builders.
 	StatusReserve *StatusReserveClient
 	// StatusRoom is the client for interacting with the StatusRoom builders.
@@ -90,6 +93,7 @@ func (c *Client) init() {
 	c.Promotion = NewPromotionClient(c.config)
 	c.ReserveRoom = NewReserveRoomClient(c.config)
 	c.Status = NewStatusClient(c.config)
+	c.StatusCheckIn = NewStatusCheckInClient(c.config)
 	c.StatusReserve = NewStatusReserveClient(c.config)
 	c.StatusRoom = NewStatusRoomClient(c.config)
 	c.TypeRoom = NewTypeRoomClient(c.config)
@@ -137,6 +141,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Promotion:       NewPromotionClient(cfg),
 		ReserveRoom:     NewReserveRoomClient(cfg),
 		Status:          NewStatusClient(cfg),
+		StatusCheckIn:   NewStatusCheckInClient(cfg),
 		StatusReserve:   NewStatusReserveClient(cfg),
 		StatusRoom:      NewStatusRoomClient(cfg),
 		TypeRoom:        NewTypeRoomClient(cfg),
@@ -167,6 +172,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Promotion:       NewPromotionClient(cfg),
 		ReserveRoom:     NewReserveRoomClient(cfg),
 		Status:          NewStatusClient(cfg),
+		StatusCheckIn:   NewStatusCheckInClient(cfg),
 		StatusReserve:   NewStatusReserveClient(cfg),
 		StatusRoom:      NewStatusRoomClient(cfg),
 		TypeRoom:        NewTypeRoomClient(cfg),
@@ -210,6 +216,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Promotion.Use(hooks...)
 	c.ReserveRoom.Use(hooks...)
 	c.Status.Use(hooks...)
+	c.StatusCheckIn.Use(hooks...)
 	c.StatusReserve.Use(hooks...)
 	c.StatusRoom.Use(hooks...)
 	c.TypeRoom.Use(hooks...)
@@ -350,6 +357,22 @@ func (c *CheckInClient) QueryDataroom(ci *CheckIn) *DataRoomQuery {
 			sqlgraph.From(checkin.Table, checkin.FieldID, id),
 			sqlgraph.To(dataroom.Table, dataroom.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, checkin.DataroomTable, checkin.DataroomColumn),
+		)
+		fromV = sqlgraph.Neighbors(ci.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryStatus queries the status edge of a CheckIn.
+func (c *CheckInClient) QueryStatus(ci *CheckIn) *StatusCheckInQuery {
+	query := &StatusCheckInQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := ci.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(checkin.Table, checkin.FieldID, id),
+			sqlgraph.To(statuscheckin.Table, statuscheckin.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, checkin.StatusTable, checkin.StatusColumn),
 		)
 		fromV = sqlgraph.Neighbors(ci.driver.Dialect(), step)
 		return fromV, nil
@@ -1833,6 +1856,105 @@ func (c *StatusClient) QueryCheckouts(s *Status) *CheckoutQuery {
 // Hooks returns the client hooks.
 func (c *StatusClient) Hooks() []Hook {
 	return c.hooks.Status
+}
+
+// StatusCheckInClient is a client for the StatusCheckIn schema.
+type StatusCheckInClient struct {
+	config
+}
+
+// NewStatusCheckInClient returns a client for the StatusCheckIn from the given config.
+func NewStatusCheckInClient(c config) *StatusCheckInClient {
+	return &StatusCheckInClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `statuscheckin.Hooks(f(g(h())))`.
+func (c *StatusCheckInClient) Use(hooks ...Hook) {
+	c.hooks.StatusCheckIn = append(c.hooks.StatusCheckIn, hooks...)
+}
+
+// Create returns a create builder for StatusCheckIn.
+func (c *StatusCheckInClient) Create() *StatusCheckInCreate {
+	mutation := newStatusCheckInMutation(c.config, OpCreate)
+	return &StatusCheckInCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Update returns an update builder for StatusCheckIn.
+func (c *StatusCheckInClient) Update() *StatusCheckInUpdate {
+	mutation := newStatusCheckInMutation(c.config, OpUpdate)
+	return &StatusCheckInUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *StatusCheckInClient) UpdateOne(sci *StatusCheckIn) *StatusCheckInUpdateOne {
+	mutation := newStatusCheckInMutation(c.config, OpUpdateOne, withStatusCheckIn(sci))
+	return &StatusCheckInUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *StatusCheckInClient) UpdateOneID(id int) *StatusCheckInUpdateOne {
+	mutation := newStatusCheckInMutation(c.config, OpUpdateOne, withStatusCheckInID(id))
+	return &StatusCheckInUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for StatusCheckIn.
+func (c *StatusCheckInClient) Delete() *StatusCheckInDelete {
+	mutation := newStatusCheckInMutation(c.config, OpDelete)
+	return &StatusCheckInDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *StatusCheckInClient) DeleteOne(sci *StatusCheckIn) *StatusCheckInDeleteOne {
+	return c.DeleteOneID(sci.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *StatusCheckInClient) DeleteOneID(id int) *StatusCheckInDeleteOne {
+	builder := c.Delete().Where(statuscheckin.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &StatusCheckInDeleteOne{builder}
+}
+
+// Create returns a query builder for StatusCheckIn.
+func (c *StatusCheckInClient) Query() *StatusCheckInQuery {
+	return &StatusCheckInQuery{config: c.config}
+}
+
+// Get returns a StatusCheckIn entity by its id.
+func (c *StatusCheckInClient) Get(ctx context.Context, id int) (*StatusCheckIn, error) {
+	return c.Query().Where(statuscheckin.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *StatusCheckInClient) GetX(ctx context.Context, id int) *StatusCheckIn {
+	sci, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return sci
+}
+
+// QueryCheckins queries the checkins edge of a StatusCheckIn.
+func (c *StatusCheckInClient) QueryCheckins(sci *StatusCheckIn) *CheckInQuery {
+	query := &CheckInQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := sci.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(statuscheckin.Table, statuscheckin.FieldID, id),
+			sqlgraph.To(checkin.Table, checkin.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, statuscheckin.CheckinsTable, statuscheckin.CheckinsColumn),
+		)
+		fromV = sqlgraph.Neighbors(sci.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *StatusCheckInClient) Hooks() []Hook {
+	return c.hooks.StatusCheckIn
 }
 
 // StatusReserveClient is a client for the StatusReserve schema.

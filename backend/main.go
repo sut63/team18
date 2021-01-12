@@ -30,6 +30,14 @@ type StatusReserve struct {
 	Status string
 }
 
+type StatusCheckins struct {
+	StatusCheckin []StatusCheckin
+}
+
+type StatusCheckin struct {
+	Status string
+}
+
 type TypeRooms struct {
 	TypeRoom []TypeRoom
 }
@@ -137,6 +145,8 @@ func main() {
 	controllers.NewFurnituretypeController(v1, client)
 	controllers.NewFurnitureController(v1, client)
 	controllers.NewFixRoomController(v1, client)
+	controllers.NewStatusCheckinController(v1, client)
+
 	// Set StatusRoom Data
 	statusrooms := StatusRooms{
 		StatusRoom: []StatusRoom{
@@ -217,6 +227,20 @@ func main() {
 		client.StatusReserve.
 			Create().
 			SetStatusName(sr.Status).
+			Save(context.Background())
+	}
+
+	// Set Statuscheckin Data
+	statuscheckins := StatusCheckins{
+		StatusCheckin: []StatusCheckin{
+			StatusCheckin{"พักอยู่"},
+			StatusCheckin{"ออกแล้ว"},
+		},
+	}
+	for _, si := range statuscheckins.StatusCheckin {
+		client.StatusCheckIn.
+			Create().
+			SetStatusName(si.Status).
 			Save(context.Background())
 	}
 

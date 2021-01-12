@@ -64,7 +64,7 @@ const checkout: FC<{}> = () => {
   var ck = new Cookies()
   var cookieName = ck.GetCookie()
 
-  const [CheckOut, setDataRoom] = React.useState<Partial<CheckOut>>({});
+  const [CheckOut, setCheckout] = React.useState<Partial<CheckOut>>({});
 
   // checkout
   const [Checkin, setCheckin] = React.useState<EntCheckIn[]>([]);  
@@ -87,7 +87,7 @@ const checkout: FC<{}> = () => {
 
   // set data for checkout
   const getcheckIn = async () => {
-    const res = await api.listCheckin({ limit: 10, offset: 0 });
+    const res = await api.listGetCheckInStatus();
     setCheckin(res);
   };
 
@@ -118,13 +118,13 @@ const checkout: FC<{}> = () => {
   ) => {
     const name = event.target.name as keyof typeof CheckOut;
     const { value } = event.target;
-    setDataRoom({ ...CheckOut, [name]: value });
+    setCheckout({ ...CheckOut, [name]: value });
     console.log(CheckOut);
   };
   
   // clear input form
   function clear() {
-    setDataRoom({});
+    setCheckout({});
   }
 
   // function save data
@@ -155,6 +155,9 @@ const checkout: FC<{}> = () => {
     ck.ClearCookie()
     window.location.reload(false)
   }
+  function reload() {
+    window.location.reload(false)
+  }
 
   return (
     <Page theme={pageTheme.home}>
@@ -174,13 +177,7 @@ const checkout: FC<{}> = () => {
       <Content>
         <Container maxWidth="sm">
           <Grid container spacing={3}>
-            <Grid item xs={12}></Grid>
-            <Grid item xs={3}>
-              
-            </Grid>
-            <Grid item xs={9}>
-            
-           </Grid>
+
             
             <Grid item xs={3}>
               <div className={classes.paper}>check in</div>
@@ -260,7 +257,10 @@ const checkout: FC<{}> = () => {
                 color="primary"
                 size="large"
                 startIcon={<SaveIcon />}
-                onClick={save}
+                onClick={() => {
+                  save();
+                  reload();
+                }}
               >
                 check out
               </Button>

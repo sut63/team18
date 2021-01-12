@@ -16,6 +16,7 @@ var (
 		{Name: "customer_id", Type: field.TypeInt, Nullable: true},
 		{Name: "room_id", Type: field.TypeInt, Nullable: true},
 		{Name: "reserves_id", Type: field.TypeInt, Nullable: true},
+		{Name: "status_id", Type: field.TypeInt, Nullable: true},
 	}
 	// CheckInsTable holds the schema information for the "check_ins" table.
 	CheckInsTable = &schema.Table{
@@ -49,6 +50,13 @@ var (
 				Columns: []*schema.Column{CheckInsColumns[5]},
 
 				RefColumns: []*schema.Column{ReserveRoomsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "check_ins_status_check_ins_checkins",
+				Columns: []*schema.Column{CheckInsColumns[6]},
+
+				RefColumns: []*schema.Column{StatusCheckInsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -334,6 +342,18 @@ var (
 		PrimaryKey:  []*schema.Column{StatusColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// StatusCheckInsColumns holds the columns for the "status_check_ins" table.
+	StatusCheckInsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "status_name", Type: field.TypeString, Unique: true},
+	}
+	// StatusCheckInsTable holds the schema information for the "status_check_ins" table.
+	StatusCheckInsTable = &schema.Table{
+		Name:        "status_check_ins",
+		Columns:     StatusCheckInsColumns,
+		PrimaryKey:  []*schema.Column{StatusCheckInsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// StatusReservesColumns holds the columns for the "status_reserves" table.
 	StatusReservesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -384,6 +404,7 @@ var (
 		PromotionsTable,
 		ReserveRoomsTable,
 		StatusTable,
+		StatusCheckInsTable,
 		StatusReservesTable,
 		StatusRoomsTable,
 		TypeRoomsTable,
@@ -395,6 +416,7 @@ func init() {
 	CheckInsTable.ForeignKeys[1].RefTable = CustomersTable
 	CheckInsTable.ForeignKeys[2].RefTable = DataRoomsTable
 	CheckInsTable.ForeignKeys[3].RefTable = ReserveRoomsTable
+	CheckInsTable.ForeignKeys[4].RefTable = StatusCheckInsTable
 	CheckoutsTable.ForeignKeys[0].RefTable = CheckInsTable
 	CheckoutsTable.ForeignKeys[1].RefTable = CounterStaffsTable
 	CheckoutsTable.ForeignKeys[2].RefTable = StatusTable

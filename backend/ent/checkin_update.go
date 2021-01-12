@@ -17,6 +17,7 @@ import (
 	"github.com/team18/app/ent/dataroom"
 	"github.com/team18/app/ent/predicate"
 	"github.com/team18/app/ent/reserveroom"
+	"github.com/team18/app/ent/statuscheckin"
 )
 
 // CheckInUpdate is the builder for updating CheckIn entities.
@@ -115,6 +116,25 @@ func (ciu *CheckInUpdate) SetDataroom(d *DataRoom) *CheckInUpdate {
 	return ciu.SetDataroomID(d.ID)
 }
 
+// SetStatusID sets the status edge to StatusCheckIn by id.
+func (ciu *CheckInUpdate) SetStatusID(id int) *CheckInUpdate {
+	ciu.mutation.SetStatusID(id)
+	return ciu
+}
+
+// SetNillableStatusID sets the status edge to StatusCheckIn by id if the given value is not nil.
+func (ciu *CheckInUpdate) SetNillableStatusID(id *int) *CheckInUpdate {
+	if id != nil {
+		ciu = ciu.SetStatusID(*id)
+	}
+	return ciu
+}
+
+// SetStatus sets the status edge to StatusCheckIn.
+func (ciu *CheckInUpdate) SetStatus(s *StatusCheckIn) *CheckInUpdate {
+	return ciu.SetStatusID(s.ID)
+}
+
 // SetCheckoutsID sets the checkouts edge to Checkout by id.
 func (ciu *CheckInUpdate) SetCheckoutsID(id int) *CheckInUpdate {
 	ciu.mutation.SetCheckoutsID(id)
@@ -160,6 +180,12 @@ func (ciu *CheckInUpdate) ClearReserveroom() *CheckInUpdate {
 // ClearDataroom clears the dataroom edge to DataRoom.
 func (ciu *CheckInUpdate) ClearDataroom() *CheckInUpdate {
 	ciu.mutation.ClearDataroom()
+	return ciu
+}
+
+// ClearStatus clears the status edge to StatusCheckIn.
+func (ciu *CheckInUpdate) ClearStatus() *CheckInUpdate {
+	ciu.mutation.ClearStatus()
 	return ciu
 }
 
@@ -386,6 +412,41 @@ func (ciu *CheckInUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ciu.mutation.StatusCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   checkin.StatusTable,
+			Columns: []string{checkin.StatusColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: statuscheckin.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ciu.mutation.StatusIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   checkin.StatusTable,
+			Columns: []string{checkin.StatusColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: statuscheckin.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if ciu.mutation.CheckoutsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
@@ -521,6 +582,25 @@ func (ciuo *CheckInUpdateOne) SetDataroom(d *DataRoom) *CheckInUpdateOne {
 	return ciuo.SetDataroomID(d.ID)
 }
 
+// SetStatusID sets the status edge to StatusCheckIn by id.
+func (ciuo *CheckInUpdateOne) SetStatusID(id int) *CheckInUpdateOne {
+	ciuo.mutation.SetStatusID(id)
+	return ciuo
+}
+
+// SetNillableStatusID sets the status edge to StatusCheckIn by id if the given value is not nil.
+func (ciuo *CheckInUpdateOne) SetNillableStatusID(id *int) *CheckInUpdateOne {
+	if id != nil {
+		ciuo = ciuo.SetStatusID(*id)
+	}
+	return ciuo
+}
+
+// SetStatus sets the status edge to StatusCheckIn.
+func (ciuo *CheckInUpdateOne) SetStatus(s *StatusCheckIn) *CheckInUpdateOne {
+	return ciuo.SetStatusID(s.ID)
+}
+
 // SetCheckoutsID sets the checkouts edge to Checkout by id.
 func (ciuo *CheckInUpdateOne) SetCheckoutsID(id int) *CheckInUpdateOne {
 	ciuo.mutation.SetCheckoutsID(id)
@@ -566,6 +646,12 @@ func (ciuo *CheckInUpdateOne) ClearReserveroom() *CheckInUpdateOne {
 // ClearDataroom clears the dataroom edge to DataRoom.
 func (ciuo *CheckInUpdateOne) ClearDataroom() *CheckInUpdateOne {
 	ciuo.mutation.ClearDataroom()
+	return ciuo
+}
+
+// ClearStatus clears the status edge to StatusCheckIn.
+func (ciuo *CheckInUpdateOne) ClearStatus() *CheckInUpdateOne {
+	ciuo.mutation.ClearStatus()
 	return ciuo
 }
 
@@ -782,6 +868,41 @@ func (ciuo *CheckInUpdateOne) sqlSave(ctx context.Context) (ci *CheckIn, err err
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: dataroom.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ciuo.mutation.StatusCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   checkin.StatusTable,
+			Columns: []string{checkin.StatusColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: statuscheckin.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ciuo.mutation.StatusIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   checkin.StatusTable,
+			Columns: []string{checkin.StatusColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: statuscheckin.FieldID,
 				},
 			},
 		}
