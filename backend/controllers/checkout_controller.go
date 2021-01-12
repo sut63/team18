@@ -93,21 +93,6 @@ func (ctl *CheckoutController) CreateCheckout(c *gin.Context) {
 		})
 		return
 	}
-
-	u, err := ctl.client.Checkout.
-		Create().
-		SetCheckoutDate(time).
-		SetStatuss(st).
-		SetCounterstaffs(cou).
-		SetCheckins(ci).
-		Save(context.Background())
-	if err != nil {
-		c.JSON(400, gin.H{
-			"error": "saving failed",
-		})
-		return
-	}
-
 	upc, err := ctl.client.CheckIn.
 		UpdateOne(ci).
 		SetStatusID(2).
@@ -120,14 +105,39 @@ func (ctl *CheckoutController) CreateCheckout(c *gin.Context) {
 		return
 	}
 
+	da, err := ctl.client.CheckIn.
+		QueryDataroom(ci).
+		Only(context.Background())
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "not found dataroom",
+		})
+		return
+	}
+
 	di, err := ctl.client.DataRoom.
-		UpdateOne(ci.Edges.Dataroom).
+		UpdateOne(da).
 		SetStatusroomID(1).
 		Save(context.Background())
 
 	if err != nil {
 		c.JSON(400, gin.H{
 			"error": "update Dataroom failed",
+		})
+		return
+	}
+
+	u, err := ctl.client.Checkout.
+		Create().
+		SetCheckoutDate(time).
+		SetStatuss(st).
+		SetCounterstaffs(cou).
+		SetCheckins(ci).
+		Save(context.Background())
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "saving failed",
 		})
 		return
 	}

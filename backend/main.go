@@ -14,6 +14,14 @@ import (
 	"github.com/team18/app/ent"
 )
 
+type Statuss struct {
+	Status []Status
+}
+
+type Status struct {
+	StatusDescription string
+}
+
 type StatusRooms struct {
 	StatusRoom []StatusRoom
 }
@@ -158,6 +166,20 @@ func main() {
 		client.StatusRoom.
 			Create().
 			SetStatusName(s.StatusName).
+			Save(context.Background())
+	}
+
+	// set status Data for checkout
+	statuss := Statuss{
+		Status: []Status{
+			Status{"จ่าย"},
+			Status{"ยังไม่จ่าย"},
+		},
+	}
+	for _, sc := range statuss.Status {
+		client.Status.
+			Create().
+			SetDescription(sc.StatusDescription).
 			Save(context.Background())
 	}
 
