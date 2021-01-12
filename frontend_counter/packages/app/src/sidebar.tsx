@@ -44,6 +44,11 @@ export const AppSidebar = () => (
       to="checkout"
       text="Check Out"
     />
+    <SidebarItem
+      icon={CreateComponentIcon}
+      to="FurnitureDetail"
+      text="FurnitureDetail"
+    />
 
     {/* End global nav */}
     <SidebarDivider />
