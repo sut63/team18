@@ -51,6 +51,9 @@ import {
     EntStatus,
     EntStatusFromJSON,
     EntStatusToJSON,
+    EntStatusCheckIn,
+    EntStatusCheckInFromJSON,
+    EntStatusCheckInToJSON,
     EntStatusReserve,
     EntStatusReserveFromJSON,
     EntStatusReserveToJSON,
@@ -102,6 +105,10 @@ export interface CreateStatusReserveRequest {
     statusReserve: EntStatus;
 }
 
+export interface CreateStatuscheckinRequest {
+    statuscheckin: EntStatus;
+}
+
 export interface CreateStatusroomRequest {
     statusroom: EntStatusRoom;
 }
@@ -135,6 +142,10 @@ export interface DeleteStatusRequest {
 }
 
 export interface DeleteStatusReserveRequest {
+    id: number;
+}
+
+export interface DeleteStatuscheckinRequest {
     id: number;
 }
 
@@ -195,6 +206,10 @@ export interface GetStatusRequest {
 }
 
 export interface GetStatusReserveRequest {
+    id: number;
+}
+
+export interface GetStatuscheckinRequest {
     id: number;
 }
 
@@ -279,6 +294,11 @@ export interface ListStatusRequest {
 }
 
 export interface ListStatusReserveRequest {
+    limit?: number;
+    offset?: number;
+}
+
+export interface ListStatuscheckinRequest {
     limit?: number;
     offset?: number;
 }
@@ -669,6 +689,41 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Create statuscheckin
+     * Create statuscheckin
+     */
+    async createStatuscheckinRaw(requestParameters: CreateStatuscheckinRequest): Promise<runtime.ApiResponse<EntStatusCheckIn>> {
+        if (requestParameters.statuscheckin === null || requestParameters.statuscheckin === undefined) {
+            throw new runtime.RequiredError('statuscheckin','Required parameter requestParameters.statuscheckin was null or undefined when calling createStatuscheckin.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/statuscheckins`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: EntStatusToJSON(requestParameters.statuscheckin),
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntStatusCheckInFromJSON(jsonValue));
+    }
+
+    /**
+     * Create statuscheckin
+     * Create statuscheckin
+     */
+    async createStatuscheckin(requestParameters: CreateStatuscheckinRequest): Promise<EntStatusCheckIn> {
+        const response = await this.createStatuscheckinRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
      * Create statusroom
      * Create statusroom
      */
@@ -959,6 +1014,38 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async deleteStatusReserve(requestParameters: DeleteStatusReserveRequest): Promise<object> {
         const response = await this.deleteStatusReserveRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * get statuscheckin by ID
+     * Delete a statuscheckin entity by ID
+     */
+    async deleteStatuscheckinRaw(requestParameters: DeleteStatuscheckinRequest): Promise<runtime.ApiResponse<object>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteStatuscheckin.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/statuscheckins/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * get statuscheckin by ID
+     * Delete a statuscheckin entity by ID
+     */
+    async deleteStatuscheckin(requestParameters: DeleteStatuscheckinRequest): Promise<object> {
+        const response = await this.deleteStatuscheckinRaw(requestParameters);
         return await response.value();
     }
 
@@ -1443,6 +1530,38 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * get statuscheckin by ID
+     * Get a statuscheckin entity by ID
+     */
+    async getStatuscheckinRaw(requestParameters: GetStatuscheckinRequest): Promise<runtime.ApiResponse<EntStatusCheckIn>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getStatuscheckin.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/statuscheckins/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntStatusCheckInFromJSON(jsonValue));
+    }
+
+    /**
+     * get statuscheckin by ID
+     * Get a statuscheckin entity by ID
+     */
+    async getStatuscheckin(requestParameters: GetStatuscheckinRequest): Promise<EntStatusCheckIn> {
+        const response = await this.getStatuscheckinRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
      * get statusroom by ID
      * Get a statusroom entity by ID
      */
@@ -1911,6 +2030,34 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * list  GetCheckInStatus entities
+     * List  GetCheckInStatus entities
+     */
+    async listGetCheckInStatusRaw(): Promise<runtime.ApiResponse<Array<EntCheckIn>>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/checkinstatuss`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntCheckInFromJSON));
+    }
+
+    /**
+     * list  GetCheckInStatus entities
+     * List  GetCheckInStatus entities
+     */
+    async listGetCheckInStatus(): Promise<Array<EntCheckIn>> {
+        const response = await this.listGetCheckInStatusRaw();
+        return await response.value();
+    }
+
+    /**
      * list promotion entities
      * List promotion entities
      */
@@ -2051,6 +2198,42 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async listStatusReserve(requestParameters: ListStatusReserveRequest): Promise<Array<EntStatusReserve>> {
         const response = await this.listStatusReserveRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * list statuscheckin entities
+     * List statuscheckin entities
+     */
+    async listStatuscheckinRaw(requestParameters: ListStatuscheckinRequest): Promise<runtime.ApiResponse<Array<EntStatusCheckIn>>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.offset !== undefined) {
+            queryParameters['offset'] = requestParameters.offset;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/statuscheckins`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntStatusCheckInFromJSON));
+    }
+
+    /**
+     * list statuscheckin entities
+     * List statuscheckin entities
+     */
+    async listStatuscheckin(requestParameters: ListStatuscheckinRequest): Promise<Array<EntStatusCheckIn>> {
+        const response = await this.listStatuscheckinRaw(requestParameters);
         return await response.value();
     }
 

@@ -34,6 +34,10 @@ import {
     EntReserveRoomFromJSON,
     EntReserveRoomFromJSONTyped,
     EntReserveRoomToJSON,
+    EntStatusCheckIn,
+    EntStatusCheckInFromJSON,
+    EntStatusCheckInFromJSONTyped,
+    EntStatusCheckInToJSON,
 } from './';
 
 /**
@@ -72,6 +76,12 @@ export interface EntCheckInEdges {
      * @memberof EntCheckInEdges
      */
     reserveroom?: EntReserveRoom;
+    /**
+     * 
+     * @type {EntStatusCheckIn}
+     * @memberof EntCheckInEdges
+     */
+    status?: EntStatusCheckIn;
 }
 
 export function EntCheckInEdgesFromJSON(json: any): EntCheckInEdges {
@@ -89,6 +99,7 @@ export function EntCheckInEdgesFromJSONTyped(json: any, ignoreDiscriminator: boo
         'customer': !exists(json, 'customer') ? undefined : EntCustomerFromJSON(json['customer']),
         'dataroom': !exists(json, 'dataroom') ? undefined : EntDataRoomFromJSON(json['dataroom']),
         'reserveroom': !exists(json, 'reserveroom') ? undefined : EntReserveRoomFromJSON(json['reserveroom']),
+        'status': !exists(json, 'status') ? undefined : EntStatusCheckInFromJSON(json['status']),
     };
 }
 
@@ -106,6 +117,7 @@ export function EntCheckInEdgesToJSON(value?: EntCheckInEdges | null): any {
         'customer': EntCustomerToJSON(value.customer),
         'dataroom': EntDataRoomToJSON(value.dataroom),
         'reserveroom': EntReserveRoomToJSON(value.reserveroom),
+        'status': EntStatusCheckInToJSON(value.status),
     };
 }
 

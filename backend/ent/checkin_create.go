@@ -16,6 +16,7 @@ import (
 	"github.com/team18/app/ent/customer"
 	"github.com/team18/app/ent/dataroom"
 	"github.com/team18/app/ent/reserveroom"
+	"github.com/team18/app/ent/statuscheckin"
 )
 
 // CheckInCreate is the builder for creating a CheckIn entity.
@@ -105,6 +106,25 @@ func (cic *CheckInCreate) SetNillableDataroomID(id *int) *CheckInCreate {
 // SetDataroom sets the dataroom edge to DataRoom.
 func (cic *CheckInCreate) SetDataroom(d *DataRoom) *CheckInCreate {
 	return cic.SetDataroomID(d.ID)
+}
+
+// SetStatusID sets the status edge to StatusCheckIn by id.
+func (cic *CheckInCreate) SetStatusID(id int) *CheckInCreate {
+	cic.mutation.SetStatusID(id)
+	return cic
+}
+
+// SetNillableStatusID sets the status edge to StatusCheckIn by id if the given value is not nil.
+func (cic *CheckInCreate) SetNillableStatusID(id *int) *CheckInCreate {
+	if id != nil {
+		cic = cic.SetStatusID(*id)
+	}
+	return cic
+}
+
+// SetStatus sets the status edge to StatusCheckIn.
+func (cic *CheckInCreate) SetStatus(s *StatusCheckIn) *CheckInCreate {
+	return cic.SetStatusID(s.ID)
 }
 
 // SetCheckoutsID sets the checkouts edge to Checkout by id.
@@ -272,6 +292,25 @@ func (cic *CheckInCreate) createSpec() (*CheckIn, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: dataroom.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := cic.mutation.StatusIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   checkin.StatusTable,
+			Columns: []string{checkin.StatusColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: statuscheckin.FieldID,
 				},
 			},
 		}

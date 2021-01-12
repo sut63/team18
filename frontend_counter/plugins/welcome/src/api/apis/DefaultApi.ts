@@ -30,6 +30,9 @@ import {
     EntDataRoom,
     EntDataRoomFromJSON,
     EntDataRoomToJSON,
+    EntFixRoom,
+    EntFixRoomFromJSON,
+    EntFixRoomToJSON,
     EntFurniture,
     EntFurnitureFromJSON,
     EntFurnitureToJSON,
@@ -48,6 +51,9 @@ import {
     EntStatus,
     EntStatusFromJSON,
     EntStatusToJSON,
+    EntStatusCheckIn,
+    EntStatusCheckInFromJSON,
+    EntStatusCheckInToJSON,
     EntStatusReserve,
     EntStatusReserveFromJSON,
     EntStatusReserveToJSON,
@@ -75,6 +81,10 @@ export interface CreateDataroomRequest {
     dataroom: EntDataRoom;
 }
 
+export interface CreateFixroomRequest {
+    fixroom: EntFixRoom;
+}
+
 export interface CreateFurnituredetailRequest {
     furnituredetail: EntFurnitureDetail;
 }
@@ -93,6 +103,10 @@ export interface CreateStatusRequest {
 
 export interface CreateStatusReserveRequest {
     statusReserve: EntStatus;
+}
+
+export interface CreateStatuscheckinRequest {
+    statuscheckin: EntStatus;
 }
 
 export interface CreateStatusroomRequest {
@@ -115,6 +129,10 @@ export interface DeleteCounterStaffRequest {
     id: number;
 }
 
+export interface DeleteFixroomRequest {
+    id: number;
+}
+
 export interface DeleteReserveRoomRequest {
     id: number;
 }
@@ -124,6 +142,10 @@ export interface DeleteStatusRequest {
 }
 
 export interface DeleteStatusReserveRequest {
+    id: number;
+}
+
+export interface DeleteStatuscheckinRequest {
     id: number;
 }
 
@@ -148,6 +170,10 @@ export interface GetDataroomRequest {
 }
 
 export interface GetDataroomcustomerRequest {
+    id: number;
+}
+
+export interface GetFixroomRequest {
     id: number;
 }
 
@@ -180,6 +206,10 @@ export interface GetStatusRequest {
 }
 
 export interface GetStatusReserveRequest {
+    id: number;
+}
+
+export interface GetStatuscheckinRequest {
     id: number;
 }
 
@@ -222,7 +252,18 @@ export interface ListDataroomRequest {
     offset?: number;
 }
 
+export interface ListFixroomRequest {
+    limit?: number;
+    offset?: number;
+}
+
 export interface ListFurnitureRequest {
+    limit?: number;
+    offset?: number;
+}
+
+export interface ListFurnitureDetailRoomRequest {
+    id: number;
     limit?: number;
     offset?: number;
 }
@@ -253,6 +294,11 @@ export interface ListStatusRequest {
 }
 
 export interface ListStatusReserveRequest {
+    limit?: number;
+    offset?: number;
+}
+
+export interface ListStatuscheckinRequest {
     limit?: number;
     offset?: number;
 }
@@ -433,6 +479,41 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Create fixroom
+     * Create fixroom
+     */
+    async createFixroomRaw(requestParameters: CreateFixroomRequest): Promise<runtime.ApiResponse<EntFixRoom>> {
+        if (requestParameters.fixroom === null || requestParameters.fixroom === undefined) {
+            throw new runtime.RequiredError('fixroom','Required parameter requestParameters.fixroom was null or undefined when calling createFixroom.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/fixrooms`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: EntFixRoomToJSON(requestParameters.fixroom),
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntFixRoomFromJSON(jsonValue));
+    }
+
+    /**
+     * Create fixroom
+     * Create fixroom
+     */
+    async createFixroom(requestParameters: CreateFixroomRequest): Promise<EntFixRoom> {
+        const response = await this.createFixroomRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
      * Create furnituredetail
      * Create furnituredetail
      */
@@ -608,6 +689,41 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Create statuscheckin
+     * Create statuscheckin
+     */
+    async createStatuscheckinRaw(requestParameters: CreateStatuscheckinRequest): Promise<runtime.ApiResponse<EntStatusCheckIn>> {
+        if (requestParameters.statuscheckin === null || requestParameters.statuscheckin === undefined) {
+            throw new runtime.RequiredError('statuscheckin','Required parameter requestParameters.statuscheckin was null or undefined when calling createStatuscheckin.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/statuscheckins`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: EntStatusToJSON(requestParameters.statuscheckin),
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntStatusCheckInFromJSON(jsonValue));
+    }
+
+    /**
+     * Create statuscheckin
+     * Create statuscheckin
+     */
+    async createStatuscheckin(requestParameters: CreateStatuscheckinRequest): Promise<EntStatusCheckIn> {
+        const response = await this.createStatuscheckinRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
      * Create statusroom
      * Create statusroom
      */
@@ -774,6 +890,38 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * get fixroom by ID
+     * Delete a fixroom entity by ID
+     */
+    async deleteFixroomRaw(requestParameters: DeleteFixroomRequest): Promise<runtime.ApiResponse<object>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteFixroom.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/fixrooms/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * get fixroom by ID
+     * Delete a fixroom entity by ID
+     */
+    async deleteFixroom(requestParameters: DeleteFixroomRequest): Promise<object> {
+        const response = await this.deleteFixroomRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
      * get ReserveRoom by ID
      * Delete a ReserveRoom entity by ID
      */
@@ -866,6 +1014,38 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async deleteStatusReserve(requestParameters: DeleteStatusReserveRequest): Promise<object> {
         const response = await this.deleteStatusReserveRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * get statuscheckin by ID
+     * Delete a statuscheckin entity by ID
+     */
+    async deleteStatuscheckinRaw(requestParameters: DeleteStatuscheckinRequest): Promise<runtime.ApiResponse<object>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteStatuscheckin.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/statuscheckins/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * get statuscheckin by ID
+     * Delete a statuscheckin entity by ID
+     */
+    async deleteStatuscheckin(requestParameters: DeleteStatuscheckinRequest): Promise<object> {
+        const response = await this.deleteStatuscheckinRaw(requestParameters);
         return await response.value();
     }
 
@@ -1058,6 +1238,38 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getDataroomcustomer(requestParameters: GetDataroomcustomerRequest): Promise<Array<EntDataRoom>> {
         const response = await this.getDataroomcustomerRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * get fixroom by ID
+     * Get a fixroom entity by ID
+     */
+    async getFixroomRaw(requestParameters: GetFixroomRequest): Promise<runtime.ApiResponse<EntFixRoom>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getFixroom.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/fixrooms/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntFixRoomFromJSON(jsonValue));
+    }
+
+    /**
+     * get fixroom by ID
+     * Get a fixroom entity by ID
+     */
+    async getFixroom(requestParameters: GetFixroomRequest): Promise<EntFixRoom> {
+        const response = await this.getFixroomRaw(requestParameters);
         return await response.value();
     }
 
@@ -1314,6 +1526,38 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getStatusReserve(requestParameters: GetStatusReserveRequest): Promise<EntStatusReserve> {
         const response = await this.getStatusReserveRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * get statuscheckin by ID
+     * Get a statuscheckin entity by ID
+     */
+    async getStatuscheckinRaw(requestParameters: GetStatuscheckinRequest): Promise<runtime.ApiResponse<EntStatusCheckIn>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getStatuscheckin.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/statuscheckins/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntStatusCheckInFromJSON(jsonValue));
+    }
+
+    /**
+     * get statuscheckin by ID
+     * Get a statuscheckin entity by ID
+     */
+    async getStatuscheckin(requestParameters: GetStatuscheckinRequest): Promise<EntStatusCheckIn> {
+        const response = await this.getStatuscheckinRaw(requestParameters);
         return await response.value();
     }
 
@@ -1602,6 +1846,42 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * list fixroom entities
+     * List fixroom entities
+     */
+    async listFixroomRaw(requestParameters: ListFixroomRequest): Promise<runtime.ApiResponse<Array<EntFixRoom>>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.offset !== undefined) {
+            queryParameters['offset'] = requestParameters.offset;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/fixrooms`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntFixRoomFromJSON));
+    }
+
+    /**
+     * list fixroom entities
+     * List fixroom entities
+     */
+    async listFixroom(requestParameters: ListFixroomRequest): Promise<Array<EntFixRoom>> {
+        const response = await this.listFixroomRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
      * list furniture entities
      * List furniture entities
      */
@@ -1634,6 +1914,46 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async listFurniture(requestParameters: ListFurnitureRequest): Promise<Array<EntFurniture>> {
         const response = await this.listFurnitureRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * list FurnitureDetailRoom entities
+     * List FurnitureDetailRoom entities
+     */
+    async listFurnitureDetailRoomRaw(requestParameters: ListFurnitureDetailRoomRequest): Promise<runtime.ApiResponse<Array<EntFurnitureDetail>>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling listFurnitureDetailRoom.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.offset !== undefined) {
+            queryParameters['offset'] = requestParameters.offset;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/FurnitureDetailRooms/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntFurnitureDetailFromJSON));
+    }
+
+    /**
+     * list FurnitureDetailRoom entities
+     * List FurnitureDetailRoom entities
+     */
+    async listFurnitureDetailRoom(requestParameters: ListFurnitureDetailRoomRequest): Promise<Array<EntFurnitureDetail>> {
+        const response = await this.listFurnitureDetailRoomRaw(requestParameters);
         return await response.value();
     }
 
@@ -1706,6 +2026,34 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async listFurnituretype(requestParameters: ListFurnituretypeRequest): Promise<Array<EntFurnitureType>> {
         const response = await this.listFurnituretypeRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * list  GetCheckInStatus entities
+     * List  GetCheckInStatus entities
+     */
+    async listGetCheckInStatusRaw(): Promise<runtime.ApiResponse<Array<EntCheckIn>>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/checkinstatuss`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntCheckInFromJSON));
+    }
+
+    /**
+     * list  GetCheckInStatus entities
+     * List  GetCheckInStatus entities
+     */
+    async listGetCheckInStatus(): Promise<Array<EntCheckIn>> {
+        const response = await this.listGetCheckInStatusRaw();
         return await response.value();
     }
 
@@ -1850,6 +2198,42 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async listStatusReserve(requestParameters: ListStatusReserveRequest): Promise<Array<EntStatusReserve>> {
         const response = await this.listStatusReserveRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * list statuscheckin entities
+     * List statuscheckin entities
+     */
+    async listStatuscheckinRaw(requestParameters: ListStatuscheckinRequest): Promise<runtime.ApiResponse<Array<EntStatusCheckIn>>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.offset !== undefined) {
+            queryParameters['offset'] = requestParameters.offset;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/statuscheckins`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntStatusCheckInFromJSON));
+    }
+
+    /**
+     * list statuscheckin entities
+     * List statuscheckin entities
+     */
+    async listStatuscheckin(requestParameters: ListStatuscheckinRequest): Promise<Array<EntStatusCheckIn>> {
+        const response = await this.listStatuscheckinRaw(requestParameters);
         return await response.value();
     }
 

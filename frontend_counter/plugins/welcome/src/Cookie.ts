@@ -10,7 +10,7 @@ class Cookies {
         document.cookie = name + "=" + (value || "")  + expires + "; path=/";
     }
     
-    GetCookie(name:any="user_email") {
+    GetCookie(name:any="customer") {
         var nameEQ = name + "=";
         var ca = document.cookie.split(';');
         for(var i=0;i < ca.length;i++) {
@@ -63,7 +63,7 @@ class Cookies {
         return boo
     }
 
-     ClearCookie(name:any="user_email",id:any="user_id",role:any="user_role"){
+     ClearCookie(name:any="customer",id:any="user_id",role:any="user_role"){
         console.log("name in ClearCookie => "+name);
         console.log("id in ClearCookie => "+id);
         console.log("role in ClearCookie => "+role);

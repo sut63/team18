@@ -890,6 +890,39 @@
                 }
             }
         },
+        "/checkinstatuss": {
+            "get": {
+                "description": "list  GetCheckInStatus entities",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "List  GetCheckInStatus entities",
+                "operationId": "list-GetCheckInStatus",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ent.CheckIn"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            }
+        },
         "/checkouts": {
             "get": {
                 "description": "list checkout entities",
@@ -2158,6 +2191,183 @@
                 }
             }
         },
+        "/statuscheckins": {
+            "get": {
+                "description": "list statuscheckin entities",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "List statuscheckin entities",
+                "operationId": "list-statuscheckin",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ent.StatusCheckIn"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create statuscheckin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Create statuscheckin",
+                "operationId": "create-statuscheckin",
+                "parameters": [
+                    {
+                        "description": "StatusCheckin entity",
+                        "name": "statuscheckin",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ent.Status"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ent.StatusCheckIn"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            }
+        },
+        "/statuscheckins/{id}": {
+            "get": {
+                "description": "get statuscheckin by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get a statuscheckin entity by ID",
+                "operationId": "get-statuscheckin",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "statuscheckin ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ent.StatusCheckIn"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "get statuscheckin by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Delete a statuscheckin entity by ID",
+                "operationId": "delete-statuscheckin",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "statuscheckin ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            }
+        },
         "/statusrooms": {
             "get": {
                 "description": "list statusroom entities",
@@ -2650,6 +2860,11 @@
                     "description": "Reserveroom holds the value of the reserveroom edge.",
                     "type": "object",
                     "$ref": "#/definitions/ent.ReserveRoom"
+                },
+                "status": {
+                    "description": "Status holds the value of the status edge.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.StatusCheckIn"
                 }
             }
         },
@@ -3127,6 +3342,36 @@
                 "id": {
                     "description": "ID of the ent.",
                     "type": "integer"
+                }
+            }
+        },
+        "ent.StatusCheckIn": {
+            "type": "object",
+            "properties": {
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the StatusCheckInQuery when eager-loading is set.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.StatusCheckInEdges"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "integer"
+                },
+                "status_name": {
+                    "description": "StatusName holds the value of the \"status_name\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.StatusCheckInEdges": {
+            "type": "object",
+            "properties": {
+                "checkins": {
+                    "description": "Checkins holds the value of the checkins edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.CheckIn"
+                    }
                 }
             }
         },

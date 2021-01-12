@@ -21,6 +21,8 @@ export * from './EntPromotionEdges';
 export * from './EntReserveRoom';
 export * from './EntReserveRoomEdges';
 export * from './EntStatus';
+export * from './EntStatusCheckIn';
+export * from './EntStatusCheckInEdges';
 export * from './EntStatusEdges';
 export * from './EntStatusReserve';
 export * from './EntStatusReserveEdges';
