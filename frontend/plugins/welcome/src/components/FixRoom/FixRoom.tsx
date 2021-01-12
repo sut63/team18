@@ -25,6 +25,8 @@ import { EntCustomer } from '../../api/models/EntCustomer';
 import { EntReserveRoom } from '../../api/models/EntReserveRoom';
 import { EntFurnitureDetail } from '../../api/models/EntFurnitureDetail';
 import { Cookies } from '../../Cookie'
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
 
 // header css
 const HeaderCustom = {
@@ -86,7 +88,7 @@ const FixRoom: FC<{}> = () => {
   // furnituredetail List
   const [FurnitureDetail, setFurnitureDetails] = React.useState<EntFurnitureDetail[]>([]);
   const getFurnitureDetail = async () => {
-    const res = await api.listFurnitureDetailRoom({ limit: 10, offset: 0,id: dids});
+    const res = await api.listFurnitureDetailRoom({ limit: 10, offset: 0, id: dids });
     setFurnitureDetails(res);
   };
 
@@ -97,18 +99,9 @@ const FixRoom: FC<{}> = () => {
     setCustomer(res);
   };
 
-  // alert setting
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    didOpen: toast => {
-      toast.addEventListener('mouseenter', Swal.stopTimer);
-      toast.addEventListener('mouseleave', Swal.resumeTimer);
-    },
-  });
+  //alert setting
+  const [open, setOpen] = React.useState(false);
+  const [fail, setFail] = React.useState(false);
 
   // Lifecycle Hooks
   useEffect(() => {
@@ -136,9 +129,18 @@ const FixRoom: FC<{}> = () => {
     console.log(FixRoom);
   };
 
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setFail(false);
+    setOpen(false);
+  };
+
   // clear input form
   function clear() {
     setFixRoom({});
+    getCustomer();
   }
 
   // clear cookies
@@ -164,15 +166,9 @@ const FixRoom: FC<{}> = () => {
         console.log(data.status);
         if (data.status === true) {
           clear();
-          Toast.fire({
-            icon: 'success',
-            title: 'บันทึกข้อมูลสำเร็จ',
-          });
+          setOpen(true);
         } else {
-          Toast.fire({
-            icon: 'error',
-            title: 'บันทึกข้อมูลไม่สำเร็จ',
-          });
+          setFail(true);
         }
       });
   }
@@ -280,6 +276,19 @@ const FixRoom: FC<{}> = () => {
             </Grid>
 
           </Grid>
+
+          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="success">
+              This is a success message!
+        </Alert>
+          </Snackbar>
+
+          <Snackbar open={fail} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="error">
+              This is a error message!
+        </Alert>
+          </Snackbar>
+
         </Container>
       </Content>
     </Page>

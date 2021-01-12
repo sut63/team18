@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Content, Header, Page, pageTheme } from '@backstage/core';
 import SaveIcon from '@material-ui/icons/Save'; // icon save
 import Swal from 'sweetalert2'; // alert
-import { Cookies } from '../../Cookie' 
+import { Cookies } from '../../Cookie'
 
 import {
   Container,
@@ -17,9 +17,11 @@ import {
   Button,
 } from '@material-ui/core';
 import { DefaultApi } from '../../api/apis';
-import { EntPromotion } from '../../api/models/EntPromotion'; 
+import { EntPromotion } from '../../api/models/EntPromotion';
 import { EntTypeRoom } from '../../api/models/EntTypeRoom';
-import { EntStatusRoom } from '../../api/models/EntStatusRoom'; 
+import { EntStatusRoom } from '../../api/models/EntStatusRoom';
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
 
 // header css
 const HeaderCustom = {
@@ -69,19 +71,6 @@ const DataRoom: FC<{}> = () => {
   const [Promotion, setPromotion] = React.useState<EntPromotion[]>([]);
   const [TypeRoom, setTypeRoom] = React.useState<EntTypeRoom[]>([]);
 
-  // alert setting
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    didOpen: toast => {
-      toast.addEventListener('mouseenter', Swal.stopTimer);
-      toast.addEventListener('mouseleave', Swal.resumeTimer);
-    },
-  });
-
   const getStatusRoom = async () => {
     const res = await api.listStatusroom({ limit: 10, offset: 0 });
     setStatusRoom(res);
@@ -94,6 +83,19 @@ const DataRoom: FC<{}> = () => {
   const getPromotion = async () => {
     const res = await api.listPromotion({ limit: 10, offset: 0 });
     setPromotion(res);
+  };
+
+  // alert setting
+  const [open, setOpen] = React.useState(false);
+  const [fail, setFail] = React.useState(false);
+
+  //close alert 
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setFail(false);
+    setOpen(false);
   };
 
   // Lifecycle Hooks
@@ -112,10 +114,10 @@ const DataRoom: FC<{}> = () => {
     setDataRoom({ ...DataRoom, [name]: value });
     console.log(DataRoom);
   };
-  var Price  =  DataRoom.Price
+  var Price = DataRoom.Price
   DataRoom.Price = Number(Price)
-  
-  
+
+
   // clear input form
   function clear() {
     setDataRoom({});
@@ -135,21 +137,16 @@ const DataRoom: FC<{}> = () => {
     fetch(apiUrl, requestOptions)
       .then(response => response.json())
       .then(data => {
-        console.log(data);
+        console.log(data.status);
         if (data.id != null) {
           clear();
-          Toast.fire({
-            icon: 'success',
-            title: 'บันทึกข้อมูลสำเร็จ',
-          });
+          setOpen(true);
         } else {
-          Toast.fire({
-            icon: 'error',
-            title: 'บันทึกข้อมูลไม่สำเร็จ',
-          });
+          setFail(true);
         }
       });
   }
+
   function Clears() {
     ck.ClearCookie()
     window.location.reload(false)
@@ -159,13 +156,13 @@ const DataRoom: FC<{}> = () => {
     <Page theme={pageTheme.home}>
       <Header style={HeaderCustom} title={`ข้อมูลห้องพัก`}>
         <Avatar alt="Remy Sharp" src="../../image/account.jpg" />
-        <div style={{ marginLeft: 10, marginRight:20 }}>{cookieName}</div>
+        <div style={{ marginLeft: 10, marginRight: 20 }}>{cookieName}</div>
         <Button
           variant="outlined"
           color="secondary"
           size="large"
           onClick={Clears}
-          >
+        >
           Logout
         </Button>
       </Header>
@@ -177,14 +174,14 @@ const DataRoom: FC<{}> = () => {
               <div className={classes.paper}>หมายเลขห้องพัก</div>
             </Grid>
             <Grid item xs={9}>
-            <TextField  
-            value = {DataRoom.RoomNumber || ''}
-            label="เลขห้องพัก" 
-            name = "RoomNumber"
-            variant="outlined" 
-            onChange={handleChange}/>
-           </Grid>
-            
+              <TextField
+                value={DataRoom.RoomNumber || ''}
+                label="เลขห้องพัก"
+                name="RoomNumber"
+                variant="outlined"
+                onChange={handleChange} />
+            </Grid>
+
             <Grid item xs={3}>
               <div className={classes.paper}>สถานะห้องพัก</div>
             </Grid>
@@ -215,7 +212,7 @@ const DataRoom: FC<{}> = () => {
                 <InputLabel>เลือกโปรโมชัน</InputLabel>
                 <Select
                   name="Promotion"
-                  value={DataRoom.Promotion  || ''} // (undefined || '') = ''
+                  value={DataRoom.Promotion || ''} // (undefined || '') = ''
                   onChange={handleChange}
                 >
                   {Promotion.map(item => {
@@ -236,9 +233,9 @@ const DataRoom: FC<{}> = () => {
               <FormControl variant="outlined" className={classes.formControl}>
                 <InputLabel>เลือกประเภทห้องพัก</InputLabel>
                 <Select
-                   value={DataRoom.TypeRoom || ''} // (undefined || '') = ''
-                   onChange={handleChange}
-                   name="TypeRoom"
+                  value={DataRoom.TypeRoom || ''} // (undefined || '') = ''
+                  onChange={handleChange}
+                  name="TypeRoom"
                 >
                   {TypeRoom.map(item => {
                     return (
@@ -254,14 +251,14 @@ const DataRoom: FC<{}> = () => {
               <div className={classes.paper}>ราคาห้องพัก</div>
             </Grid>
             <Grid item xs={9}>
-            <TextField  
-            value={DataRoom.Price || ''}
-            label="ราคา" 
-            name = "Price"
-            variant="outlined" 
-            onChange={handleChange}/>
-           </Grid>
-           <Grid item xs={3}></Grid>
+              <TextField
+                value={DataRoom.Price || ''}
+                label="ราคา"
+                name="Price"
+                variant="outlined"
+                onChange={handleChange} />
+            </Grid>
+            <Grid item xs={3}></Grid>
             <Grid item xs={9}>
               <Button
                 variant="contained"
@@ -274,6 +271,19 @@ const DataRoom: FC<{}> = () => {
               </Button>
             </Grid>
           </Grid>
+
+          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="success">
+              This is a success message!
+        </Alert>
+          </Snackbar>
+
+          <Snackbar open={fail} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="error">
+              This is a error message!
+        </Alert>
+          </Snackbar>
+
         </Container>
       </Content>
     </Page>

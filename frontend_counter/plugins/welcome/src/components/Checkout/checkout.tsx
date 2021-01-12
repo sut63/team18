@@ -2,8 +2,6 @@ import React, { FC, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Content, Header, Page, pageTheme } from '@backstage/core';
 import SaveIcon from '@material-ui/icons/Save'; // icon save
-import Swal from 'sweetalert2'; // alert
-import Alert from '@material-ui/lab/Alert';//new alert
 import {Cookies} from '../../Cookie'
 import {
   Container,
@@ -21,6 +19,9 @@ import { DefaultApi } from '../../api/apis'; // Api Gennerate From Command
 import { EntCheckIn } from '../../api/models/EntCheckIn'; // import interface checkin
 import { EntStatus } from '../../api/models/EntStatus'; // import interface Status
 import { EntCounterStaff } from '../../api/models/EntCounterStaff'; // import interface CounterStaff
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
+
 // header css
 const HeaderCustom = {
   minHeight: '50px',
@@ -72,19 +73,17 @@ const checkout: FC<{}> = () => {
   //
 
   // alert setting
-  const Toast = Swal.mixin({
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 10000,
-    timerProgressBar: true,
-    didOpen: toast => {
-      toast.addEventListener('mouseenter', Swal.stopTimer);
-      toast.addEventListener('mouseleave', Swal.resumeTimer);
-    },
-  });
+  const [open, setOpen] = React.useState(false);
+  const [fail, setFail] = React.useState(false);
 
-
+  //close alert 
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setFail(false);
+    setOpen(false);
+  };
 
   // set data for checkout
   const getcheckIn = async () => {
@@ -122,8 +121,6 @@ const checkout: FC<{}> = () => {
     setDataRoom({ ...CheckOut, [name]: value });
     console.log(CheckOut);
   };
- 
-  
   
   // clear input form
   function clear() {
@@ -142,30 +139,16 @@ const checkout: FC<{}> = () => {
     console.log(CheckOut); // log ดูข้อมูล สามารถ Inspect ดูข้อมูลได้ F12 เลือก Tab Console
 
     fetch(apiUrl, requestOptions)
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        if (data.id != null) {
-          clear();
-          Toast.fire({
-            icon: 'success',
-            title: 'บันทึกข้อมูลสำเร็จ',
-          });
-        } else {
-           
-           Toast.fire({
-            icon: 'error',
-            title: 'บันทึกข้อมูลไม่สำเร็จ',
-          });
-          
-          /** Alert({
-            onClose: '{standard}',
-            variant:'outlined', 
-            severity: 'error',
-          }) ; 
-          */
-        }
-      });
+    .then(response => response.json())
+    .then(data => {
+      console.log(data.status);
+      if (data.id != null) {
+        clear();
+        setOpen(true);
+      } else {
+        setFail(true);
+      }
+    });
   }
 
   function Clears() {
@@ -283,6 +266,19 @@ const checkout: FC<{}> = () => {
               </Button>
             </Grid>
           </Grid>
+
+          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="success">
+              This is a success message!
+        </Alert>
+          </Snackbar>
+
+          <Snackbar open={fail} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="error">
+              This is a error message!
+        </Alert>
+          </Snackbar>
+          
         </Container>
       </Content>
     </Page>
