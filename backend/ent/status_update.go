@@ -71,6 +71,11 @@ func (su *StatusUpdate) RemoveCheckouts(c ...*Checkout) *StatusUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (su *StatusUpdate) Save(ctx context.Context) (int, error) {
+	if v, ok := su.mutation.Description(); ok {
+		if err := status.DescriptionValidator(v); err != nil {
+			return 0, &ValidationError{Name: "description", err: fmt.Errorf("ent: validator failed for field \"description\": %w", err)}
+		}
+	}
 
 	var (
 		err      error
@@ -245,6 +250,11 @@ func (suo *StatusUpdateOne) RemoveCheckouts(c ...*Checkout) *StatusUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (suo *StatusUpdateOne) Save(ctx context.Context) (*Status, error) {
+	if v, ok := suo.mutation.Description(); ok {
+		if err := status.DescriptionValidator(v); err != nil {
+			return nil, &ValidationError{Name: "description", err: fmt.Errorf("ent: validator failed for field \"description\": %w", err)}
+		}
+	}
 
 	var (
 		err  error
