@@ -333,7 +333,7 @@ var (
 	// StatusColumns holds the columns for the "status" table.
 	StatusColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "description", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Unique: true},
 	}
 	// StatusTable holds the schema information for the "status" table.
 	StatusTable = &schema.Table{
