@@ -51,6 +51,11 @@ func (sc *StatusCreate) Save(ctx context.Context) (*Status, error) {
 	if _, ok := sc.mutation.Description(); !ok {
 		return nil, &ValidationError{Name: "description", err: errors.New("ent: missing required field \"description\"")}
 	}
+	if v, ok := sc.mutation.Description(); ok {
+		if err := status.DescriptionValidator(v); err != nil {
+			return nil, &ValidationError{Name: "description", err: fmt.Errorf("ent: validator failed for field \"description\": %w", err)}
+		}
+	}
 	var (
 		err  error
 		node *Status

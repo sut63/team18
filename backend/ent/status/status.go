@@ -29,3 +29,8 @@ var Columns = []string{
 	FieldID,
 	FieldDescription,
 }
+
+var (
+	// DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	DescriptionValidator func(string) error
+)
