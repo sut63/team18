@@ -12,6 +12,7 @@ import {
   MenuItem,
   Avatar,
   Button,
+  TextField,
 } from '@material-ui/core';
 import { DefaultApi } from '../../api/apis';
 import { EntCounterStaff, EntCustomer, EntDataRoom, EntReserveRoom } from '../../api';
@@ -66,6 +67,7 @@ const CheckIn: FC<{}> = () => {
   // ดึงคุกกี้
   var ck = new Cookies()
   var cookieName = ck.GetCookie()
+  var cookieID = ck.GetID()
 
   //อันหลักสำหรับสร้าง การ Check_in
   const [CheckIn, setCheckIn] = React.useState<Partial<CheckIn>>({})
@@ -94,9 +96,9 @@ const CheckIn: FC<{}> = () => {
   }
 
   // CounterStaff
-  const [counter, setCounter] = React.useState<EntCounterStaff[]>([])
+  const [counter, setCounter] = React.useState<EntCounterStaff>()
   const getCounterStaff = async () => {
-    const res = await api.listCounterStaff({})
+    const res = await api.getCounterStaff({ id: Number(cookieID) })
     setCounter(res)
   }
 
@@ -133,6 +135,9 @@ const CheckIn: FC<{}> = () => {
   useEffect(() => {
     getDataroom()
   }, [CheckIn.Reserveroom])
+  useEffect(() => {
+    setCheckIn({ ...CheckIn, ['Counter']: counter?.id })
+  }, [counter]);
 
 
   // function save data
@@ -165,6 +170,7 @@ const CheckIn: FC<{}> = () => {
   // clear input form
   function clear() {
     setCheckIn({});
+    getCounterStaff();
   }
 
   return (
@@ -256,21 +262,13 @@ const CheckIn: FC<{}> = () => {
               <div className={classes.paper}>Counter staff</div>
             </Grid>
             <Grid item xs={9}>
-              <FormControl variant="outlined" className={classes.formControl}>
-                <InputLabel>Counter staff</InputLabel>
-                <Select
+            <FormControl variant="outlined" className={classes.formControl}>
+                <TextField
+                  disabled
                   name="Counter"
-                  value={CheckIn.Counter || ''} // (undefined || '') = ''
-                  onChange={handleChange}
-                >
-                  {counter.map(item => {
-                    return (
-                      <MenuItem key={item.id} value={item.id}>
-                        {item.name}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
+                  variant="outlined"
+                  value={counter?.name}
+                />
               </FormControl>
             </Grid>
             <Grid item xs={3}></Grid>
