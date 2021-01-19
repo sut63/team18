@@ -57,6 +57,7 @@ func (ctl *DataRoomController) CreateDataRoom(c *gin.Context) {
 		SetStatusroomID(obj.StatusRoom).
 		SetTyperoomID(obj.TypeRoom).
 		Save(context.Background())
+		//fail
 	if err != nil {
 		c.JSON(400, gin.H{
 			"status": false,
