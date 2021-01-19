@@ -100,6 +100,27 @@ func CheckinDate(v time.Time) predicate.CheckIn {
 	})
 }
 
+// MobileKey applies equality check predicate on the "mobile_key" field. It's identical to MobileKeyEQ.
+func MobileKey(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMobileKey), v))
+	})
+}
+
+// PhoneNumber applies equality check predicate on the "phone_number" field. It's identical to PhoneNumberEQ.
+func PhoneNumber(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PersonNumber applies equality check predicate on the "person_number" field. It's identical to PersonNumberEQ.
+func PersonNumber(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPersonNumber), v))
+	})
+}
+
 // CheckinDateEQ applies the EQ predicate on the "checkin_date" field.
 func CheckinDateEQ(v time.Time) predicate.CheckIn {
 	return predicate.CheckIn(func(s *sql.Selector) {
@@ -173,6 +194,339 @@ func CheckinDateLT(v time.Time) predicate.CheckIn {
 func CheckinDateLTE(v time.Time) predicate.CheckIn {
 	return predicate.CheckIn(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldCheckinDate), v))
+	})
+}
+
+// MobileKeyEQ applies the EQ predicate on the "mobile_key" field.
+func MobileKeyEQ(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMobileKey), v))
+	})
+}
+
+// MobileKeyNEQ applies the NEQ predicate on the "mobile_key" field.
+func MobileKeyNEQ(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldMobileKey), v))
+	})
+}
+
+// MobileKeyIn applies the In predicate on the "mobile_key" field.
+func MobileKeyIn(vs ...string) predicate.CheckIn {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.CheckIn(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldMobileKey), v...))
+	})
+}
+
+// MobileKeyNotIn applies the NotIn predicate on the "mobile_key" field.
+func MobileKeyNotIn(vs ...string) predicate.CheckIn {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.CheckIn(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldMobileKey), v...))
+	})
+}
+
+// MobileKeyGT applies the GT predicate on the "mobile_key" field.
+func MobileKeyGT(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldMobileKey), v))
+	})
+}
+
+// MobileKeyGTE applies the GTE predicate on the "mobile_key" field.
+func MobileKeyGTE(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldMobileKey), v))
+	})
+}
+
+// MobileKeyLT applies the LT predicate on the "mobile_key" field.
+func MobileKeyLT(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldMobileKey), v))
+	})
+}
+
+// MobileKeyLTE applies the LTE predicate on the "mobile_key" field.
+func MobileKeyLTE(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldMobileKey), v))
+	})
+}
+
+// MobileKeyContains applies the Contains predicate on the "mobile_key" field.
+func MobileKeyContains(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldMobileKey), v))
+	})
+}
+
+// MobileKeyHasPrefix applies the HasPrefix predicate on the "mobile_key" field.
+func MobileKeyHasPrefix(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldMobileKey), v))
+	})
+}
+
+// MobileKeyHasSuffix applies the HasSuffix predicate on the "mobile_key" field.
+func MobileKeyHasSuffix(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldMobileKey), v))
+	})
+}
+
+// MobileKeyEqualFold applies the EqualFold predicate on the "mobile_key" field.
+func MobileKeyEqualFold(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldMobileKey), v))
+	})
+}
+
+// MobileKeyContainsFold applies the ContainsFold predicate on the "mobile_key" field.
+func MobileKeyContainsFold(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldMobileKey), v))
+	})
+}
+
+// PhoneNumberEQ applies the EQ predicate on the "phone_number" field.
+func PhoneNumberEQ(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberNEQ applies the NEQ predicate on the "phone_number" field.
+func PhoneNumberNEQ(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberIn applies the In predicate on the "phone_number" field.
+func PhoneNumberIn(vs ...string) predicate.CheckIn {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.CheckIn(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldPhoneNumber), v...))
+	})
+}
+
+// PhoneNumberNotIn applies the NotIn predicate on the "phone_number" field.
+func PhoneNumberNotIn(vs ...string) predicate.CheckIn {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.CheckIn(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldPhoneNumber), v...))
+	})
+}
+
+// PhoneNumberGT applies the GT predicate on the "phone_number" field.
+func PhoneNumberGT(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberGTE applies the GTE predicate on the "phone_number" field.
+func PhoneNumberGTE(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberLT applies the LT predicate on the "phone_number" field.
+func PhoneNumberLT(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberLTE applies the LTE predicate on the "phone_number" field.
+func PhoneNumberLTE(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberContains applies the Contains predicate on the "phone_number" field.
+func PhoneNumberContains(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberHasPrefix applies the HasPrefix predicate on the "phone_number" field.
+func PhoneNumberHasPrefix(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberHasSuffix applies the HasSuffix predicate on the "phone_number" field.
+func PhoneNumberHasSuffix(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberEqualFold applies the EqualFold predicate on the "phone_number" field.
+func PhoneNumberEqualFold(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberContainsFold applies the ContainsFold predicate on the "phone_number" field.
+func PhoneNumberContainsFold(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PersonNumberEQ applies the EQ predicate on the "person_number" field.
+func PersonNumberEQ(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPersonNumber), v))
+	})
+}
+
+// PersonNumberNEQ applies the NEQ predicate on the "person_number" field.
+func PersonNumberNEQ(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldPersonNumber), v))
+	})
+}
+
+// PersonNumberIn applies the In predicate on the "person_number" field.
+func PersonNumberIn(vs ...string) predicate.CheckIn {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.CheckIn(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldPersonNumber), v...))
+	})
+}
+
+// PersonNumberNotIn applies the NotIn predicate on the "person_number" field.
+func PersonNumberNotIn(vs ...string) predicate.CheckIn {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.CheckIn(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldPersonNumber), v...))
+	})
+}
+
+// PersonNumberGT applies the GT predicate on the "person_number" field.
+func PersonNumberGT(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldPersonNumber), v))
+	})
+}
+
+// PersonNumberGTE applies the GTE predicate on the "person_number" field.
+func PersonNumberGTE(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldPersonNumber), v))
+	})
+}
+
+// PersonNumberLT applies the LT predicate on the "person_number" field.
+func PersonNumberLT(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldPersonNumber), v))
+	})
+}
+
+// PersonNumberLTE applies the LTE predicate on the "person_number" field.
+func PersonNumberLTE(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldPersonNumber), v))
+	})
+}
+
+// PersonNumberContains applies the Contains predicate on the "person_number" field.
+func PersonNumberContains(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldPersonNumber), v))
+	})
+}
+
+// PersonNumberHasPrefix applies the HasPrefix predicate on the "person_number" field.
+func PersonNumberHasPrefix(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldPersonNumber), v))
+	})
+}
+
+// PersonNumberHasSuffix applies the HasSuffix predicate on the "person_number" field.
+func PersonNumberHasSuffix(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldPersonNumber), v))
+	})
+}
+
+// PersonNumberEqualFold applies the EqualFold predicate on the "person_number" field.
+func PersonNumberEqualFold(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldPersonNumber), v))
+	})
+}
+
+// PersonNumberContainsFold applies the ContainsFold predicate on the "person_number" field.
+func PersonNumberContainsFold(v string) predicate.CheckIn {
+	return predicate.CheckIn(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldPersonNumber), v))
 	})
 }
 

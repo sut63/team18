@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"github.com/team18/app/ent/checkin"
 	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/customer"
 	"github.com/team18/app/ent/dataroom"
@@ -21,6 +22,48 @@ import (
 // code (default values, validators or hooks) and stitches it
 // to their package variables.
 func init() {
+	checkinFields := schema.CheckIn{}.Fields()
+	_ = checkinFields
+	// checkinDescMobileKey is the schema descriptor for mobile_key field.
+	checkinDescMobileKey := checkinFields[1].Descriptor()
+	// checkin.MobileKeyValidator is a validator for the "mobile_key" field. It is called by the builders before save.
+	checkin.MobileKeyValidator = func() func(string) error {
+		validators := checkinDescMobileKey.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(mobile_key string) error {
+			for _, fn := range fns {
+				if err := fn(mobile_key); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// checkinDescPhoneNumber is the schema descriptor for phone_number field.
+	checkinDescPhoneNumber := checkinFields[2].Descriptor()
+	// checkin.PhoneNumberValidator is a validator for the "phone_number" field. It is called by the builders before save.
+	checkin.PhoneNumberValidator = checkinDescPhoneNumber.Validators[0].(func(string) error)
+	// checkinDescPersonNumber is the schema descriptor for person_number field.
+	checkinDescPersonNumber := checkinFields[3].Descriptor()
+	// checkin.PersonNumberValidator is a validator for the "person_number" field. It is called by the builders before save.
+	checkin.PersonNumberValidator = func() func(string) error {
+		validators := checkinDescPersonNumber.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(person_number string) error {
+			for _, fn := range fns {
+				if err := fn(person_number); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	counterstaffFields := schema.CounterStaff{}.Fields()
 	_ = counterstaffFields
 	// counterstaffDescName is the schema descriptor for name field.

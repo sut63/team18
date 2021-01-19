@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"regexp"
+
 	"github.com/facebookincubator/ent"
 	"github.com/facebookincubator/ent/schema/edge"
 	"github.com/facebookincubator/ent/schema/field"
@@ -15,6 +17,9 @@ type CheckIn struct {
 func (CheckIn) Fields() []ent.Field {
 	return []ent.Field{
 		field.Time("checkin_date"),
+		field.String("mobile_key").MinLen(10).MaxLen(10),
+		field.String("phone_number").Match(regexp.MustCompile("[0]\\d{9}")),
+		field.String("person_number").MinLen(13).MaxLen(13),
 	}
 }
 

@@ -2842,6 +2842,18 @@ var doc = `{
                 "id": {
                     "description": "ID of the ent.",
                     "type": "integer"
+                },
+                "mobile_key": {
+                    "description": "MobileKey holds the value of the \"mobile_key\" field.",
+                    "type": "string"
+                },
+                "person_number": {
+                    "description": "PersonNumber holds the value of the \"person_number\" field.",
+                    "type": "string"
+                },
+                "phone_number": {
+                    "description": "PhoneNumber holds the value of the \"phone_number\" field.",
+                    "type": "string"
                 }
             }
         },

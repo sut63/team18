@@ -55,6 +55,9 @@ interface CheckIn {
   Counter: number;
   Reserveroom: number;
   Dataroom: number;
+  MobileKey: string;
+  PhoneNumber: string;
+  PersonNumber: string;
   //CheckinDate : string;
   // create_by: number;
 }
@@ -71,6 +74,12 @@ const CheckIn: FC<{}> = () => {
 
   //อันหลักสำหรับสร้าง การ Check_in
   const [CheckIn, setCheckIn] = React.useState<Partial<CheckIn>>({})
+
+  // สำหรับตรวยสอบความถูกต้อง
+  const [MobileKeyError, setMobileKeyError] = React.useState('');
+  const [PhoneNumberError, setPhoneNumberError] = React.useState('');
+  const [PersonNumberError, setPersonNumberError] = React.useState('');
+  const [errors, setError] = React.useState(String);
 
   // Customer
   const [idcustomer, setIdcustomer] = React.useState<number>(0)
@@ -93,7 +102,6 @@ const CheckIn: FC<{}> = () => {
   const getDataroom = async () => {
     const res = await api.getDataroomcustomer({ id: idreserveroom })
     setDataroom(res)
-    console.log("dataroom => "+res)
   }
 
   // CounterStaff
@@ -110,6 +118,36 @@ const CheckIn: FC<{}> = () => {
     setCheckIn({ ...CheckIn, [name]: value })
     setIdcustomer(event.target.value)
     setIdreserveroom(event.target.value)
+    const validateValue = value.toString() 
+    checkPattern(name, validateValue)
+  }
+
+  //valid
+  const validateMobileKey = (val: string) => {
+    return val.length == 10 ? true:false;
+  }
+  const validatePhoneNumber = (val: string) => {
+    return val.match("[0]\\d{9}");
+  }
+  const validatePersonNumber = (val: string) => {
+    return val.length == 13 ? true:false;
+  }
+
+  // checkPattern
+  const checkPattern  = (id: string, value: string) => {
+    switch(id) { 
+      case 'MobileKey':
+        validateMobileKey(value) ? setMobileKeyError('') : setMobileKeyError('ความปลอดภัยต่ำ กรุณาใส่ 10 ตัว');
+        return;
+      case 'PhoneNumber': 
+        validatePhoneNumber(value) ? setPhoneNumberError('') : setPhoneNumberError('Ex 0850583300');
+        return;
+      case 'PersonNumber':
+        validatePersonNumber(value) ? setPersonNumberError('') : setPersonNumberError('Ex 1119700054000')
+        return;
+      default:
+        return;
+    }
   }
 
   // alert setting
@@ -142,6 +180,23 @@ const CheckIn: FC<{}> = () => {
   useEffect(() => {
     setCheckIn({ ...CheckIn, ['Dataroom']: dataroom?.id })
   }, [dataroom]);
+
+  // func checkerror
+  const checkerror = (s :string) => {
+    switch(s) {
+      case 'phone_number':
+        setError("จำนวนเบอร์โทรผิดพลาด และ ต้องขึ้นต้นด้วย 0") 
+        return;
+      case 'mobile_key':
+        setError("ต้อง 10 ตัว!!!")
+        return;
+      case 'person_number':
+        setError("เลขบัตรประชาชนต้อง 13 ตัว")
+        return;
+      default:
+        return;
+    }
+  };
   
 
 
@@ -157,11 +212,12 @@ const CheckIn: FC<{}> = () => {
     fetch(apiUrl, requestOptions)
       .then(response => response.json())
       .then(data => {
-        console.log(data.status);
-        if (data.id != null) {
+        console.log(data);
+        if (data.status === true) {
           clear();
           setOpen(true);
         } else {
+          checkerror(data.error.Name)
           setFail(true);
         }
       });
@@ -176,7 +232,6 @@ const CheckIn: FC<{}> = () => {
   function clear() {
     setCheckIn({});
     getCounterStaff();
-    getDataroom({});
   }
 
   return (
@@ -269,6 +324,54 @@ const CheckIn: FC<{}> = () => {
                 />
               </FormControl>
             </Grid>
+            <Grid item xs={3}>
+              <div className={classes.paper}>Peson id</div>
+            </Grid>
+            <Grid item xs={9}>
+            <FormControl variant="outlined" className={classes.formControl}>
+                <TextField
+                  error = {PersonNumberError ? true : false}
+                  helperText={PersonNumberError}
+                  name="PersonNumber"
+                  label="เลขบัตรประชาชน"
+                  variant="outlined"
+                  value={CheckIn.PersonNumber || ''}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={3}>
+              <div className={classes.paper}>Phone number</div>
+            </Grid>
+            <Grid item xs={9}>
+            <FormControl variant="outlined" className={classes.formControl}>
+                <TextField
+                  error = {PhoneNumberError ? true : false}
+                  helperText={PhoneNumberError}
+                  name="PhoneNumber"
+                  label="เบอร์โทรศัพท์"
+                  variant="outlined"
+                  value={CheckIn.PhoneNumber || ''}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={3}>
+              <div className={classes.paper}>Mobile Key</div>
+            </Grid>
+            <Grid item xs={9}>
+            <FormControl variant="outlined" className={classes.formControl}>
+                <TextField
+                  error = {MobileKeyError ? true : false}
+                  helperText={MobileKeyError}
+                  name="MobileKey"
+                  label="คีย์เข้าห้อง"
+                  variant="outlined"
+                  value={CheckIn.MobileKey || ''}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
             <Grid item xs={3}></Grid>
             <Grid item xs={9}>
               <Button
@@ -285,13 +388,13 @@ const CheckIn: FC<{}> = () => {
           <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="success">
               This is a success message!
-        </Alert>
+          </Alert>
           </Snackbar>
 
           <Snackbar open={fail} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="error">
-              This is a error message!
-        </Alert>
+              {errors}
+          </Alert>
           </Snackbar>
           
         </Container>

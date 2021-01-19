@@ -12,6 +12,9 @@ var (
 	CheckInsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "checkin_date", Type: field.TypeTime},
+		{Name: "mobile_key", Type: field.TypeString, Size: 10},
+		{Name: "phone_number", Type: field.TypeString},
+		{Name: "person_number", Type: field.TypeString, Size: 13},
 		{Name: "staff_id", Type: field.TypeInt, Nullable: true},
 		{Name: "customer_id", Type: field.TypeInt, Nullable: true},
 		{Name: "room_id", Type: field.TypeInt, Nullable: true},
@@ -26,35 +29,35 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "check_ins_counter_staffs_checkins",
-				Columns: []*schema.Column{CheckInsColumns[2]},
+				Columns: []*schema.Column{CheckInsColumns[5]},
 
 				RefColumns: []*schema.Column{CounterStaffsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "check_ins_customers_checkins",
-				Columns: []*schema.Column{CheckInsColumns[3]},
+				Columns: []*schema.Column{CheckInsColumns[6]},
 
 				RefColumns: []*schema.Column{CustomersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "check_ins_data_rooms_checkins",
-				Columns: []*schema.Column{CheckInsColumns[4]},
+				Columns: []*schema.Column{CheckInsColumns[7]},
 
 				RefColumns: []*schema.Column{DataRoomsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "check_ins_reserve_rooms_checkins",
-				Columns: []*schema.Column{CheckInsColumns[5]},
+				Columns: []*schema.Column{CheckInsColumns[8]},
 
 				RefColumns: []*schema.Column{ReserveRoomsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "check_ins_status_check_ins_checkins",
-				Columns: []*schema.Column{CheckInsColumns[6]},
+				Columns: []*schema.Column{CheckInsColumns[9]},
 
 				RefColumns: []*schema.Column{StatusCheckInsColumns[0]},
 				OnDelete:   schema.SetNull,

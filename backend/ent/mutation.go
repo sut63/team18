@@ -63,6 +63,9 @@ type CheckInMutation struct {
 	typ                string
 	id                 *int
 	checkin_date       *time.Time
+	mobile_key         *string
+	phone_number       *string
+	person_number      *string
 	clearedFields      map[string]struct{}
 	customer           *int
 	clearedcustomer    bool
@@ -194,6 +197,117 @@ func (m *CheckInMutation) OldCheckinDate(ctx context.Context) (v time.Time, err 
 // ResetCheckinDate reset all changes of the "checkin_date" field.
 func (m *CheckInMutation) ResetCheckinDate() {
 	m.checkin_date = nil
+}
+
+// SetMobileKey sets the mobile_key field.
+func (m *CheckInMutation) SetMobileKey(s string) {
+	m.mobile_key = &s
+}
+
+// MobileKey returns the mobile_key value in the mutation.
+func (m *CheckInMutation) MobileKey() (r string, exists bool) {
+	v := m.mobile_key
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMobileKey returns the old mobile_key value of the CheckIn.
+// If the CheckIn object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *CheckInMutation) OldMobileKey(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldMobileKey is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldMobileKey requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMobileKey: %w", err)
+	}
+	return oldValue.MobileKey, nil
+}
+
+// ResetMobileKey reset all changes of the "mobile_key" field.
+func (m *CheckInMutation) ResetMobileKey() {
+	m.mobile_key = nil
+}
+
+// SetPhoneNumber sets the phone_number field.
+func (m *CheckInMutation) SetPhoneNumber(s string) {
+	m.phone_number = &s
+}
+
+// PhoneNumber returns the phone_number value in the mutation.
+func (m *CheckInMutation) PhoneNumber() (r string, exists bool) {
+	v := m.phone_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPhoneNumber returns the old phone_number value of the CheckIn.
+// If the CheckIn object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *CheckInMutation) OldPhoneNumber(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldPhoneNumber is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldPhoneNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPhoneNumber: %w", err)
+	}
+	return oldValue.PhoneNumber, nil
+}
+
+// ResetPhoneNumber reset all changes of the "phone_number" field.
+func (m *CheckInMutation) ResetPhoneNumber() {
+	m.phone_number = nil
+}
+
+// SetPersonNumber sets the person_number field.
+func (m *CheckInMutation) SetPersonNumber(s string) {
+	m.person_number = &s
+}
+
+// PersonNumber returns the person_number value in the mutation.
+func (m *CheckInMutation) PersonNumber() (r string, exists bool) {
+	v := m.person_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPersonNumber returns the old person_number value of the CheckIn.
+// If the CheckIn object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *CheckInMutation) OldPersonNumber(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldPersonNumber is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldPersonNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPersonNumber: %w", err)
+	}
+	return oldValue.PersonNumber, nil
+}
+
+// ResetPersonNumber reset all changes of the "person_number" field.
+func (m *CheckInMutation) ResetPersonNumber() {
+	m.person_number = nil
 }
 
 // SetCustomerID sets the customer edge to Customer by id.
@@ -444,9 +558,18 @@ func (m *CheckInMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *CheckInMutation) Fields() []string {
-	fields := make([]string, 0, 1)
+	fields := make([]string, 0, 4)
 	if m.checkin_date != nil {
 		fields = append(fields, checkin.FieldCheckinDate)
+	}
+	if m.mobile_key != nil {
+		fields = append(fields, checkin.FieldMobileKey)
+	}
+	if m.phone_number != nil {
+		fields = append(fields, checkin.FieldPhoneNumber)
+	}
+	if m.person_number != nil {
+		fields = append(fields, checkin.FieldPersonNumber)
 	}
 	return fields
 }
@@ -458,6 +581,12 @@ func (m *CheckInMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case checkin.FieldCheckinDate:
 		return m.CheckinDate()
+	case checkin.FieldMobileKey:
+		return m.MobileKey()
+	case checkin.FieldPhoneNumber:
+		return m.PhoneNumber()
+	case checkin.FieldPersonNumber:
+		return m.PersonNumber()
 	}
 	return nil, false
 }
@@ -469,6 +598,12 @@ func (m *CheckInMutation) OldField(ctx context.Context, name string) (ent.Value,
 	switch name {
 	case checkin.FieldCheckinDate:
 		return m.OldCheckinDate(ctx)
+	case checkin.FieldMobileKey:
+		return m.OldMobileKey(ctx)
+	case checkin.FieldPhoneNumber:
+		return m.OldPhoneNumber(ctx)
+	case checkin.FieldPersonNumber:
+		return m.OldPersonNumber(ctx)
 	}
 	return nil, fmt.Errorf("unknown CheckIn field %s", name)
 }
@@ -484,6 +619,27 @@ func (m *CheckInMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCheckinDate(v)
+		return nil
+	case checkin.FieldMobileKey:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMobileKey(v)
+		return nil
+	case checkin.FieldPhoneNumber:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPhoneNumber(v)
+		return nil
+	case checkin.FieldPersonNumber:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPersonNumber(v)
 		return nil
 	}
 	return fmt.Errorf("unknown CheckIn field %s", name)
@@ -537,6 +693,15 @@ func (m *CheckInMutation) ResetField(name string) error {
 	switch name {
 	case checkin.FieldCheckinDate:
 		m.ResetCheckinDate()
+		return nil
+	case checkin.FieldMobileKey:
+		m.ResetMobileKey()
+		return nil
+	case checkin.FieldPhoneNumber:
+		m.ResetPhoneNumber()
+		return nil
+	case checkin.FieldPersonNumber:
+		m.ResetPersonNumber()
 		return nil
 	}
 	return fmt.Errorf("unknown CheckIn field %s", name)

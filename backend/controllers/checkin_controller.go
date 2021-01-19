@@ -26,6 +26,9 @@ type CheckinController struct {
 type CheckIn struct {
 	CheckinDate string
 	Statusname  string
+	MobileKey	string
+	PhoneNumber	string
+	PersonNumber	string
 	Customer    int
 	Counter     int
 	Reserveroom int
@@ -116,12 +119,16 @@ func (ctl *CheckinController) CreateCheckIn(c *gin.Context) {
 		SetCounter(cou).
 		SetReserveroom(r).
 		SetDataroom(dr).
+		SetMobileKey(obj.MobileKey).
+		SetPhoneNumber(obj.PhoneNumber).
+		SetPersonNumber(obj.PersonNumber).
 		SetStatusID(1).
 		Save(context.Background())
 
 	if err != nil {
 		c.JSON(400, gin.H{
-			"error": "Create CheckIn error",
+			"error": err,
+			"Status": false,
 		})
 		return
 	}
@@ -139,7 +146,10 @@ func (ctl *CheckinController) CreateCheckIn(c *gin.Context) {
 	}
 	fmt.Print(ci)
 
-	c.JSON(200, ch)
+	c.JSON(200, gin.H{
+		"status": true,
+		"data": ch,
+	})
 }
 
 // ListCheckIn handles request to get a list of checkin entities

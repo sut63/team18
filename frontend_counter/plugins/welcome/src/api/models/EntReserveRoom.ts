@@ -27,11 +27,17 @@ import {
  */
 export interface EntReserveRoom {
     /**
-     * DateOut holds the value of the "date_out" field.
-     * @type {string}
+     * Amount holds the value of the "amount" field.
+     * @type {number}
      * @memberof EntReserveRoom
      */
-    dateOut?: string;
+    amount?: number;
+    /**
+     * Duration holds the value of the "duration" field.
+     * @type {number}
+     * @memberof EntReserveRoom
+     */
+    duration?: number;
     /**
      * 
      * @type {EntReserveRoomEdges}
@@ -51,11 +57,23 @@ export interface EntReserveRoom {
      */
     netPrice?: number;
     /**
+     * Province holds the value of the "province" field.
+     * @type {string}
+     * @memberof EntReserveRoom
+     */
+    province?: string;
+    /**
      * ReserveDate holds the value of the "reserve_date" field.
      * @type {string}
      * @memberof EntReserveRoom
      */
     reserveDate?: string;
+    /**
+     * Tel holds the value of the "tel" field.
+     * @type {string}
+     * @memberof EntReserveRoom
+     */
+    tel?: string;
 }
 
 export function EntReserveRoomFromJSON(json: any): EntReserveRoom {
@@ -68,11 +86,14 @@ export function EntReserveRoomFromJSONTyped(json: any, ignoreDiscriminator: bool
     }
     return {
         
-        'dateOut': !exists(json, 'date_out') ? undefined : json['date_out'],
+        'amount': !exists(json, 'amount') ? undefined : json['amount'],
+        'duration': !exists(json, 'duration') ? undefined : json['duration'],
         'edges': !exists(json, 'edges') ? undefined : EntReserveRoomEdgesFromJSON(json['edges']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'netPrice': !exists(json, 'net_price') ? undefined : json['net_price'],
+        'province': !exists(json, 'province') ? undefined : json['province'],
         'reserveDate': !exists(json, 'reserve_date') ? undefined : json['reserve_date'],
+        'tel': !exists(json, 'tel') ? undefined : json['tel'],
     };
 }
 
@@ -85,11 +106,14 @@ export function EntReserveRoomToJSON(value?: EntReserveRoom | null): any {
     }
     return {
         
-        'date_out': value.dateOut,
+        'amount': value.amount,
+        'duration': value.duration,
         'edges': EntReserveRoomEdgesToJSON(value.edges),
         'id': value.id,
         'net_price': value.netPrice,
+        'province': value.province,
         'reserve_date': value.reserveDate,
+        'tel': value.tel,
     };
 }
 
