@@ -9,6 +9,12 @@ const (
 	FieldID = "id"
 	// FieldCheckinDate holds the string denoting the checkin_date field in the database.
 	FieldCheckinDate = "checkin_date"
+	// FieldMobileKey holds the string denoting the mobile_key field in the database.
+	FieldMobileKey = "mobile_key"
+	// FieldPhoneNumber holds the string denoting the phone_number field in the database.
+	FieldPhoneNumber = "phone_number"
+	// FieldPersonNumber holds the string denoting the person_number field in the database.
+	FieldPersonNumber = "person_number"
 
 	// EdgeCustomer holds the string denoting the customer edge name in mutations.
 	EdgeCustomer = "customer"
@@ -73,6 +79,9 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldCheckinDate,
+	FieldMobileKey,
+	FieldPhoneNumber,
+	FieldPersonNumber,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the CheckIn type.
@@ -83,3 +92,12 @@ var ForeignKeys = []string{
 	"reserves_id",
 	"status_id",
 }
+
+var (
+	// MobileKeyValidator is a validator for the "mobile_key" field. It is called by the builders before save.
+	MobileKeyValidator func(string) error
+	// PhoneNumberValidator is a validator for the "phone_number" field. It is called by the builders before save.
+	PhoneNumberValidator func(string) error
+	// PersonNumberValidator is a validator for the "person_number" field. It is called by the builders before save.
+	PersonNumberValidator func(string) error
+)

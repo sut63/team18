@@ -32,6 +32,24 @@ func (cic *CheckInCreate) SetCheckinDate(t time.Time) *CheckInCreate {
 	return cic
 }
 
+// SetMobileKey sets the mobile_key field.
+func (cic *CheckInCreate) SetMobileKey(s string) *CheckInCreate {
+	cic.mutation.SetMobileKey(s)
+	return cic
+}
+
+// SetPhoneNumber sets the phone_number field.
+func (cic *CheckInCreate) SetPhoneNumber(s string) *CheckInCreate {
+	cic.mutation.SetPhoneNumber(s)
+	return cic
+}
+
+// SetPersonNumber sets the person_number field.
+func (cic *CheckInCreate) SetPersonNumber(s string) *CheckInCreate {
+	cic.mutation.SetPersonNumber(s)
+	return cic
+}
+
 // SetCustomerID sets the customer edge to Customer by id.
 func (cic *CheckInCreate) SetCustomerID(id int) *CheckInCreate {
 	cic.mutation.SetCustomerID(id)
@@ -156,6 +174,30 @@ func (cic *CheckInCreate) Save(ctx context.Context) (*CheckIn, error) {
 	if _, ok := cic.mutation.CheckinDate(); !ok {
 		return nil, &ValidationError{Name: "checkin_date", err: errors.New("ent: missing required field \"checkin_date\"")}
 	}
+	if _, ok := cic.mutation.MobileKey(); !ok {
+		return nil, &ValidationError{Name: "mobile_key", err: errors.New("ent: missing required field \"mobile_key\"")}
+	}
+	if v, ok := cic.mutation.MobileKey(); ok {
+		if err := checkin.MobileKeyValidator(v); err != nil {
+			return nil, &ValidationError{Name: "mobile_key", err: fmt.Errorf("ent: validator failed for field \"mobile_key\": %w", err)}
+		}
+	}
+	if _, ok := cic.mutation.PhoneNumber(); !ok {
+		return nil, &ValidationError{Name: "phone_number", err: errors.New("ent: missing required field \"phone_number\"")}
+	}
+	if v, ok := cic.mutation.PhoneNumber(); ok {
+		if err := checkin.PhoneNumberValidator(v); err != nil {
+			return nil, &ValidationError{Name: "phone_number", err: fmt.Errorf("ent: validator failed for field \"phone_number\": %w", err)}
+		}
+	}
+	if _, ok := cic.mutation.PersonNumber(); !ok {
+		return nil, &ValidationError{Name: "person_number", err: errors.New("ent: missing required field \"person_number\"")}
+	}
+	if v, ok := cic.mutation.PersonNumber(); ok {
+		if err := checkin.PersonNumberValidator(v); err != nil {
+			return nil, &ValidationError{Name: "person_number", err: fmt.Errorf("ent: validator failed for field \"person_number\": %w", err)}
+		}
+	}
 	var (
 		err  error
 		node *CheckIn
@@ -223,6 +265,30 @@ func (cic *CheckInCreate) createSpec() (*CheckIn, *sqlgraph.CreateSpec) {
 			Column: checkin.FieldCheckinDate,
 		})
 		ci.CheckinDate = value
+	}
+	if value, ok := cic.mutation.MobileKey(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: checkin.FieldMobileKey,
+		})
+		ci.MobileKey = value
+	}
+	if value, ok := cic.mutation.PhoneNumber(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: checkin.FieldPhoneNumber,
+		})
+		ci.PhoneNumber = value
+	}
+	if value, ok := cic.mutation.PersonNumber(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: checkin.FieldPersonNumber,
+		})
+		ci.PersonNumber = value
 	}
 	if nodes := cic.mutation.CustomerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

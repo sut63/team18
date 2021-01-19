@@ -229,8 +229,8 @@ const DataRoom: FC<{}> = () => {
             <Grid item xs={9}>
               <TextField
                 error = {RoomnumberError ? true : false}
-                value={DataRoom.RoomNumber || ''}
                 helperText={RoomnumberError}
+                value={DataRoom.RoomNumber || ''}
                 label="เลขห้องพัก"
                 name="RoomNumber"
                 variant="outlined"

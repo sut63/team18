@@ -40,6 +40,24 @@ func (ciu *CheckInUpdate) SetCheckinDate(t time.Time) *CheckInUpdate {
 	return ciu
 }
 
+// SetMobileKey sets the mobile_key field.
+func (ciu *CheckInUpdate) SetMobileKey(s string) *CheckInUpdate {
+	ciu.mutation.SetMobileKey(s)
+	return ciu
+}
+
+// SetPhoneNumber sets the phone_number field.
+func (ciu *CheckInUpdate) SetPhoneNumber(s string) *CheckInUpdate {
+	ciu.mutation.SetPhoneNumber(s)
+	return ciu
+}
+
+// SetPersonNumber sets the person_number field.
+func (ciu *CheckInUpdate) SetPersonNumber(s string) *CheckInUpdate {
+	ciu.mutation.SetPersonNumber(s)
+	return ciu
+}
+
 // SetCustomerID sets the customer edge to Customer by id.
 func (ciu *CheckInUpdate) SetCustomerID(id int) *CheckInUpdate {
 	ciu.mutation.SetCustomerID(id)
@@ -197,6 +215,21 @@ func (ciu *CheckInUpdate) ClearCheckouts() *CheckInUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (ciu *CheckInUpdate) Save(ctx context.Context) (int, error) {
+	if v, ok := ciu.mutation.MobileKey(); ok {
+		if err := checkin.MobileKeyValidator(v); err != nil {
+			return 0, &ValidationError{Name: "mobile_key", err: fmt.Errorf("ent: validator failed for field \"mobile_key\": %w", err)}
+		}
+	}
+	if v, ok := ciu.mutation.PhoneNumber(); ok {
+		if err := checkin.PhoneNumberValidator(v); err != nil {
+			return 0, &ValidationError{Name: "phone_number", err: fmt.Errorf("ent: validator failed for field \"phone_number\": %w", err)}
+		}
+	}
+	if v, ok := ciu.mutation.PersonNumber(); ok {
+		if err := checkin.PersonNumberValidator(v); err != nil {
+			return 0, &ValidationError{Name: "person_number", err: fmt.Errorf("ent: validator failed for field \"person_number\": %w", err)}
+		}
+	}
 
 	var (
 		err      error
@@ -270,6 +303,27 @@ func (ciu *CheckInUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeTime,
 			Value:  value,
 			Column: checkin.FieldCheckinDate,
+		})
+	}
+	if value, ok := ciu.mutation.MobileKey(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: checkin.FieldMobileKey,
+		})
+	}
+	if value, ok := ciu.mutation.PhoneNumber(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: checkin.FieldPhoneNumber,
+		})
+	}
+	if value, ok := ciu.mutation.PersonNumber(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: checkin.FieldPersonNumber,
 		})
 	}
 	if ciu.mutation.CustomerCleared() {
@@ -506,6 +560,24 @@ func (ciuo *CheckInUpdateOne) SetCheckinDate(t time.Time) *CheckInUpdateOne {
 	return ciuo
 }
 
+// SetMobileKey sets the mobile_key field.
+func (ciuo *CheckInUpdateOne) SetMobileKey(s string) *CheckInUpdateOne {
+	ciuo.mutation.SetMobileKey(s)
+	return ciuo
+}
+
+// SetPhoneNumber sets the phone_number field.
+func (ciuo *CheckInUpdateOne) SetPhoneNumber(s string) *CheckInUpdateOne {
+	ciuo.mutation.SetPhoneNumber(s)
+	return ciuo
+}
+
+// SetPersonNumber sets the person_number field.
+func (ciuo *CheckInUpdateOne) SetPersonNumber(s string) *CheckInUpdateOne {
+	ciuo.mutation.SetPersonNumber(s)
+	return ciuo
+}
+
 // SetCustomerID sets the customer edge to Customer by id.
 func (ciuo *CheckInUpdateOne) SetCustomerID(id int) *CheckInUpdateOne {
 	ciuo.mutation.SetCustomerID(id)
@@ -663,6 +735,21 @@ func (ciuo *CheckInUpdateOne) ClearCheckouts() *CheckInUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (ciuo *CheckInUpdateOne) Save(ctx context.Context) (*CheckIn, error) {
+	if v, ok := ciuo.mutation.MobileKey(); ok {
+		if err := checkin.MobileKeyValidator(v); err != nil {
+			return nil, &ValidationError{Name: "mobile_key", err: fmt.Errorf("ent: validator failed for field \"mobile_key\": %w", err)}
+		}
+	}
+	if v, ok := ciuo.mutation.PhoneNumber(); ok {
+		if err := checkin.PhoneNumberValidator(v); err != nil {
+			return nil, &ValidationError{Name: "phone_number", err: fmt.Errorf("ent: validator failed for field \"phone_number\": %w", err)}
+		}
+	}
+	if v, ok := ciuo.mutation.PersonNumber(); ok {
+		if err := checkin.PersonNumberValidator(v); err != nil {
+			return nil, &ValidationError{Name: "person_number", err: fmt.Errorf("ent: validator failed for field \"person_number\": %w", err)}
+		}
+	}
 
 	var (
 		err  error
@@ -734,6 +821,27 @@ func (ciuo *CheckInUpdateOne) sqlSave(ctx context.Context) (ci *CheckIn, err err
 			Type:   field.TypeTime,
 			Value:  value,
 			Column: checkin.FieldCheckinDate,
+		})
+	}
+	if value, ok := ciuo.mutation.MobileKey(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: checkin.FieldMobileKey,
+		})
+	}
+	if value, ok := ciuo.mutation.PhoneNumber(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: checkin.FieldPhoneNumber,
+		})
+	}
+	if value, ok := ciuo.mutation.PersonNumber(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: checkin.FieldPersonNumber,
 		})
 	}
 	if ciuo.mutation.CustomerCleared() {
