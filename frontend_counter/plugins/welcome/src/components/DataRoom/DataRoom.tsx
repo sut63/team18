@@ -103,7 +103,7 @@ const DataRoom: FC<{}> = () => {
   const validateRoomdetail = (val: string) => {
     return val.length > 70 ? false : true;
   }
-
+//checkpatten
   const checkPattern  = (id: string, value: string) => {
     switch(id) {
       case 'RoomNumber':
