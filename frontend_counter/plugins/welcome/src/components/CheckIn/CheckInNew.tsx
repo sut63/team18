@@ -89,10 +89,11 @@ const CheckIn: FC<{}> = () => {
   }
 
   // DataRoom 
-  const [dataroom, setDataroom] = React.useState<EntDataRoom[]>([])
+  const [dataroom, setDataroom] = React.useState<EntDataRoom>()
   const getDataroom = async () => {
     const res = await api.getDataroomcustomer({ id: idreserveroom })
     setDataroom(res)
+    console.log("dataroom => "+res)
   }
 
   // CounterStaff
@@ -138,6 +139,10 @@ const CheckIn: FC<{}> = () => {
   useEffect(() => {
     setCheckIn({ ...CheckIn, ['Counter']: counter?.id })
   }, [counter]);
+  useEffect(() => {
+    setCheckIn({ ...CheckIn, ['Dataroom']: dataroom?.id })
+  }, [dataroom]);
+  
 
 
   // function save data
@@ -171,6 +176,7 @@ const CheckIn: FC<{}> = () => {
   function clear() {
     setCheckIn({});
     getCounterStaff();
+    getDataroom({});
   }
 
   return (
@@ -240,21 +246,13 @@ const CheckIn: FC<{}> = () => {
               <div className={classes.paper}>Room Number</div>
             </Grid>
             <Grid item xs={9}>
-              <FormControl variant="outlined" className={classes.formControl}>
-                <InputLabel>Data Room</InputLabel>
-                <Select
+            <FormControl variant="outlined" className={classes.formControl}>
+                <TextField
+                  disabled
                   name="Dataroom"
-                  value={CheckIn.Dataroom || ''} // (undefined || '') = ''
-                  onChange={handleChange}
-                >
-                  {dataroom.map(item => {
-                    return (
-                      <MenuItem key={item.id} value={item.id}>
-                        {item.roomnumber}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
+                  variant="outlined"
+                  value={dataroom?.roomnumber}
+                />
               </FormControl>
             </Grid>
 

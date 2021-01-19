@@ -1264,9 +1264,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/ent.DataRoom'
-            type: array
+            $ref: '#/definitions/ent.DataRoom'
         "400":
           description: Bad Request
           schema:
