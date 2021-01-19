@@ -58,6 +58,7 @@ interface DataRoom {
   TypeRoom: number;
   Price: number;
   RoomNumber: string;
+  RoomDetail: string;
   // create_by: number;
 }
 
@@ -70,7 +71,10 @@ const DataRoom: FC<{}> = () => {
   const [StatusRoom, setStatusRoom] = React.useState<EntStatusRoom[]>([]);
   const [Promotion, setPromotion] = React.useState<EntPromotion[]>([]);
   const [TypeRoom, setTypeRoom] = React.useState<EntTypeRoom[]>([]);
-
+  DataRoom.Price = Number(DataRoom.Price)
+  const [RoomnumberError, setRoomnumberError] = React.useState('');
+  const [PriceError, setPriceError] = React.useState('');
+  const [RoomDetailError, setRoomdetailError] = React.useState('');
   const getStatusRoom = async () => {
     const res = await api.listStatusroom({ limit: 10, offset: 0 });
     setStatusRoom(res);
@@ -85,10 +89,41 @@ const DataRoom: FC<{}> = () => {
     setPromotion(res);
   };
 
+
+  const validateRoomnumber = (val: string) => {
+    return val.match("[A-Z]\\d{3}");
+  }
+
+  
+  const validatePrice = (val: Number) => {
+    return val > 0 ? true : false;
+  }
+
+  // ฟังก์ชั่นสำหรับ validate รหัสนักศึกษา
+  const validateRoomdetail = (val: string) => {
+    return val.length > 70 ? false : true;
+  }
+
+  const checkPattern  = (id: string, value: string) => {
+    switch(id) {
+      case 'RoomNumber':
+        validateRoomnumber(value) ? setRoomnumberError('') : setRoomnumberError('หมายเลขห้องขึ้นต้นด้วย A-Z เเละ ตัวเลข 3 ตัว');
+        return;
+      case 'Price':
+        validatePrice(Number(value)) ? setPriceError('') : setPriceError('เป็นจำนวนเต็มบวกเท่านั้น');
+        return;
+      case 'RoomDetail':
+        validateRoomdetail(value) ? setRoomdetailError('') : setRoomdetailError('ห้ามเกิน 70 ตัวอักษร')
+        return;
+      default:
+        return;
+    }
+  }
+
   // alert setting
   const [open, setOpen] = React.useState(false);
   const [fail, setFail] = React.useState(false);
-
+  const [errors, setError] = React.useState(String);
   //close alert 
   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
     if (reason === 'clickaway') {
@@ -98,6 +133,23 @@ const DataRoom: FC<{}> = () => {
     setOpen(false);
   };
 
+  const checkerror = (s :string) => {
+    switch(s) {
+      case 'roomnumber':
+        setError("รูปแบบหมายเลขห้องพักไม่ถูกต้อง")
+        return;
+      case 'price':
+        setError("ราคาไม่ถูกต้อง")
+        return;
+      case 'roomdetail':
+        setError("รายละเอียดมีความยาวมากเกินไป")
+        return;
+      default:
+        return;
+    }
+  };
+  
+  
   // Lifecycle Hooks
   useEffect(() => {
     getStatusRoom();
@@ -107,15 +159,16 @@ const DataRoom: FC<{}> = () => {
 
   // set data to object DataRoom
   const handleChange = (
-    event: React.ChangeEvent<{ name?: string; value: unknown }>,
+    event: React.ChangeEvent<{ name?: string; value: any }>,
   ) => {
     const name = event.target.name as keyof typeof DataRoom;
     const { value } = event.target;
     setDataRoom({ ...DataRoom, [name]: value });
+    const validateValue = value.toString() 
+    checkPattern(name, validateValue)
     console.log(DataRoom);
   };
-  var Price = DataRoom.Price
-  DataRoom.Price = Number(Price)
+  
 
 
   // clear input form
@@ -138,15 +191,15 @@ const DataRoom: FC<{}> = () => {
       .then(response => response.json())
       .then(data => {
         console.log(data.status);
-        if (data.id != null) {
+        if (data.status == true) {
           clear();
           setOpen(true);
         } else {
+          checkerror(data.error.Name)
           setFail(true);
         }
       });
   }
-
   function Clears() {
     ck.ClearCookie()
     window.location.reload(false)
@@ -175,7 +228,9 @@ const DataRoom: FC<{}> = () => {
             </Grid>
             <Grid item xs={9}>
               <TextField
+                error = {RoomnumberError ? true : false}
                 value={DataRoom.RoomNumber || ''}
+                helperText={RoomnumberError}
                 label="เลขห้องพัก"
                 name="RoomNumber"
                 variant="outlined"
@@ -252,9 +307,27 @@ const DataRoom: FC<{}> = () => {
             </Grid>
             <Grid item xs={9}>
               <TextField
+                error = {PriceError ? true : false}
+                helperText={PriceError}
+                type={"number"}
                 value={DataRoom.Price || ''}
                 label="ราคา"
                 name="Price"
+                variant="outlined"
+                onChange={handleChange} />
+            </Grid>
+           
+
+            <Grid item xs={3}>
+              <div className={classes.paper}>รายละเอียด</div>
+            </Grid>
+            <Grid item xs={9}>
+              <TextField
+                error = {RoomDetailError ? true : false}
+                helperText={RoomDetailError}
+                value={DataRoom.RoomDetail || ''}
+                label="รายละเอียด"
+                name="RoomDetail"
                 variant="outlined"
                 onChange={handleChange} />
             </Grid>
@@ -280,7 +353,7 @@ const DataRoom: FC<{}> = () => {
 
           <Snackbar open={fail} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="error">
-              This is a error message!
+            {errors}
         </Alert>
           </Snackbar>
 
