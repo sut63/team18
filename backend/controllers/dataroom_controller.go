@@ -154,7 +154,7 @@ func (ctl *DataRoomController) ListDataRoom(c *gin.Context) {
 // @ID get-dataroomcustomer
 // @Produce  json
 // @Param id path int true "dataroomcustomer ID"
-// @Success 200 {array} ent.DataRoom
+// @Success 200 {object} ent.DataRoom
 // @Failure 400 {object} gin.H
 // @Failure 404 {object} gin.H
 // @Failure 500 {object} gin.H
@@ -173,7 +173,7 @@ func (ctl *DataRoomController) GetDataroomCustomer(c *gin.Context) {
 		WithStatusroom().
 		WithTyperoom().
 		Where(dataroom.HasReservesWith(reserveroom.IDEQ(int(id)))).
-		All(context.Background())
+		Only(context.Background())
 	if err != nil {
 		c.JSON(404, gin.H{
 			"error": err.Error(),

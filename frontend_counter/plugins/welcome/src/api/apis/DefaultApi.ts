@@ -1213,7 +1213,7 @@ export class DefaultApi extends runtime.BaseAPI {
      * get dataroomcustomer by ID
      * Get a dataroomcustomer entity by ID
      */
-    async getDataroomcustomerRaw(requestParameters: GetDataroomcustomerRequest): Promise<runtime.ApiResponse<Array<EntDataRoom>>> {
+    async getDataroomcustomerRaw(requestParameters: GetDataroomcustomerRequest): Promise<runtime.ApiResponse<EntDataRoom>> {
         if (requestParameters.id === null || requestParameters.id === undefined) {
             throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getDataroomcustomer.');
         }
@@ -1229,14 +1229,14 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntDataRoomFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntDataRoomFromJSON(jsonValue));
     }
 
     /**
      * get dataroomcustomer by ID
      * Get a dataroomcustomer entity by ID
      */
-    async getDataroomcustomer(requestParameters: GetDataroomcustomerRequest): Promise<Array<EntDataRoom>> {
+    async getDataroomcustomer(requestParameters: GetDataroomcustomerRequest): Promise<EntDataRoom> {
         const response = await this.getDataroomcustomerRaw(requestParameters);
         return await response.value();
     }
