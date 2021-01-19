@@ -54,7 +54,21 @@ func init() {
 	// dataroomDescPrice is the schema descriptor for price field.
 	dataroomDescPrice := dataroomFields[0].Descriptor()
 	// dataroom.PriceValidator is a validator for the "price" field. It is called by the builders before save.
-	dataroom.PriceValidator = dataroomDescPrice.Validators[0].(func(float64) error)
+	dataroom.PriceValidator = func() func(float64) error {
+		validators := dataroomDescPrice.Validators
+		fns := [...]func(float64) error{
+			validators[0].(func(float64) error),
+			validators[1].(func(float64) error),
+		}
+		return func(price float64) error {
+			for _, fn := range fns {
+				if err := fn(price); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// dataroomDescRoomnumber is the schema descriptor for roomnumber field.
 	dataroomDescRoomnumber := dataroomFields[1].Descriptor()
 	// dataroom.RoomnumberValidator is a validator for the "roomnumber" field. It is called by the builders before save.
