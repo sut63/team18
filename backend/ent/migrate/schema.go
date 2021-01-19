@@ -131,6 +131,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "price", Type: field.TypeFloat64},
 		{Name: "roomnumber", Type: field.TypeString},
+		{Name: "roomdetail", Type: field.TypeString, Size: 70},
 		{Name: "promotion_id", Type: field.TypeInt, Nullable: true},
 		{Name: "statusroom_id", Type: field.TypeInt, Nullable: true},
 		{Name: "typeroom_id", Type: field.TypeInt, Nullable: true},
@@ -143,21 +144,21 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "data_rooms_promotions_datarooms",
-				Columns: []*schema.Column{DataRoomsColumns[3]},
+				Columns: []*schema.Column{DataRoomsColumns[4]},
 
 				RefColumns: []*schema.Column{PromotionsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "data_rooms_status_rooms_datarooms",
-				Columns: []*schema.Column{DataRoomsColumns[4]},
+				Columns: []*schema.Column{DataRoomsColumns[5]},
 
 				RefColumns: []*schema.Column{StatusRoomsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "data_rooms_type_rooms_datarooms",
-				Columns: []*schema.Column{DataRoomsColumns[5]},
+				Columns: []*schema.Column{DataRoomsColumns[6]},
 
 				RefColumns: []*schema.Column{TypeRoomsColumns[0]},
 				OnDelete:   schema.SetNull,

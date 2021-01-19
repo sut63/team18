@@ -11,6 +11,8 @@ const (
 	FieldPrice = "price"
 	// FieldRoomnumber holds the string denoting the roomnumber field in the database.
 	FieldRoomnumber = "roomnumber"
+	// FieldRoomdetail holds the string denoting the roomdetail field in the database.
+	FieldRoomdetail = "roomdetail"
 
 	// EdgeReserves holds the string denoting the reserves edge name in mutations.
 	EdgeReserves = "reserves"
@@ -85,6 +87,7 @@ var Columns = []string{
 	FieldID,
 	FieldPrice,
 	FieldRoomnumber,
+	FieldRoomdetail,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the DataRoom type.
@@ -99,4 +102,6 @@ var (
 	PriceValidator func(float64) error
 	// RoomnumberValidator is a validator for the "roomnumber" field. It is called by the builders before save.
 	RoomnumberValidator func(string) error
+	// RoomdetailValidator is a validator for the "roomdetail" field. It is called by the builders before save.
+	RoomdetailValidator func(string) error
 )

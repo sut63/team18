@@ -38,6 +38,12 @@ func (drc *DataRoomCreate) SetRoomnumber(s string) *DataRoomCreate {
 	return drc
 }
 
+// SetRoomdetail sets the roomdetail field.
+func (drc *DataRoomCreate) SetRoomdetail(s string) *DataRoomCreate {
+	drc.mutation.SetRoomdetail(s)
+	return drc
+}
+
 // AddReserfIDs adds the reserves edge to ReserveRoom by ids.
 func (drc *DataRoomCreate) AddReserfIDs(ids ...int) *DataRoomCreate {
 	drc.mutation.AddReserfIDs(ids...)
@@ -178,6 +184,14 @@ func (drc *DataRoomCreate) Save(ctx context.Context) (*DataRoom, error) {
 			return nil, &ValidationError{Name: "roomnumber", err: fmt.Errorf("ent: validator failed for field \"roomnumber\": %w", err)}
 		}
 	}
+	if _, ok := drc.mutation.Roomdetail(); !ok {
+		return nil, &ValidationError{Name: "roomdetail", err: errors.New("ent: missing required field \"roomdetail\"")}
+	}
+	if v, ok := drc.mutation.Roomdetail(); ok {
+		if err := dataroom.RoomdetailValidator(v); err != nil {
+			return nil, &ValidationError{Name: "roomdetail", err: fmt.Errorf("ent: validator failed for field \"roomdetail\": %w", err)}
+		}
+	}
 	var (
 		err  error
 		node *DataRoom
@@ -253,6 +267,14 @@ func (drc *DataRoomCreate) createSpec() (*DataRoom, *sqlgraph.CreateSpec) {
 			Column: dataroom.FieldRoomnumber,
 		})
 		dr.Roomnumber = value
+	}
+	if value, ok := drc.mutation.Roomdetail(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: dataroom.FieldRoomdetail,
+		})
+		dr.Roomdetail = value
 	}
 	if nodes := drc.mutation.ReservesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

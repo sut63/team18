@@ -25,6 +25,7 @@ type DataRoom struct {
 	TypeRoom   int
 	StatusRoom int
 	Promotion  int
+	RoomDetail string
 }
 
 // CreateDataRoom handles POST requests for adding dataroom entities
@@ -50,6 +51,7 @@ func (ctl *DataRoomController) CreateDataRoom(c *gin.Context) {
 	d, err := ctl.client.DataRoom.
 		Create().
 		SetPrice(obj.Price).
+		SetRoomdetail(obj.RoomDetail).
 		SetRoomnumber(obj.RoomNumber).
 		SetPromotionID(obj.Promotion).
 		SetStatusroomID(obj.StatusRoom).
@@ -57,12 +59,16 @@ func (ctl *DataRoomController) CreateDataRoom(c *gin.Context) {
 		Save(context.Background())
 	if err != nil {
 		c.JSON(400, gin.H{
-			"error": "saving failed",
+			"status": false,
+			"error":  err,
 		})
 		return
 	}
 
-	c.JSON(200, d)
+	c.JSON(200, gin.H{
+		"status": false,
+		"data":   d,
+	})
 }
 
 // GetDataRoom handles GET requests to retrieve a dataroom entity

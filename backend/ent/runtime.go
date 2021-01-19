@@ -59,6 +59,10 @@ func init() {
 	dataroomDescRoomnumber := dataroomFields[1].Descriptor()
 	// dataroom.RoomnumberValidator is a validator for the "roomnumber" field. It is called by the builders before save.
 	dataroom.RoomnumberValidator = dataroomDescRoomnumber.Validators[0].(func(string) error)
+	// dataroomDescRoomdetail is the schema descriptor for roomdetail field.
+	dataroomDescRoomdetail := dataroomFields[2].Descriptor()
+	// dataroom.RoomdetailValidator is a validator for the "roomdetail" field. It is called by the builders before save.
+	dataroom.RoomdetailValidator = dataroomDescRoomdetail.Validators[0].(func(string) error)
 	furnitureFields := schema.Furniture{}.Fields()
 	_ = furnitureFields
 	// furnitureDescFurnitureName is the schema descriptor for furniture_name field.

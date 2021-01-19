@@ -22,6 +22,8 @@ type DataRoom struct {
 	Price float64 `json:"price,omitempty"`
 	// Roomnumber holds the value of the "roomnumber" field.
 	Roomnumber string `json:"roomnumber,omitempty"`
+	// Roomdetail holds the value of the "roomdetail" field.
+	Roomdetail string `json:"roomdetail,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DataRoomQuery when eager-loading is set.
 	Edges         DataRoomEdges `json:"edges"`
@@ -135,6 +137,7 @@ func (*DataRoom) scanValues() []interface{} {
 		&sql.NullInt64{},   // id
 		&sql.NullFloat64{}, // price
 		&sql.NullString{},  // roomnumber
+		&sql.NullString{},  // roomdetail
 	}
 }
 
@@ -169,7 +172,12 @@ func (dr *DataRoom) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		dr.Roomnumber = value.String
 	}
-	values = values[2:]
+	if value, ok := values[2].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field roomdetail", values[2])
+	} else if value.Valid {
+		dr.Roomdetail = value.String
+	}
+	values = values[3:]
 	if len(values) == len(dataroom.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field promotion_id", value)
@@ -255,6 +263,8 @@ func (dr *DataRoom) String() string {
 	builder.WriteString(fmt.Sprintf("%v", dr.Price))
 	builder.WriteString(", roomnumber=")
 	builder.WriteString(dr.Roomnumber)
+	builder.WriteString(", roomdetail=")
+	builder.WriteString(dr.Roomdetail)
 	builder.WriteByte(')')
 	return builder.String()
 }
