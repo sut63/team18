@@ -81,6 +81,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ent.CounterStaff"
                         }
                     }
@@ -175,6 +176,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ent.CounterStaff"
                         }
                     }
@@ -453,6 +455,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ent.ReserveRoom"
                         }
                     }
@@ -547,6 +550,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ent.ReserveRoom"
                         }
                     }
@@ -727,6 +731,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ent.CheckIn"
                         }
                     }
@@ -821,6 +826,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ent.CheckIn"
                         }
                     }
@@ -986,6 +992,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ent.Checkout"
                         }
                     }
@@ -1262,6 +1269,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ent.DataRoom"
                         }
                     }
@@ -1356,6 +1364,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ent.DataRoom"
                         }
                     }
@@ -1445,6 +1454,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ent.FixRoom"
                         }
                     }
@@ -1622,6 +1632,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ent.FurnitureDetail"
                         }
                     }
@@ -1940,6 +1951,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ent.Promotion"
                         }
                     }
@@ -2074,6 +2086,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ent.Status"
                         }
                     }
@@ -2251,6 +2264,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ent.Status"
                         }
                     }
@@ -2428,6 +2442,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ent.StatusRoom"
                         }
                     }
@@ -2562,6 +2577,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ent.Status"
                         }
                     }
@@ -2739,6 +2755,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/ent.TypeRoom"
                         }
                     }
@@ -2819,13 +2836,41 @@
                     "description": "CheckinDate holds the value of the \"checkin_date\" field.",
                     "type": "string"
                 },
+                "customer_id": {
+                    "type": "integer"
+                },
+                "debug": {
+                    "description": "debug enable a debug logging.",
+                    "type": "boolean"
+                },
+                "driver": {
+                    "description": "driver used for executing database requests.",
+                    "type": "string"
+                },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the CheckInQuery when eager-loading is set.",
                     "type": "object",
                     "$ref": "#/definitions/ent.CheckInEdges"
                 },
+                "hooks": {
+                    "description": "hooks to execute on mutations.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.hooks"
+                },
                 "id": {
                     "description": "ID of the ent.",
+                    "type": "integer"
+                },
+                "reserves_id": {
+                    "type": "integer"
+                },
+                "room_id": {
+                    "type": "integer"
+                },
+                "staff_id": {
+                    "type": "integer"
+                },
+                "status_id": {
                     "type": "integer"
                 }
             }
@@ -2853,6 +2898,13 @@
                     "type": "object",
                     "$ref": "#/definitions/ent.DataRoom"
                 },
+                "loadedTypes": {
+                    "description": "loadedTypes holds the information for reporting if a\ntype was loaded (or requested) in eager-loading or not.",
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
+                },
                 "reserveroom": {
                     "description": "Reserveroom holds the value of the reserveroom edge.",
                     "type": "object",
@@ -2868,8 +2920,19 @@
         "ent.Checkout": {
             "type": "object",
             "properties": {
+                "check_in_checkouts": {
+                    "type": "integer"
+                },
                 "checkout_date": {
                     "description": "CheckoutDate holds the value of the \"checkout_date\" field.",
+                    "type": "string"
+                },
+                "debug": {
+                    "description": "debug enable a debug logging.",
+                    "type": "boolean"
+                },
+                "driver": {
+                    "description": "driver used for executing database requests.",
                     "type": "string"
                 },
                 "edges": {
@@ -2877,8 +2940,19 @@
                     "type": "object",
                     "$ref": "#/definitions/ent.CheckoutEdges"
                 },
+                "hooks": {
+                    "description": "hooks to execute on mutations.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.hooks"
+                },
                 "id": {
                     "description": "ID of the ent.",
+                    "type": "integer"
+                },
+                "staff_id": {
+                    "type": "integer"
+                },
+                "status_checkouts": {
                     "type": "integer"
                 }
             }
@@ -2896,6 +2970,13 @@
                     "type": "object",
                     "$ref": "#/definitions/ent.CounterStaff"
                 },
+                "loadedTypes": {
+                    "description": "loadedTypes holds the information for reporting if a\ntype was loaded (or requested) in eager-loading or not.",
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
+                },
                 "statuss": {
                     "description": "Statuss holds the value of the statuss edge.",
                     "type": "object",
@@ -2906,6 +2987,14 @@
         "ent.CounterStaff": {
             "type": "object",
             "properties": {
+                "debug": {
+                    "description": "debug enable a debug logging.",
+                    "type": "boolean"
+                },
+                "driver": {
+                    "description": "driver used for executing database requests.",
+                    "type": "string"
+                },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the CounterStaffQuery when eager-loading is set.",
                     "type": "object",
@@ -2914,6 +3003,11 @@
                 "email": {
                     "description": "Email holds the value of the \"email\" field.",
                     "type": "string"
+                },
+                "hooks": {
+                    "description": "hooks to execute on mutations.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.hooks"
                 },
                 "id": {
                     "description": "ID of the ent.",
@@ -2952,12 +3046,27 @@
                     "items": {
                         "$ref": "#/definitions/ent.FurnitureDetail"
                     }
+                },
+                "loadedTypes": {
+                    "description": "loadedTypes holds the information for reporting if a\ntype was loaded (or requested) in eager-loading or not.",
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
                 }
             }
         },
         "ent.Customer": {
             "type": "object",
             "properties": {
+                "debug": {
+                    "description": "debug enable a debug logging.",
+                    "type": "boolean"
+                },
+                "driver": {
+                    "description": "driver used for executing database requests.",
+                    "type": "string"
+                },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the CustomerQuery when eager-loading is set.",
                     "type": "object",
@@ -2966,6 +3075,11 @@
                 "email": {
                     "description": "Email holds the value of the \"email\" field.",
                     "type": "string"
+                },
+                "hooks": {
+                    "description": "hooks to execute on mutations.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.hooks"
                 },
                 "id": {
                     "description": "ID of the ent.",
@@ -2998,6 +3112,13 @@
                         "$ref": "#/definitions/ent.FixRoom"
                     }
                 },
+                "loadedTypes": {
+                    "description": "loadedTypes holds the information for reporting if a\ntype was loaded (or requested) in eager-loading or not.",
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
+                },
                 "reserves": {
                     "description": "Reserves holds the value of the reserves edge.",
                     "type": "array",
@@ -3010,10 +3131,23 @@
         "ent.DataRoom": {
             "type": "object",
             "properties": {
+                "debug": {
+                    "description": "debug enable a debug logging.",
+                    "type": "boolean"
+                },
+                "driver": {
+                    "description": "driver used for executing database requests.",
+                    "type": "string"
+                },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the DataRoomQuery when eager-loading is set.",
                     "type": "object",
                     "$ref": "#/definitions/ent.DataRoomEdges"
+                },
+                "hooks": {
+                    "description": "hooks to execute on mutations.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.hooks"
                 },
                 "id": {
                     "description": "ID of the ent.",
@@ -3023,9 +3157,22 @@
                     "description": "Price holds the value of the \"price\" field.",
                     "type": "number"
                 },
+                "promotion_id": {
+                    "type": "integer"
+                },
+                "roomdetail": {
+                    "description": "Roomdetail holds the value of the \"roomdetail\" field.",
+                    "type": "string"
+                },
                 "roomnumber": {
                     "description": "Roomnumber holds the value of the \"roomnumber\" field.",
                     "type": "string"
+                },
+                "statusroom_id": {
+                    "type": "integer"
+                },
+                "typeroom_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -3051,6 +3198,13 @@
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/ent.FixRoom"
+                    }
+                },
+                "loadedTypes": {
+                    "description": "loadedTypes holds the information for reporting if a\ntype was loaded (or requested) in eager-loading or not.",
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
                     }
                 },
                 "promotion": {
@@ -3080,6 +3234,17 @@
         "ent.FixRoom": {
             "type": "object",
             "properties": {
+                "customer_id": {
+                    "type": "integer"
+                },
+                "debug": {
+                    "description": "debug enable a debug logging.",
+                    "type": "boolean"
+                },
+                "driver": {
+                    "description": "driver used for executing database requests.",
+                    "type": "string"
+                },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the FixRoomQuery when eager-loading is set.",
                     "type": "object",
@@ -3089,8 +3254,19 @@
                     "description": "FixDetail holds the value of the \"fix_detail\" field.",
                     "type": "string"
                 },
+                "hooks": {
+                    "description": "hooks to execute on mutations.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.hooks"
+                },
                 "id": {
                     "description": "ID of the ent.",
+                    "type": "integer"
+                },
+                "object_id": {
+                    "type": "integer"
+                },
+                "room_id": {
                     "type": "integer"
                 }
             }
@@ -3108,6 +3284,13 @@
                     "type": "object",
                     "$ref": "#/definitions/ent.FurnitureDetail"
                 },
+                "loadedTypes": {
+                    "description": "loadedTypes holds the information for reporting if a\ntype was loaded (or requested) in eager-loading or not.",
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
+                },
                 "room": {
                     "description": "Room holds the value of the room edge.",
                     "type": "object",
@@ -3118,6 +3301,14 @@
         "ent.Furniture": {
             "type": "object",
             "properties": {
+                "debug": {
+                    "description": "debug enable a debug logging.",
+                    "type": "boolean"
+                },
+                "driver": {
+                    "description": "driver used for executing database requests.",
+                    "type": "string"
+                },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the FurnitureQuery when eager-loading is set.",
                     "type": "object",
@@ -3126,6 +3317,11 @@
                 "furniture_name": {
                     "description": "FurnitureName holds the value of the \"furniture_name\" field.",
                     "type": "string"
+                },
+                "hooks": {
+                    "description": "hooks to execute on mutations.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.hooks"
                 },
                 "id": {
                     "description": "ID of the ent.",
@@ -3140,13 +3336,38 @@
                     "description": "DateAdd holds the value of the \"date_add\" field.",
                     "type": "string"
                 },
+                "debug": {
+                    "description": "debug enable a debug logging.",
+                    "type": "boolean"
+                },
+                "driver": {
+                    "description": "driver used for executing database requests.",
+                    "type": "string"
+                },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the FurnitureDetailQuery when eager-loading is set.",
                     "type": "object",
                     "$ref": "#/definitions/ent.FurnitureDetailEdges"
                 },
+                "furniture_id": {
+                    "type": "integer"
+                },
+                "hooks": {
+                    "description": "hooks to execute on mutations.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.hooks"
+                },
                 "id": {
                     "description": "ID of the ent.",
+                    "type": "integer"
+                },
+                "room_id": {
+                    "type": "integer"
+                },
+                "staff_id": {
+                    "type": "integer"
+                },
+                "type_id": {
                     "type": "integer"
                 }
             }
@@ -3171,6 +3392,13 @@
                     "type": "object",
                     "$ref": "#/definitions/ent.Furniture"
                 },
+                "loadedTypes": {
+                    "description": "loadedTypes holds the information for reporting if a\ntype was loaded (or requested) in eager-loading or not.",
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
+                },
                 "rooms": {
                     "description": "Rooms holds the value of the rooms edge.",
                     "type": "object",
@@ -3192,12 +3420,27 @@
                     "items": {
                         "$ref": "#/definitions/ent.FurnitureDetail"
                     }
+                },
+                "loadedTypes": {
+                    "description": "loadedTypes holds the information for reporting if a\ntype was loaded (or requested) in eager-loading or not.",
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
                 }
             }
         },
         "ent.FurnitureType": {
             "type": "object",
             "properties": {
+                "debug": {
+                    "description": "debug enable a debug logging.",
+                    "type": "boolean"
+                },
+                "driver": {
+                    "description": "driver used for executing database requests.",
+                    "type": "string"
+                },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the FurnitureTypeQuery when eager-loading is set.",
                     "type": "object",
@@ -3206,6 +3449,11 @@
                 "furniture_type": {
                     "description": "FurnitureType holds the value of the \"furniture_type\" field.",
                     "type": "string"
+                },
+                "hooks": {
+                    "description": "hooks to execute on mutations.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.hooks"
                 },
                 "id": {
                     "description": "ID of the ent.",
@@ -3222,20 +3470,41 @@
                     "items": {
                         "$ref": "#/definitions/ent.FurnitureDetail"
                     }
+                },
+                "loadedTypes": {
+                    "description": "loadedTypes holds the information for reporting if a\ntype was loaded (or requested) in eager-loading or not.",
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
                 }
             }
         },
+        "ent.Hook": {},
         "ent.Promotion": {
             "type": "object",
             "properties": {
+                "debug": {
+                    "description": "debug enable a debug logging.",
+                    "type": "boolean"
+                },
                 "discount": {
                     "description": "Discount holds the value of the \"discount\" field.",
                     "type": "number"
+                },
+                "driver": {
+                    "description": "driver used for executing database requests.",
+                    "type": "string"
                 },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the PromotionQuery when eager-loading is set.",
                     "type": "object",
                     "$ref": "#/definitions/ent.PromotionEdges"
+                },
+                "hooks": {
+                    "description": "hooks to execute on mutations.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.hooks"
                 },
                 "id": {
                     "description": "ID of the ent.",
@@ -3257,6 +3526,13 @@
                         "$ref": "#/definitions/ent.DataRoom"
                     }
                 },
+                "loadedTypes": {
+                    "description": "loadedTypes holds the information for reporting if a\ntype was loaded (or requested) in eager-loading or not.",
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
+                },
                 "reserves": {
                     "description": "Reserves holds the value of the reserves edge.",
                     "type": "array",
@@ -3269,14 +3545,30 @@
         "ent.ReserveRoom": {
             "type": "object",
             "properties": {
+                "customer_id": {
+                    "type": "integer"
+                },
                 "date_out": {
                     "description": "DateOut holds the value of the \"date_out\" field.",
+                    "type": "string"
+                },
+                "debug": {
+                    "description": "debug enable a debug logging.",
+                    "type": "boolean"
+                },
+                "driver": {
+                    "description": "driver used for executing database requests.",
                     "type": "string"
                 },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the ReserveRoomQuery when eager-loading is set.",
                     "type": "object",
                     "$ref": "#/definitions/ent.ReserveRoomEdges"
+                },
+                "hooks": {
+                    "description": "hooks to execute on mutations.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.hooks"
                 },
                 "id": {
                     "description": "ID of the ent.",
@@ -3286,9 +3578,18 @@
                     "description": "NetPrice holds the value of the \"net_price\" field.",
                     "type": "number"
                 },
+                "promotion_id": {
+                    "type": "integer"
+                },
                 "reserve_date": {
                     "description": "ReserveDate holds the value of the \"reserve_date\" field.",
                     "type": "string"
+                },
+                "room_id": {
+                    "type": "integer"
+                },
+                "status_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -3306,6 +3607,13 @@
                     "description": "Customer holds the value of the customer edge.",
                     "type": "object",
                     "$ref": "#/definitions/ent.Customer"
+                },
+                "loadedTypes": {
+                    "description": "loadedTypes holds the information for reporting if a\ntype was loaded (or requested) in eager-loading or not.",
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
                 },
                 "promotion": {
                     "description": "Promotion holds the value of the promotion edge.",
@@ -3327,14 +3635,27 @@
         "ent.Status": {
             "type": "object",
             "properties": {
+                "debug": {
+                    "description": "debug enable a debug logging.",
+                    "type": "boolean"
+                },
                 "description": {
                     "description": "Description holds the value of the \"description\" field.",
+                    "type": "string"
+                },
+                "driver": {
+                    "description": "driver used for executing database requests.",
                     "type": "string"
                 },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the StatusQuery when eager-loading is set.",
                     "type": "object",
                     "$ref": "#/definitions/ent.StatusEdges"
+                },
+                "hooks": {
+                    "description": "hooks to execute on mutations.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.hooks"
                 },
                 "id": {
                     "description": "ID of the ent.",
@@ -3345,10 +3666,23 @@
         "ent.StatusCheckIn": {
             "type": "object",
             "properties": {
+                "debug": {
+                    "description": "debug enable a debug logging.",
+                    "type": "boolean"
+                },
+                "driver": {
+                    "description": "driver used for executing database requests.",
+                    "type": "string"
+                },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the StatusCheckInQuery when eager-loading is set.",
                     "type": "object",
                     "$ref": "#/definitions/ent.StatusCheckInEdges"
+                },
+                "hooks": {
+                    "description": "hooks to execute on mutations.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.hooks"
                 },
                 "id": {
                     "description": "ID of the ent.",
@@ -3369,6 +3703,13 @@
                     "items": {
                         "$ref": "#/definitions/ent.CheckIn"
                     }
+                },
+                "loadedTypes": {
+                    "description": "loadedTypes holds the information for reporting if a\ntype was loaded (or requested) in eager-loading or not.",
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
                 }
             }
         },
@@ -3381,16 +3722,36 @@
                     "items": {
                         "$ref": "#/definitions/ent.Checkout"
                     }
+                },
+                "loadedTypes": {
+                    "description": "loadedTypes holds the information for reporting if a\ntype was loaded (or requested) in eager-loading or not.",
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
                 }
             }
         },
         "ent.StatusReserve": {
             "type": "object",
             "properties": {
+                "debug": {
+                    "description": "debug enable a debug logging.",
+                    "type": "boolean"
+                },
+                "driver": {
+                    "description": "driver used for executing database requests.",
+                    "type": "string"
+                },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the StatusReserveQuery when eager-loading is set.",
                     "type": "object",
                     "$ref": "#/definitions/ent.StatusReserveEdges"
+                },
+                "hooks": {
+                    "description": "hooks to execute on mutations.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.hooks"
                 },
                 "id": {
                     "description": "ID of the ent.",
@@ -3405,6 +3766,13 @@
         "ent.StatusReserveEdges": {
             "type": "object",
             "properties": {
+                "loadedTypes": {
+                    "description": "loadedTypes holds the information for reporting if a\ntype was loaded (or requested) in eager-loading or not.",
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
+                },
                 "reserves": {
                     "description": "Reserves holds the value of the reserves edge.",
                     "type": "array",
@@ -3417,10 +3785,23 @@
         "ent.StatusRoom": {
             "type": "object",
             "properties": {
+                "debug": {
+                    "description": "debug enable a debug logging.",
+                    "type": "boolean"
+                },
+                "driver": {
+                    "description": "driver used for executing database requests.",
+                    "type": "string"
+                },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the StatusRoomQuery when eager-loading is set.",
                     "type": "object",
                     "$ref": "#/definitions/ent.StatusRoomEdges"
+                },
+                "hooks": {
+                    "description": "hooks to execute on mutations.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.hooks"
                 },
                 "id": {
                     "description": "ID of the ent.",
@@ -3441,16 +3822,36 @@
                     "items": {
                         "$ref": "#/definitions/ent.DataRoom"
                     }
+                },
+                "loadedTypes": {
+                    "description": "loadedTypes holds the information for reporting if a\ntype was loaded (or requested) in eager-loading or not.",
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
                 }
             }
         },
         "ent.TypeRoom": {
             "type": "object",
             "properties": {
+                "debug": {
+                    "description": "debug enable a debug logging.",
+                    "type": "boolean"
+                },
+                "driver": {
+                    "description": "driver used for executing database requests.",
+                    "type": "string"
+                },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the TypeRoomQuery when eager-loading is set.",
                     "type": "object",
                     "$ref": "#/definitions/ent.TypeRoomEdges"
+                },
+                "hooks": {
+                    "description": "hooks to execute on mutations.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.hooks"
                 },
                 "id": {
                     "description": "ID of the ent.",
@@ -3471,12 +3872,122 @@
                     "items": {
                         "$ref": "#/definitions/ent.DataRoom"
                     }
+                },
+                "loadedTypes": {
+                    "description": "loadedTypes holds the information for reporting if a\ntype was loaded (or requested) in eager-loading or not.",
+                    "type": "array",
+                    "items": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        },
+        "ent.hooks": {
+            "type": "object",
+            "properties": {
+                "checkIn": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Hook"
+                    }
+                },
+                "checkout": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Hook"
+                    }
+                },
+                "counterStaff": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Hook"
+                    }
+                },
+                "customer": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Hook"
+                    }
+                },
+                "dataRoom": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Hook"
+                    }
+                },
+                "fixRoom": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Hook"
+                    }
+                },
+                "furniture": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Hook"
+                    }
+                },
+                "furnitureDetail": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Hook"
+                    }
+                },
+                "furnitureType": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Hook"
+                    }
+                },
+                "promotion": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Hook"
+                    }
+                },
+                "reserveRoom": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Hook"
+                    }
+                },
+                "status": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Hook"
+                    }
+                },
+                "statusCheckIn": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Hook"
+                    }
+                },
+                "statusReserve": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Hook"
+                    }
+                },
+                "statusRoom": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Hook"
+                    }
+                },
+                "typeRoom": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Hook"
+                    }
                 }
             }
         },
         "gin.H": {
             "type": "object",
-            "additionalProperties": true
+            "additionalProperties": {
+                "type": "object"
+            }
         }
     },
     "securityDefinitions": {
@@ -3500,7 +4011,6 @@
         "OAuth2Application": {
             "type": "oauth2",
             "flow": "application",
-            "authorizationUrl": "",
             "tokenUrl": "https://example.com/oauth/token",
             "scopes": {
                 "admin": " Grants read and write access to administrative information",
@@ -3519,7 +4029,6 @@
         "OAuth2Password": {
             "type": "oauth2",
             "flow": "password",
-            "authorizationUrl": "",
             "tokenUrl": "https://example.com/oauth/token",
             "scopes": {
                 "admin": " Grants read and write access to administrative information",

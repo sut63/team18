@@ -53,6 +53,12 @@ func (dru *DataRoomUpdate) SetRoomnumber(s string) *DataRoomUpdate {
 	return dru
 }
 
+// SetRoomdetail sets the roomdetail field.
+func (dru *DataRoomUpdate) SetRoomdetail(s string) *DataRoomUpdate {
+	dru.mutation.SetRoomdetail(s)
+	return dru
+}
+
 // AddReserfIDs adds the reserves edge to ReserveRoom by ids.
 func (dru *DataRoomUpdate) AddReserfIDs(ids ...int) *DataRoomUpdate {
 	dru.mutation.AddReserfIDs(ids...)
@@ -265,6 +271,11 @@ func (dru *DataRoomUpdate) Save(ctx context.Context) (int, error) {
 			return 0, &ValidationError{Name: "roomnumber", err: fmt.Errorf("ent: validator failed for field \"roomnumber\": %w", err)}
 		}
 	}
+	if v, ok := dru.mutation.Roomdetail(); ok {
+		if err := dataroom.RoomdetailValidator(v); err != nil {
+			return 0, &ValidationError{Name: "roomdetail", err: fmt.Errorf("ent: validator failed for field \"roomdetail\": %w", err)}
+		}
+	}
 
 	var (
 		err      error
@@ -352,6 +363,13 @@ func (dru *DataRoomUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeString,
 			Value:  value,
 			Column: dataroom.FieldRoomnumber,
+		})
+	}
+	if value, ok := dru.mutation.Roomdetail(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: dataroom.FieldRoomdetail,
 		})
 	}
 	if nodes := dru.mutation.RemovedReservesIDs(); len(nodes) > 0 {
@@ -648,6 +666,12 @@ func (druo *DataRoomUpdateOne) SetRoomnumber(s string) *DataRoomUpdateOne {
 	return druo
 }
 
+// SetRoomdetail sets the roomdetail field.
+func (druo *DataRoomUpdateOne) SetRoomdetail(s string) *DataRoomUpdateOne {
+	druo.mutation.SetRoomdetail(s)
+	return druo
+}
+
 // AddReserfIDs adds the reserves edge to ReserveRoom by ids.
 func (druo *DataRoomUpdateOne) AddReserfIDs(ids ...int) *DataRoomUpdateOne {
 	druo.mutation.AddReserfIDs(ids...)
@@ -860,6 +884,11 @@ func (druo *DataRoomUpdateOne) Save(ctx context.Context) (*DataRoom, error) {
 			return nil, &ValidationError{Name: "roomnumber", err: fmt.Errorf("ent: validator failed for field \"roomnumber\": %w", err)}
 		}
 	}
+	if v, ok := druo.mutation.Roomdetail(); ok {
+		if err := dataroom.RoomdetailValidator(v); err != nil {
+			return nil, &ValidationError{Name: "roomdetail", err: fmt.Errorf("ent: validator failed for field \"roomdetail\": %w", err)}
+		}
+	}
 
 	var (
 		err  error
@@ -945,6 +974,13 @@ func (druo *DataRoomUpdateOne) sqlSave(ctx context.Context) (dr *DataRoom, err e
 			Type:   field.TypeString,
 			Value:  value,
 			Column: dataroom.FieldRoomnumber,
+		})
+	}
+	if value, ok := druo.mutation.Roomdetail(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: dataroom.FieldRoomdetail,
 		})
 	}
 	if nodes := druo.mutation.RemovedReservesIDs(); len(nodes) > 0 {

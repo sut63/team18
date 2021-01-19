@@ -1,6 +1,9 @@
 package schema
 
 import (
+	"errors"
+	"regexp"
+
 	"github.com/facebookincubator/ent"
 	"github.com/facebookincubator/ent/schema/edge"
 	"github.com/facebookincubator/ent/schema/field"
@@ -14,8 +17,15 @@ type DataRoom struct {
 // Fields of the DataRoom.
 func (DataRoom) Fields() []ent.Field {
 	return []ent.Field{
-		field.Float("price").Positive(),
-		field.String("roomnumber").NotEmpty(),
+		field.Float("price").Min(0),
+		field.String("roomnumber").Validate(func(s string) error {
+			match, _ := regexp.MatchString("[A-Z]\\d3", s)
+			if !match {
+				return errors.New("รูปแบบหมายเลขห้องพักไม่ถูกต้อง")
+			}
+			return nil
+		}),
+		field.String("roomdetail").MaxLen(70),
 	}
 }
 

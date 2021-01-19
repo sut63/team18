@@ -2418,6 +2418,7 @@ type DataRoomMutation struct {
 	price             *float64
 	addprice          *float64
 	roomnumber        *string
+	roomdetail        *string
 	clearedFields     map[string]struct{}
 	reserves          map[int]struct{}
 	removedreserves   map[int]struct{}
@@ -2608,6 +2609,43 @@ func (m *DataRoomMutation) OldRoomnumber(ctx context.Context) (v string, err err
 // ResetRoomnumber reset all changes of the "roomnumber" field.
 func (m *DataRoomMutation) ResetRoomnumber() {
 	m.roomnumber = nil
+}
+
+// SetRoomdetail sets the roomdetail field.
+func (m *DataRoomMutation) SetRoomdetail(s string) {
+	m.roomdetail = &s
+}
+
+// Roomdetail returns the roomdetail value in the mutation.
+func (m *DataRoomMutation) Roomdetail() (r string, exists bool) {
+	v := m.roomdetail
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRoomdetail returns the old roomdetail value of the DataRoom.
+// If the DataRoom object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *DataRoomMutation) OldRoomdetail(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldRoomdetail is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldRoomdetail requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRoomdetail: %w", err)
+	}
+	return oldValue.Roomdetail, nil
+}
+
+// ResetRoomdetail reset all changes of the "roomdetail" field.
+func (m *DataRoomMutation) ResetRoomdetail() {
+	m.roomdetail = nil
 }
 
 // AddReserfIDs adds the reserves edge to ReserveRoom by ids.
@@ -2909,12 +2947,15 @@ func (m *DataRoomMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *DataRoomMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 3)
 	if m.price != nil {
 		fields = append(fields, dataroom.FieldPrice)
 	}
 	if m.roomnumber != nil {
 		fields = append(fields, dataroom.FieldRoomnumber)
+	}
+	if m.roomdetail != nil {
+		fields = append(fields, dataroom.FieldRoomdetail)
 	}
 	return fields
 }
@@ -2928,6 +2969,8 @@ func (m *DataRoomMutation) Field(name string) (ent.Value, bool) {
 		return m.Price()
 	case dataroom.FieldRoomnumber:
 		return m.Roomnumber()
+	case dataroom.FieldRoomdetail:
+		return m.Roomdetail()
 	}
 	return nil, false
 }
@@ -2941,6 +2984,8 @@ func (m *DataRoomMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldPrice(ctx)
 	case dataroom.FieldRoomnumber:
 		return m.OldRoomnumber(ctx)
+	case dataroom.FieldRoomdetail:
+		return m.OldRoomdetail(ctx)
 	}
 	return nil, fmt.Errorf("unknown DataRoom field %s", name)
 }
@@ -2963,6 +3008,13 @@ func (m *DataRoomMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetRoomnumber(v)
+		return nil
+	case dataroom.FieldRoomdetail:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRoomdetail(v)
 		return nil
 	}
 	return fmt.Errorf("unknown DataRoom field %s", name)
@@ -3034,6 +3086,9 @@ func (m *DataRoomMutation) ResetField(name string) error {
 		return nil
 	case dataroom.FieldRoomnumber:
 		m.ResetRoomnumber()
+		return nil
+	case dataroom.FieldRoomdetail:
+		m.ResetRoomdetail()
 		return nil
 	}
 	return fmt.Errorf("unknown DataRoom field %s", name)
