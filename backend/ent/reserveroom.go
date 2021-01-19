@@ -22,8 +22,14 @@ type ReserveRoom struct {
 	ID int `json:"id,omitempty"`
 	// ReserveDate holds the value of the "reserve_date" field.
 	ReserveDate time.Time `json:"reserve_date,omitempty"`
-	// DateOut holds the value of the "date_out" field.
-	DateOut time.Time `json:"date_out,omitempty"`
+	// Duration holds the value of the "duration" field.
+	Duration int `json:"duration,omitempty"`
+	// Province holds the value of the "province" field.
+	Province string `json:"province,omitempty"`
+	// Amount holds the value of the "amount" field.
+	Amount int `json:"amount,omitempty"`
+	// Tel holds the value of the "tel" field.
+	Tel string `json:"tel,omitempty"`
 	// NetPrice holds the value of the "net_price" field.
 	NetPrice float64 `json:"net_price,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -122,7 +128,10 @@ func (*ReserveRoom) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{},   // id
 		&sql.NullTime{},    // reserve_date
-		&sql.NullTime{},    // date_out
+		&sql.NullInt64{},   // duration
+		&sql.NullString{},  // province
+		&sql.NullInt64{},   // amount
+		&sql.NullString{},  // tel
 		&sql.NullFloat64{}, // net_price
 	}
 }
@@ -154,17 +163,32 @@ func (rr *ReserveRoom) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		rr.ReserveDate = value.Time
 	}
-	if value, ok := values[1].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field date_out", values[1])
+	if value, ok := values[1].(*sql.NullInt64); !ok {
+		return fmt.Errorf("unexpected type %T for field duration", values[1])
 	} else if value.Valid {
-		rr.DateOut = value.Time
+		rr.Duration = int(value.Int64)
 	}
-	if value, ok := values[2].(*sql.NullFloat64); !ok {
-		return fmt.Errorf("unexpected type %T for field net_price", values[2])
+	if value, ok := values[2].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field province", values[2])
+	} else if value.Valid {
+		rr.Province = value.String
+	}
+	if value, ok := values[3].(*sql.NullInt64); !ok {
+		return fmt.Errorf("unexpected type %T for field amount", values[3])
+	} else if value.Valid {
+		rr.Amount = int(value.Int64)
+	}
+	if value, ok := values[4].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field tel", values[4])
+	} else if value.Valid {
+		rr.Tel = value.String
+	}
+	if value, ok := values[5].(*sql.NullFloat64); !ok {
+		return fmt.Errorf("unexpected type %T for field net_price", values[5])
 	} else if value.Valid {
 		rr.NetPrice = value.Float64
 	}
-	values = values[3:]
+	values = values[6:]
 	if len(values) == len(reserveroom.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field customer_id", value)
@@ -244,8 +268,14 @@ func (rr *ReserveRoom) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v", rr.ID))
 	builder.WriteString(", reserve_date=")
 	builder.WriteString(rr.ReserveDate.Format(time.ANSIC))
-	builder.WriteString(", date_out=")
-	builder.WriteString(rr.DateOut.Format(time.ANSIC))
+	builder.WriteString(", duration=")
+	builder.WriteString(fmt.Sprintf("%v", rr.Duration))
+	builder.WriteString(", province=")
+	builder.WriteString(rr.Province)
+	builder.WriteString(", amount=")
+	builder.WriteString(fmt.Sprintf("%v", rr.Amount))
+	builder.WriteString(", tel=")
+	builder.WriteString(rr.Tel)
 	builder.WriteString(", net_price=")
 	builder.WriteString(fmt.Sprintf("%v", rr.NetPrice))
 	builder.WriteByte(')')

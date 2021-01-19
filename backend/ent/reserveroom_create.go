@@ -31,9 +31,27 @@ func (rrc *ReserveRoomCreate) SetReserveDate(t time.Time) *ReserveRoomCreate {
 	return rrc
 }
 
-// SetDateOut sets the date_out field.
-func (rrc *ReserveRoomCreate) SetDateOut(t time.Time) *ReserveRoomCreate {
-	rrc.mutation.SetDateOut(t)
+// SetDuration sets the duration field.
+func (rrc *ReserveRoomCreate) SetDuration(i int) *ReserveRoomCreate {
+	rrc.mutation.SetDuration(i)
+	return rrc
+}
+
+// SetProvince sets the province field.
+func (rrc *ReserveRoomCreate) SetProvince(s string) *ReserveRoomCreate {
+	rrc.mutation.SetProvince(s)
+	return rrc
+}
+
+// SetAmount sets the amount field.
+func (rrc *ReserveRoomCreate) SetAmount(i int) *ReserveRoomCreate {
+	rrc.mutation.SetAmount(i)
+	return rrc
+}
+
+// SetTel sets the tel field.
+func (rrc *ReserveRoomCreate) SetTel(s string) *ReserveRoomCreate {
+	rrc.mutation.SetTel(s)
 	return rrc
 }
 
@@ -144,8 +162,37 @@ func (rrc *ReserveRoomCreate) Save(ctx context.Context) (*ReserveRoom, error) {
 	if _, ok := rrc.mutation.ReserveDate(); !ok {
 		return nil, &ValidationError{Name: "reserve_date", err: errors.New("ent: missing required field \"reserve_date\"")}
 	}
-	if _, ok := rrc.mutation.DateOut(); !ok {
-		return nil, &ValidationError{Name: "date_out", err: errors.New("ent: missing required field \"date_out\"")}
+	if _, ok := rrc.mutation.Duration(); !ok {
+		return nil, &ValidationError{Name: "duration", err: errors.New("ent: missing required field \"duration\"")}
+	}
+	if v, ok := rrc.mutation.Duration(); ok {
+		if err := reserveroom.DurationValidator(v); err != nil {
+			return nil, &ValidationError{Name: "duration", err: fmt.Errorf("ent: validator failed for field \"duration\": %w", err)}
+		}
+	}
+	if _, ok := rrc.mutation.Province(); !ok {
+		return nil, &ValidationError{Name: "province", err: errors.New("ent: missing required field \"province\"")}
+	}
+	if v, ok := rrc.mutation.Province(); ok {
+		if err := reserveroom.ProvinceValidator(v); err != nil {
+			return nil, &ValidationError{Name: "province", err: fmt.Errorf("ent: validator failed for field \"province\": %w", err)}
+		}
+	}
+	if _, ok := rrc.mutation.Amount(); !ok {
+		return nil, &ValidationError{Name: "amount", err: errors.New("ent: missing required field \"amount\"")}
+	}
+	if v, ok := rrc.mutation.Amount(); ok {
+		if err := reserveroom.AmountValidator(v); err != nil {
+			return nil, &ValidationError{Name: "amount", err: fmt.Errorf("ent: validator failed for field \"amount\": %w", err)}
+		}
+	}
+	if _, ok := rrc.mutation.Tel(); !ok {
+		return nil, &ValidationError{Name: "tel", err: errors.New("ent: missing required field \"tel\"")}
+	}
+	if v, ok := rrc.mutation.Tel(); ok {
+		if err := reserveroom.TelValidator(v); err != nil {
+			return nil, &ValidationError{Name: "tel", err: fmt.Errorf("ent: validator failed for field \"tel\": %w", err)}
+		}
 	}
 	if _, ok := rrc.mutation.NetPrice(); !ok {
 		return nil, &ValidationError{Name: "net_price", err: errors.New("ent: missing required field \"net_price\"")}
@@ -223,13 +270,37 @@ func (rrc *ReserveRoomCreate) createSpec() (*ReserveRoom, *sqlgraph.CreateSpec) 
 		})
 		rr.ReserveDate = value
 	}
-	if value, ok := rrc.mutation.DateOut(); ok {
+	if value, ok := rrc.mutation.Duration(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
+			Type:   field.TypeInt,
 			Value:  value,
-			Column: reserveroom.FieldDateOut,
+			Column: reserveroom.FieldDuration,
 		})
-		rr.DateOut = value
+		rr.Duration = value
+	}
+	if value, ok := rrc.mutation.Province(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: reserveroom.FieldProvince,
+		})
+		rr.Province = value
+	}
+	if value, ok := rrc.mutation.Amount(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: reserveroom.FieldAmount,
+		})
+		rr.Amount = value
+	}
+	if value, ok := rrc.mutation.Tel(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: reserveroom.FieldTel,
+		})
+		rr.Tel = value
 	}
 	if value, ok := rrc.mutation.NetPrice(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

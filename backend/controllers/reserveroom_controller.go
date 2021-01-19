@@ -28,7 +28,9 @@ type Resreve_Room struct {
 	Customers   int
 	Status      int
 	ReserveDate string
-	OutDate     string
+	Duration    int
+	Province    string
+	Amount      int
 	NetPrice    float64
 }
 
@@ -101,22 +103,25 @@ func (ctl *ReserveRoomController) CreateReserveRoom(c *gin.Context) {
 	}
 
 	timereserve, err := time.Parse(time.RFC3339, obj.ReserveDate)
-	timeout, err := time.Parse(time.RFC3339, obj.OutDate)
 
 	r, err := ctl.client.ReserveRoom.
 		Create().
 		SetReserveDate(timereserve).
-		SetDateOut(timeout).
 		SetCustomer(cus).
 		SetPromotion(p).
 		SetRoom(d).
 		SetStatus(s).
+		SetAmount(obj.Amount).
+		SetDuration(obj.Duration).
+		SetProvince(obj.Province).
 		SetNetPrice(obj.NetPrice).
 		Save(context.Background())
 
 	if err != nil {
+		fmt.Println(err)
 		c.JSON(400, gin.H{
-			"error": "saving failed",
+			"status": false,
+			"error":  err,
 		})
 		return
 	}

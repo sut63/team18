@@ -39,9 +39,41 @@ func (rru *ReserveRoomUpdate) SetReserveDate(t time.Time) *ReserveRoomUpdate {
 	return rru
 }
 
-// SetDateOut sets the date_out field.
-func (rru *ReserveRoomUpdate) SetDateOut(t time.Time) *ReserveRoomUpdate {
-	rru.mutation.SetDateOut(t)
+// SetDuration sets the duration field.
+func (rru *ReserveRoomUpdate) SetDuration(i int) *ReserveRoomUpdate {
+	rru.mutation.ResetDuration()
+	rru.mutation.SetDuration(i)
+	return rru
+}
+
+// AddDuration adds i to duration.
+func (rru *ReserveRoomUpdate) AddDuration(i int) *ReserveRoomUpdate {
+	rru.mutation.AddDuration(i)
+	return rru
+}
+
+// SetProvince sets the province field.
+func (rru *ReserveRoomUpdate) SetProvince(s string) *ReserveRoomUpdate {
+	rru.mutation.SetProvince(s)
+	return rru
+}
+
+// SetAmount sets the amount field.
+func (rru *ReserveRoomUpdate) SetAmount(i int) *ReserveRoomUpdate {
+	rru.mutation.ResetAmount()
+	rru.mutation.SetAmount(i)
+	return rru
+}
+
+// AddAmount adds i to amount.
+func (rru *ReserveRoomUpdate) AddAmount(i int) *ReserveRoomUpdate {
+	rru.mutation.AddAmount(i)
+	return rru
+}
+
+// SetTel sets the tel field.
+func (rru *ReserveRoomUpdate) SetTel(s string) *ReserveRoomUpdate {
+	rru.mutation.SetTel(s)
 	return rru
 }
 
@@ -195,6 +227,26 @@ func (rru *ReserveRoomUpdate) RemoveCheckins(c ...*CheckIn) *ReserveRoomUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (rru *ReserveRoomUpdate) Save(ctx context.Context) (int, error) {
+	if v, ok := rru.mutation.Duration(); ok {
+		if err := reserveroom.DurationValidator(v); err != nil {
+			return 0, &ValidationError{Name: "duration", err: fmt.Errorf("ent: validator failed for field \"duration\": %w", err)}
+		}
+	}
+	if v, ok := rru.mutation.Province(); ok {
+		if err := reserveroom.ProvinceValidator(v); err != nil {
+			return 0, &ValidationError{Name: "province", err: fmt.Errorf("ent: validator failed for field \"province\": %w", err)}
+		}
+	}
+	if v, ok := rru.mutation.Amount(); ok {
+		if err := reserveroom.AmountValidator(v); err != nil {
+			return 0, &ValidationError{Name: "amount", err: fmt.Errorf("ent: validator failed for field \"amount\": %w", err)}
+		}
+	}
+	if v, ok := rru.mutation.Tel(); ok {
+		if err := reserveroom.TelValidator(v); err != nil {
+			return 0, &ValidationError{Name: "tel", err: fmt.Errorf("ent: validator failed for field \"tel\": %w", err)}
+		}
+	}
 	if v, ok := rru.mutation.NetPrice(); ok {
 		if err := reserveroom.NetPriceValidator(v); err != nil {
 			return 0, &ValidationError{Name: "net_price", err: fmt.Errorf("ent: validator failed for field \"net_price\": %w", err)}
@@ -275,11 +327,46 @@ func (rru *ReserveRoomUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: reserveroom.FieldReserveDate,
 		})
 	}
-	if value, ok := rru.mutation.DateOut(); ok {
+	if value, ok := rru.mutation.Duration(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
+			Type:   field.TypeInt,
 			Value:  value,
-			Column: reserveroom.FieldDateOut,
+			Column: reserveroom.FieldDuration,
+		})
+	}
+	if value, ok := rru.mutation.AddedDuration(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: reserveroom.FieldDuration,
+		})
+	}
+	if value, ok := rru.mutation.Province(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: reserveroom.FieldProvince,
+		})
+	}
+	if value, ok := rru.mutation.Amount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: reserveroom.FieldAmount,
+		})
+	}
+	if value, ok := rru.mutation.AddedAmount(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: reserveroom.FieldAmount,
+		})
+	}
+	if value, ok := rru.mutation.Tel(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: reserveroom.FieldTel,
 		})
 	}
 	if value, ok := rru.mutation.NetPrice(); ok {
@@ -498,9 +585,41 @@ func (rruo *ReserveRoomUpdateOne) SetReserveDate(t time.Time) *ReserveRoomUpdate
 	return rruo
 }
 
-// SetDateOut sets the date_out field.
-func (rruo *ReserveRoomUpdateOne) SetDateOut(t time.Time) *ReserveRoomUpdateOne {
-	rruo.mutation.SetDateOut(t)
+// SetDuration sets the duration field.
+func (rruo *ReserveRoomUpdateOne) SetDuration(i int) *ReserveRoomUpdateOne {
+	rruo.mutation.ResetDuration()
+	rruo.mutation.SetDuration(i)
+	return rruo
+}
+
+// AddDuration adds i to duration.
+func (rruo *ReserveRoomUpdateOne) AddDuration(i int) *ReserveRoomUpdateOne {
+	rruo.mutation.AddDuration(i)
+	return rruo
+}
+
+// SetProvince sets the province field.
+func (rruo *ReserveRoomUpdateOne) SetProvince(s string) *ReserveRoomUpdateOne {
+	rruo.mutation.SetProvince(s)
+	return rruo
+}
+
+// SetAmount sets the amount field.
+func (rruo *ReserveRoomUpdateOne) SetAmount(i int) *ReserveRoomUpdateOne {
+	rruo.mutation.ResetAmount()
+	rruo.mutation.SetAmount(i)
+	return rruo
+}
+
+// AddAmount adds i to amount.
+func (rruo *ReserveRoomUpdateOne) AddAmount(i int) *ReserveRoomUpdateOne {
+	rruo.mutation.AddAmount(i)
+	return rruo
+}
+
+// SetTel sets the tel field.
+func (rruo *ReserveRoomUpdateOne) SetTel(s string) *ReserveRoomUpdateOne {
+	rruo.mutation.SetTel(s)
 	return rruo
 }
 
@@ -654,6 +773,26 @@ func (rruo *ReserveRoomUpdateOne) RemoveCheckins(c ...*CheckIn) *ReserveRoomUpda
 
 // Save executes the query and returns the updated entity.
 func (rruo *ReserveRoomUpdateOne) Save(ctx context.Context) (*ReserveRoom, error) {
+	if v, ok := rruo.mutation.Duration(); ok {
+		if err := reserveroom.DurationValidator(v); err != nil {
+			return nil, &ValidationError{Name: "duration", err: fmt.Errorf("ent: validator failed for field \"duration\": %w", err)}
+		}
+	}
+	if v, ok := rruo.mutation.Province(); ok {
+		if err := reserveroom.ProvinceValidator(v); err != nil {
+			return nil, &ValidationError{Name: "province", err: fmt.Errorf("ent: validator failed for field \"province\": %w", err)}
+		}
+	}
+	if v, ok := rruo.mutation.Amount(); ok {
+		if err := reserveroom.AmountValidator(v); err != nil {
+			return nil, &ValidationError{Name: "amount", err: fmt.Errorf("ent: validator failed for field \"amount\": %w", err)}
+		}
+	}
+	if v, ok := rruo.mutation.Tel(); ok {
+		if err := reserveroom.TelValidator(v); err != nil {
+			return nil, &ValidationError{Name: "tel", err: fmt.Errorf("ent: validator failed for field \"tel\": %w", err)}
+		}
+	}
 	if v, ok := rruo.mutation.NetPrice(); ok {
 		if err := reserveroom.NetPriceValidator(v); err != nil {
 			return nil, &ValidationError{Name: "net_price", err: fmt.Errorf("ent: validator failed for field \"net_price\": %w", err)}
@@ -732,11 +871,46 @@ func (rruo *ReserveRoomUpdateOne) sqlSave(ctx context.Context) (rr *ReserveRoom,
 			Column: reserveroom.FieldReserveDate,
 		})
 	}
-	if value, ok := rruo.mutation.DateOut(); ok {
+	if value, ok := rruo.mutation.Duration(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
+			Type:   field.TypeInt,
 			Value:  value,
-			Column: reserveroom.FieldDateOut,
+			Column: reserveroom.FieldDuration,
+		})
+	}
+	if value, ok := rruo.mutation.AddedDuration(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: reserveroom.FieldDuration,
+		})
+	}
+	if value, ok := rruo.mutation.Province(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: reserveroom.FieldProvince,
+		})
+	}
+	if value, ok := rruo.mutation.Amount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: reserveroom.FieldAmount,
+		})
+	}
+	if value, ok := rruo.mutation.AddedAmount(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: reserveroom.FieldAmount,
+		})
+	}
+	if value, ok := rruo.mutation.Tel(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: reserveroom.FieldTel,
 		})
 	}
 	if value, ok := rruo.mutation.NetPrice(); ok {
