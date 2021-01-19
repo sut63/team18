@@ -3304,10 +3304,6 @@ var doc = `{
                     "description": "Amount holds the value of the \"amount\" field.",
                     "type": "integer"
                 },
-                "duration": {
-                    "description": "Duration holds the value of the \"duration\" field.",
-                    "type": "integer"
-                },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the ReserveRoomQuery when eager-loading is set.",
                     "type": "object",
@@ -3321,16 +3317,16 @@ var doc = `{
                     "description": "NetPrice holds the value of the \"net_price\" field.",
                     "type": "number"
                 },
+                "phone_number": {
+                    "description": "PhoneNumber holds the value of the \"phone_number\" field.",
+                    "type": "string"
+                },
                 "province": {
                     "description": "Province holds the value of the \"province\" field.",
                     "type": "string"
                 },
                 "reserve_date": {
                     "description": "ReserveDate holds the value of the \"reserve_date\" field.",
-                    "type": "string"
-                },
-                "tel": {
-                    "description": "Tel holds the value of the \"tel\" field.",
                     "type": "string"
                 }
             }

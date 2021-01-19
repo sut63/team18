@@ -366,9 +366,6 @@ definitions:
       amount:
         description: Amount holds the value of the "amount" field.
         type: integer
-      duration:
-        description: Duration holds the value of the "duration" field.
-        type: integer
       edges:
         $ref: '#/definitions/ent.ReserveRoomEdges'
         description: |-
@@ -381,14 +378,14 @@ definitions:
       net_price:
         description: NetPrice holds the value of the "net_price" field.
         type: number
+      phone_number:
+        description: PhoneNumber holds the value of the "phone_number" field.
+        type: string
       province:
         description: Province holds the value of the "province" field.
         type: string
       reserve_date:
         description: ReserveDate holds the value of the "reserve_date" field.
-        type: string
-      tel:
-        description: Tel holds the value of the "tel" field.
         type: string
     type: object
   ent.ReserveRoomEdges:

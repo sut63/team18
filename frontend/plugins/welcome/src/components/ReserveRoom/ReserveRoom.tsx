@@ -4,11 +4,6 @@ import { Content, Header, Page, pageTheme } from '@backstage/core';
 import SaveIcon from '@material-ui/icons/Save'; // icon save
 import Swal from 'sweetalert2'; // alert
 import {
-  MuiPickersUtilsProvider,
-  KeyboardTimePicker,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
-import {
   Container,
   Grid,
   FormControl,
@@ -20,10 +15,7 @@ import {
   Button,
 } from '@material-ui/core';
 import { DefaultApi } from '../../api/apis'; // Api Gennerate From Command
-import { EntDataRoom } from '../../api/models/EntDataRoom';
-import { EntPromotion } from '../../api/models/EntPromotion';
-import { EntCustomer } from '../../api/models/EntCustomer';
-import { EntStatusReserve } from '../../api/models/EntStatusReserve';
+import { EntDataRoom, EntPromotion, EntCustomer, EntStatusReserve} from '../../api/models/';
 import { Cookies } from '../../Cookie'
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
@@ -63,13 +55,10 @@ interface reserve {
   Customers: number;
   Status: number;
   ReserveDate: Date;
-  OutDate: Date;
   NetPrice: number;
-  // create_by: number;
-}
-
-interface room {
-  StatusRoom: number;
+  Amount: number;
+  Province: string;
+  PhoneNumber: string;
   // create_by: number;
 }
 
@@ -84,6 +73,13 @@ const ReserveRoom: FC<{}> = () => {
 
   //อันหลักสำหรับสร้าง การ reserve_room
   const [reserve_room, setReserveroom] = React.useState<Partial<reserve>>({});
+  reserve_room.Amount = Number(reserve_room.Amount)
+
+  // สำหรับตรวยสอบความถูกต้อง
+  const [ProvinceError, setProvinceError] = React.useState('');
+  const [PhoneNumberError, setPhoneNumberError] = React.useState('');
+  const [AmountError, setAmountError] = React.useState('');
+  const [errors, setError] = React.useState(String);
 
   // data room List
   const [dataroom, setdataroom] = React.useState<EntDataRoom[]>([]);
@@ -91,6 +87,7 @@ const ReserveRoom: FC<{}> = () => {
     const res = await api.listDataRoomPromo({ id: ids });
     setdataroom(res);
   };
+
   // Room
   const [room, setroom] = React.useState<EntDataRoom>();
   const getRoom = async () => {
@@ -139,7 +136,6 @@ const ReserveRoom: FC<{}> = () => {
 
   //set time
   const [timeIn, setTimeIn] = React.useState<any>(0)
-  const [timeOut, setTimeOut] = React.useState<any>(0)
 
   //id for find room and price
   const [ids, setIds] = React.useState<number>(0)
@@ -148,6 +144,55 @@ const ReserveRoom: FC<{}> = () => {
   // alert setting
   const [open, setOpen] = React.useState(false);
   const [fail, setFail] = React.useState(false);
+
+  //validate
+  const validatePhoneNumber = (val: string) => {
+    return val.match("[0]\\d{9}");
+  }
+
+  const validateAmount = (val: Number) => {
+    return val > 0 && val <= 5 ? true : false;
+  }
+
+  // ฟังก์ชั่นสำหรับ validate รหัสนักศึกษา
+  const validateProvince = (val: string) => {
+    return val.length > 50 ? false : true;
+  }
+
+  // checkPattern
+  const checkPattern  = (id: string, value: string) => {
+    switch(id) { 
+      case 'Province':
+        validateProvince(value) ? setProvinceError('') : setProvinceError('ห้ามเกิน 50 ตัวอักษร');
+        return;
+      case 'PhoneNumber': 
+        validatePhoneNumber(value) ? setPhoneNumberError('') : setPhoneNumberError('Ex 0850583300');
+        return;
+      case 'Amount':
+        validateAmount(Number(value)) ? setAmountError('') : setAmountError('เข้าพักได้ไม่เกินห้องละ 5 คน')
+        return;
+      default:
+        return;
+    }
+  }
+
+  //กำหนดข้อความ error
+  const checkerror = (s :string) => {
+    switch(s) {
+      case 'Province':
+        setError("รูปแบบจังหวัดไม่ถูกต้อง")
+        return;
+      case 'PhoneNumber':
+        setError("รูปแบบเบอร์โทรศัพท์ไม่ถูกต้อง")
+        return;
+      case 'Amount':
+        setError("จำนวนคนไม่ตรงตามเงื่อนไขการเข้าพัก")
+        return;
+      default:
+        setError("กรุณกรอกข้อมูลให้ครบถ้วน")
+        return;
+    }
+  };
 
   // Lifecycle Hooks
   useEffect(() => {
@@ -190,6 +235,8 @@ const ReserveRoom: FC<{}> = () => {
     setReserveroom({ ...reserve_room, [name]: value });
     setIds(event.target.value);
     setDIds(event.target.value);
+    const validateValue = value.toString() 
+    checkPattern(name, validateValue)
     console.log(reserve_room);
   };
 
@@ -202,18 +249,6 @@ const ReserveRoom: FC<{}> = () => {
     const time = value + ":00+07:00"
     setReserveroom({ ...reserve_room, [name]: time });
     setTimeIn(value);
-    console.log(reserve_room);
-  };
-
-  // set data for time out
-  const handleChangeTimeOut = (
-    event: React.ChangeEvent<{ name?: string; value: any }>,
-  ) => {
-    const name = event.target.name as keyof typeof ReserveRoom;
-    const { value } = event.target;
-    const time = value + ":00+07:00"
-    setReserveroom({ ...reserve_room, [name]: time });
-    setTimeOut(value);
     console.log(reserve_room);
   };
 
@@ -235,7 +270,6 @@ const ReserveRoom: FC<{}> = () => {
     setPrice(0);
     setNetprice(0);
     setTimeIn({});
-    setTimeOut({});
     getCustomes();
   }
 
@@ -249,7 +283,7 @@ const ReserveRoom: FC<{}> = () => {
     ck.ClearCookie()
     window.location.reload(false)
   }
-
+  
   // function save data
   function save() {
     const apiUrl = 'http://localhost:8080/api/v1/ReserveRooms';
@@ -264,11 +298,12 @@ const ReserveRoom: FC<{}> = () => {
     fetch(apiUrl, requestOptions)
       .then(response => response.json())
       .then(data => {
-        console.log(data.status);
+        console.log(data);
         if (data.status === true) {
           clear();
           setOpen(true);
         } else {
+          checkerror(data.error.Name);
           setFail(true);
         }
       });
@@ -302,6 +337,23 @@ const ReserveRoom: FC<{}> = () => {
                   name="Customer"
                   variant="outlined"
                   value={customers?.name}
+                />
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={3}>
+              <div className={classes.paper}>Phone number</div>
+            </Grid>
+            <Grid item xs={9}>
+            <FormControl variant="outlined" className={classes.formControl}>
+                <TextField
+                  error = {PhoneNumberError ? true : false}
+                  helperText={PhoneNumberError}
+                  name="PhoneNumber"
+                  label="เบอร์โทรศัพท์"
+                  variant="outlined"
+                  value={reserve_room.PhoneNumber || ''}
+                  onChange={handleChange}
                 />
               </FormControl>
             </Grid>
@@ -350,6 +402,28 @@ const ReserveRoom: FC<{}> = () => {
               </FormControl>
             </Grid>
 
+            
+            <Grid item xs={3}>
+              <div className={classes.paper}>จำนวนคน</div>
+            </Grid>
+            <Grid item xs={9}>
+            <FormControl variant="outlined" className={classes.formControl}>
+              <TextField
+                error = {AmountError ? true : false}
+                helperText={AmountError}
+                type={"number"}
+                value={reserve_room.Amount || ''}
+                label="จำนวนคน"
+                name="Amount"
+                variant="outlined"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onChange={handleChange} />
+              </FormControl>
+            </Grid>
+
+
             <Grid item xs={3}>
               <div className={classes.paper}>เลือกวันเข้าพัก</div>
             </Grid>
@@ -369,19 +443,18 @@ const ReserveRoom: FC<{}> = () => {
             </Grid>
 
             <Grid item xs={3}>
-              <div className={classes.paper}>เลือกวันออก</div>
+              <div className={classes.paper}>จังหวัด</div>
             </Grid>
             <Grid item xs={9}>
-              <FormControl variant="outlined" className={classes.formControl}>
+            <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
-                  name="OutDate"
-                  type="datetime-local"
-                  value={timeOut}
-                  defaultValue="2020-12-31"
-                  onChange={handleChangeTimeOut}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
+                  error = {ProvinceError ? true : false}
+                  helperText={ProvinceError}
+                  name="Province"
+                  label="จังหวัด"
+                  variant="outlined"
+                  value={reserve_room.Province || ''}
+                  onChange={handleChange}
                 />
               </FormControl>
             </Grid>
@@ -467,7 +540,7 @@ const ReserveRoom: FC<{}> = () => {
 
           <Snackbar open={fail} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="error">
-              This is a error message!
+              {errors}
         </Alert>
           </Snackbar>
 

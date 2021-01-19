@@ -44,6 +44,24 @@ export interface EntCheckIn {
      * @memberof EntCheckIn
      */
     id?: number;
+    /**
+     * MobileKey holds the value of the "mobile_key" field.
+     * @type {string}
+     * @memberof EntCheckIn
+     */
+    mobileKey?: string;
+    /**
+     * PersonNumber holds the value of the "person_number" field.
+     * @type {string}
+     * @memberof EntCheckIn
+     */
+    personNumber?: string;
+    /**
+     * PhoneNumber holds the value of the "phone_number" field.
+     * @type {string}
+     * @memberof EntCheckIn
+     */
+    phoneNumber?: string;
 }
 
 export function EntCheckInFromJSON(json: any): EntCheckIn {
@@ -59,6 +77,9 @@ export function EntCheckInFromJSONTyped(json: any, ignoreDiscriminator: boolean)
         'checkinDate': !exists(json, 'checkin_date') ? undefined : json['checkin_date'],
         'edges': !exists(json, 'edges') ? undefined : EntCheckInEdgesFromJSON(json['edges']),
         'id': !exists(json, 'id') ? undefined : json['id'],
+        'mobileKey': !exists(json, 'mobile_key') ? undefined : json['mobile_key'],
+        'personNumber': !exists(json, 'person_number') ? undefined : json['person_number'],
+        'phoneNumber': !exists(json, 'phone_number') ? undefined : json['phone_number'],
     };
 }
 
@@ -74,6 +95,9 @@ export function EntCheckInToJSON(value?: EntCheckIn | null): any {
         'checkin_date': value.checkinDate,
         'edges': EntCheckInEdgesToJSON(value.edges),
         'id': value.id,
+        'mobile_key': value.mobileKey,
+        'person_number': value.personNumber,
+        'phone_number': value.phoneNumber,
     };
 }
 

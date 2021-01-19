@@ -291,10 +291,9 @@ var (
 	ReserveRoomsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "reserve_date", Type: field.TypeTime},
-		{Name: "duration", Type: field.TypeInt},
-		{Name: "province", Type: field.TypeString, Size: 10},
+		{Name: "province", Type: field.TypeString, Size: 50},
 		{Name: "amount", Type: field.TypeInt},
-		{Name: "tel", Type: field.TypeString},
+		{Name: "phone_number", Type: field.TypeString},
 		{Name: "net_price", Type: field.TypeFloat64},
 		{Name: "customer_id", Type: field.TypeInt, Nullable: true},
 		{Name: "room_id", Type: field.TypeInt, Nullable: true},
@@ -309,28 +308,28 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "reserve_rooms_customers_reserves",
-				Columns: []*schema.Column{ReserveRoomsColumns[7]},
+				Columns: []*schema.Column{ReserveRoomsColumns[6]},
 
 				RefColumns: []*schema.Column{CustomersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "reserve_rooms_data_rooms_reserves",
-				Columns: []*schema.Column{ReserveRoomsColumns[8]},
+				Columns: []*schema.Column{ReserveRoomsColumns[7]},
 
 				RefColumns: []*schema.Column{DataRoomsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "reserve_rooms_promotions_reserves",
-				Columns: []*schema.Column{ReserveRoomsColumns[9]},
+				Columns: []*schema.Column{ReserveRoomsColumns[8]},
 
 				RefColumns: []*schema.Column{PromotionsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "reserve_rooms_status_reserves_reserves",
-				Columns: []*schema.Column{ReserveRoomsColumns[10]},
+				Columns: []*schema.Column{ReserveRoomsColumns[9]},
 
 				RefColumns: []*schema.Column{StatusReservesColumns[0]},
 				OnDelete:   schema.SetNull,
