@@ -354,9 +354,12 @@ definitions:
     type: object
   ent.ReserveRoom:
     properties:
-      date_out:
-        description: DateOut holds the value of the "date_out" field.
-        type: string
+      amount:
+        description: Amount holds the value of the "amount" field.
+        type: integer
+      duration:
+        description: Duration holds the value of the "duration" field.
+        type: integer
       edges:
         $ref: '#/definitions/ent.ReserveRoomEdges'
         description: |-
@@ -369,8 +372,14 @@ definitions:
       net_price:
         description: NetPrice holds the value of the "net_price" field.
         type: number
+      province:
+        description: Province holds the value of the "province" field.
+        type: string
       reserve_date:
         description: ReserveDate holds the value of the "reserve_date" field.
+        type: string
+      tel:
+        description: Tel holds the value of the "tel" field.
         type: string
     type: object
   ent.ReserveRoomEdges:
