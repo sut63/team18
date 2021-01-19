@@ -5,34 +5,14 @@ definitions:
       checkin_date:
         description: CheckinDate holds the value of the "checkin_date" field.
         type: string
-      customer_id:
-        type: integer
-      debug:
-        description: debug enable a debug logging.
-        type: boolean
-      driver:
-        description: driver used for executing database requests.
-        type: string
       edges:
         $ref: '#/definitions/ent.CheckInEdges'
         description: |-
           Edges holds the relations/edges for other nodes in the graph.
           The values are being populated by the CheckInQuery when eager-loading is set.
         type: object
-      hooks:
-        $ref: '#/definitions/ent.hooks'
-        description: hooks to execute on mutations.
-        type: object
       id:
         description: ID of the ent.
-        type: integer
-      reserves_id:
-        type: integer
-      room_id:
-        type: integer
-      staff_id:
-        type: integer
-      status_id:
         type: integer
     type: object
   ent.CheckInEdges:
@@ -53,13 +33,6 @@ definitions:
         $ref: '#/definitions/ent.DataRoom'
         description: Dataroom holds the value of the dataroom edge.
         type: object
-      loadedTypes:
-        description: |-
-          loadedTypes holds the information for reporting if a
-          type was loaded (or requested) in eager-loading or not.
-        items:
-          type: boolean
-        type: array
       reserveroom:
         $ref: '#/definitions/ent.ReserveRoom'
         description: Reserveroom holds the value of the reserveroom edge.
@@ -71,16 +44,8 @@ definitions:
     type: object
   ent.Checkout:
     properties:
-      check_in_checkouts:
-        type: integer
       checkout_date:
         description: CheckoutDate holds the value of the "checkout_date" field.
-        type: string
-      debug:
-        description: debug enable a debug logging.
-        type: boolean
-      driver:
-        description: driver used for executing database requests.
         type: string
       edges:
         $ref: '#/definitions/ent.CheckoutEdges'
@@ -88,16 +53,8 @@ definitions:
           Edges holds the relations/edges for other nodes in the graph.
           The values are being populated by the CheckoutQuery when eager-loading is set.
         type: object
-      hooks:
-        $ref: '#/definitions/ent.hooks'
-        description: hooks to execute on mutations.
-        type: object
       id:
         description: ID of the ent.
-        type: integer
-      staff_id:
-        type: integer
-      status_checkouts:
         type: integer
     type: object
   ent.CheckoutEdges:
@@ -110,13 +67,6 @@ definitions:
         $ref: '#/definitions/ent.CounterStaff'
         description: Counterstaffs holds the value of the counterstaffs edge.
         type: object
-      loadedTypes:
-        description: |-
-          loadedTypes holds the information for reporting if a
-          type was loaded (or requested) in eager-loading or not.
-        items:
-          type: boolean
-        type: array
       statuss:
         $ref: '#/definitions/ent.Status'
         description: Statuss holds the value of the statuss edge.
@@ -124,12 +74,6 @@ definitions:
     type: object
   ent.CounterStaff:
     properties:
-      debug:
-        description: debug enable a debug logging.
-        type: boolean
-      driver:
-        description: driver used for executing database requests.
-        type: string
       edges:
         $ref: '#/definitions/ent.CounterStaffEdges'
         description: |-
@@ -139,10 +83,6 @@ definitions:
       email:
         description: Email holds the value of the "email" field.
         type: string
-      hooks:
-        $ref: '#/definitions/ent.hooks'
-        description: hooks to execute on mutations.
-        type: object
       id:
         description: ID of the ent.
         type: integer
@@ -170,22 +110,9 @@ definitions:
         items:
           $ref: '#/definitions/ent.FurnitureDetail'
         type: array
-      loadedTypes:
-        description: |-
-          loadedTypes holds the information for reporting if a
-          type was loaded (or requested) in eager-loading or not.
-        items:
-          type: boolean
-        type: array
     type: object
   ent.Customer:
     properties:
-      debug:
-        description: debug enable a debug logging.
-        type: boolean
-      driver:
-        description: driver used for executing database requests.
-        type: string
       edges:
         $ref: '#/definitions/ent.CustomerEdges'
         description: |-
@@ -195,10 +122,6 @@ definitions:
       email:
         description: Email holds the value of the "email" field.
         type: string
-      hooks:
-        $ref: '#/definitions/ent.hooks'
-        description: hooks to execute on mutations.
-        type: object
       id:
         description: ID of the ent.
         type: integer
@@ -221,13 +144,6 @@ definitions:
         items:
           $ref: '#/definitions/ent.FixRoom'
         type: array
-      loadedTypes:
-        description: |-
-          loadedTypes holds the information for reporting if a
-          type was loaded (or requested) in eager-loading or not.
-        items:
-          type: boolean
-        type: array
       reserves:
         description: Reserves holds the value of the reserves edge.
         items:
@@ -236,21 +152,11 @@ definitions:
     type: object
   ent.DataRoom:
     properties:
-      debug:
-        description: debug enable a debug logging.
-        type: boolean
-      driver:
-        description: driver used for executing database requests.
-        type: string
       edges:
         $ref: '#/definitions/ent.DataRoomEdges'
         description: |-
           Edges holds the relations/edges for other nodes in the graph.
           The values are being populated by the DataRoomQuery when eager-loading is set.
-        type: object
-      hooks:
-        $ref: '#/definitions/ent.hooks'
-        description: hooks to execute on mutations.
         type: object
       id:
         description: ID of the ent.
@@ -258,18 +164,12 @@ definitions:
       price:
         description: Price holds the value of the "price" field.
         type: number
-      promotion_id:
-        type: integer
       roomdetail:
         description: Roomdetail holds the value of the "roomdetail" field.
         type: string
       roomnumber:
         description: Roomnumber holds the value of the "roomnumber" field.
         type: string
-      statusroom_id:
-        type: integer
-      typeroom_id:
-        type: integer
     type: object
   ent.DataRoomEdges:
     properties:
@@ -287,13 +187,6 @@ definitions:
         description: Fixs holds the value of the fixs edge.
         items:
           $ref: '#/definitions/ent.FixRoom'
-        type: array
-      loadedTypes:
-        description: |-
-          loadedTypes holds the information for reporting if a
-          type was loaded (or requested) in eager-loading or not.
-        items:
-          type: boolean
         type: array
       promotion:
         $ref: '#/definitions/ent.Promotion'
@@ -315,14 +208,6 @@ definitions:
     type: object
   ent.FixRoom:
     properties:
-      customer_id:
-        type: integer
-      debug:
-        description: debug enable a debug logging.
-        type: boolean
-      driver:
-        description: driver used for executing database requests.
-        type: string
       edges:
         $ref: '#/definitions/ent.FixRoomEdges'
         description: |-
@@ -332,16 +217,8 @@ definitions:
       fix_detail:
         description: FixDetail holds the value of the "fix_detail" field.
         type: string
-      hooks:
-        $ref: '#/definitions/ent.hooks'
-        description: hooks to execute on mutations.
-        type: object
       id:
         description: ID of the ent.
-        type: integer
-      object_id:
-        type: integer
-      room_id:
         type: integer
     type: object
   ent.FixRoomEdges:
@@ -354,13 +231,6 @@ definitions:
         $ref: '#/definitions/ent.FurnitureDetail'
         description: FurnitureDetail holds the value of the furnitureDetail edge.
         type: object
-      loadedTypes:
-        description: |-
-          loadedTypes holds the information for reporting if a
-          type was loaded (or requested) in eager-loading or not.
-        items:
-          type: boolean
-        type: array
       room:
         $ref: '#/definitions/ent.DataRoom'
         description: Room holds the value of the room edge.
@@ -368,12 +238,6 @@ definitions:
     type: object
   ent.Furniture:
     properties:
-      debug:
-        description: debug enable a debug logging.
-        type: boolean
-      driver:
-        description: driver used for executing database requests.
-        type: string
       edges:
         $ref: '#/definitions/ent.FurnitureEdges'
         description: |-
@@ -383,10 +247,6 @@ definitions:
       furniture_name:
         description: FurnitureName holds the value of the "furniture_name" field.
         type: string
-      hooks:
-        $ref: '#/definitions/ent.hooks'
-        description: hooks to execute on mutations.
-        type: object
       id:
         description: ID of the ent.
         type: integer
@@ -396,32 +256,14 @@ definitions:
       date_add:
         description: DateAdd holds the value of the "date_add" field.
         type: string
-      debug:
-        description: debug enable a debug logging.
-        type: boolean
-      driver:
-        description: driver used for executing database requests.
-        type: string
       edges:
         $ref: '#/definitions/ent.FurnitureDetailEdges'
         description: |-
           Edges holds the relations/edges for other nodes in the graph.
           The values are being populated by the FurnitureDetailQuery when eager-loading is set.
         type: object
-      furniture_id:
-        type: integer
-      hooks:
-        $ref: '#/definitions/ent.hooks'
-        description: hooks to execute on mutations.
-        type: object
       id:
         description: ID of the ent.
-        type: integer
-      room_id:
-        type: integer
-      staff_id:
-        type: integer
-      type_id:
         type: integer
     type: object
   ent.FurnitureDetailEdges:
@@ -439,13 +281,6 @@ definitions:
         $ref: '#/definitions/ent.Furniture'
         description: Furnitures holds the value of the furnitures edge.
         type: object
-      loadedTypes:
-        description: |-
-          loadedTypes holds the information for reporting if a
-          type was loaded (or requested) in eager-loading or not.
-        items:
-          type: boolean
-        type: array
       rooms:
         $ref: '#/definitions/ent.DataRoom'
         description: Rooms holds the value of the rooms edge.
@@ -462,22 +297,9 @@ definitions:
         items:
           $ref: '#/definitions/ent.FurnitureDetail'
         type: array
-      loadedTypes:
-        description: |-
-          loadedTypes holds the information for reporting if a
-          type was loaded (or requested) in eager-loading or not.
-        items:
-          type: boolean
-        type: array
     type: object
   ent.FurnitureType:
     properties:
-      debug:
-        description: debug enable a debug logging.
-        type: boolean
-      driver:
-        description: driver used for executing database requests.
-        type: string
       edges:
         $ref: '#/definitions/ent.FurnitureTypeEdges'
         description: |-
@@ -487,10 +309,6 @@ definitions:
       furniture_type:
         description: FurnitureType holds the value of the "furniture_type" field.
         type: string
-      hooks:
-        $ref: '#/definitions/ent.hooks'
-        description: hooks to execute on mutations.
-        type: object
       id:
         description: ID of the ent.
         type: integer
@@ -502,35 +320,17 @@ definitions:
         items:
           $ref: '#/definitions/ent.FurnitureDetail'
         type: array
-      loadedTypes:
-        description: |-
-          loadedTypes holds the information for reporting if a
-          type was loaded (or requested) in eager-loading or not.
-        items:
-          type: boolean
-        type: array
     type: object
-  ent.Hook: {}
   ent.Promotion:
     properties:
-      debug:
-        description: debug enable a debug logging.
-        type: boolean
       discount:
         description: Discount holds the value of the "discount" field.
         type: number
-      driver:
-        description: driver used for executing database requests.
-        type: string
       edges:
         $ref: '#/definitions/ent.PromotionEdges'
         description: |-
           Edges holds the relations/edges for other nodes in the graph.
           The values are being populated by the PromotionQuery when eager-loading is set.
-        type: object
-      hooks:
-        $ref: '#/definitions/ent.hooks'
-        description: hooks to execute on mutations.
         type: object
       id:
         description: ID of the ent.
@@ -546,13 +346,6 @@ definitions:
         items:
           $ref: '#/definitions/ent.DataRoom'
         type: array
-      loadedTypes:
-        description: |-
-          loadedTypes holds the information for reporting if a
-          type was loaded (or requested) in eager-loading or not.
-        items:
-          type: boolean
-        type: array
       reserves:
         description: Reserves holds the value of the reserves edge.
         items:
@@ -561,16 +354,8 @@ definitions:
     type: object
   ent.ReserveRoom:
     properties:
-      customer_id:
-        type: integer
       date_out:
         description: DateOut holds the value of the "date_out" field.
-        type: string
-      debug:
-        description: debug enable a debug logging.
-        type: boolean
-      driver:
-        description: driver used for executing database requests.
         type: string
       edges:
         $ref: '#/definitions/ent.ReserveRoomEdges'
@@ -578,25 +363,15 @@ definitions:
           Edges holds the relations/edges for other nodes in the graph.
           The values are being populated by the ReserveRoomQuery when eager-loading is set.
         type: object
-      hooks:
-        $ref: '#/definitions/ent.hooks'
-        description: hooks to execute on mutations.
-        type: object
       id:
         description: ID of the ent.
         type: integer
       net_price:
         description: NetPrice holds the value of the "net_price" field.
         type: number
-      promotion_id:
-        type: integer
       reserve_date:
         description: ReserveDate holds the value of the "reserve_date" field.
         type: string
-      room_id:
-        type: integer
-      status_id:
-        type: integer
     type: object
   ent.ReserveRoomEdges:
     properties:
@@ -609,13 +384,6 @@ definitions:
         $ref: '#/definitions/ent.Customer'
         description: Customer holds the value of the customer edge.
         type: object
-      loadedTypes:
-        description: |-
-          loadedTypes holds the information for reporting if a
-          type was loaded (or requested) in eager-loading or not.
-        items:
-          type: boolean
-        type: array
       promotion:
         $ref: '#/definitions/ent.Promotion'
         description: Promotion holds the value of the promotion edge.
@@ -631,14 +399,8 @@ definitions:
     type: object
   ent.Status:
     properties:
-      debug:
-        description: debug enable a debug logging.
-        type: boolean
       description:
         description: Description holds the value of the "description" field.
-        type: string
-      driver:
-        description: driver used for executing database requests.
         type: string
       edges:
         $ref: '#/definitions/ent.StatusEdges'
@@ -646,31 +408,17 @@ definitions:
           Edges holds the relations/edges for other nodes in the graph.
           The values are being populated by the StatusQuery when eager-loading is set.
         type: object
-      hooks:
-        $ref: '#/definitions/ent.hooks'
-        description: hooks to execute on mutations.
-        type: object
       id:
         description: ID of the ent.
         type: integer
     type: object
   ent.StatusCheckIn:
     properties:
-      debug:
-        description: debug enable a debug logging.
-        type: boolean
-      driver:
-        description: driver used for executing database requests.
-        type: string
       edges:
         $ref: '#/definitions/ent.StatusCheckInEdges'
         description: |-
           Edges holds the relations/edges for other nodes in the graph.
           The values are being populated by the StatusCheckInQuery when eager-loading is set.
-        type: object
-      hooks:
-        $ref: '#/definitions/ent.hooks'
-        description: hooks to execute on mutations.
         type: object
       id:
         description: ID of the ent.
@@ -686,13 +434,6 @@ definitions:
         items:
           $ref: '#/definitions/ent.CheckIn'
         type: array
-      loadedTypes:
-        description: |-
-          loadedTypes holds the information for reporting if a
-          type was loaded (or requested) in eager-loading or not.
-        items:
-          type: boolean
-        type: array
     type: object
   ent.StatusEdges:
     properties:
@@ -701,31 +442,14 @@ definitions:
         items:
           $ref: '#/definitions/ent.Checkout'
         type: array
-      loadedTypes:
-        description: |-
-          loadedTypes holds the information for reporting if a
-          type was loaded (or requested) in eager-loading or not.
-        items:
-          type: boolean
-        type: array
     type: object
   ent.StatusReserve:
     properties:
-      debug:
-        description: debug enable a debug logging.
-        type: boolean
-      driver:
-        description: driver used for executing database requests.
-        type: string
       edges:
         $ref: '#/definitions/ent.StatusReserveEdges'
         description: |-
           Edges holds the relations/edges for other nodes in the graph.
           The values are being populated by the StatusReserveQuery when eager-loading is set.
-        type: object
-      hooks:
-        $ref: '#/definitions/ent.hooks'
-        description: hooks to execute on mutations.
         type: object
       id:
         description: ID of the ent.
@@ -736,13 +460,6 @@ definitions:
     type: object
   ent.StatusReserveEdges:
     properties:
-      loadedTypes:
-        description: |-
-          loadedTypes holds the information for reporting if a
-          type was loaded (or requested) in eager-loading or not.
-        items:
-          type: boolean
-        type: array
       reserves:
         description: Reserves holds the value of the reserves edge.
         items:
@@ -751,21 +468,11 @@ definitions:
     type: object
   ent.StatusRoom:
     properties:
-      debug:
-        description: debug enable a debug logging.
-        type: boolean
-      driver:
-        description: driver used for executing database requests.
-        type: string
       edges:
         $ref: '#/definitions/ent.StatusRoomEdges'
         description: |-
           Edges holds the relations/edges for other nodes in the graph.
           The values are being populated by the StatusRoomQuery when eager-loading is set.
-        type: object
-      hooks:
-        $ref: '#/definitions/ent.hooks'
-        description: hooks to execute on mutations.
         type: object
       id:
         description: ID of the ent.
@@ -781,31 +488,14 @@ definitions:
         items:
           $ref: '#/definitions/ent.DataRoom'
         type: array
-      loadedTypes:
-        description: |-
-          loadedTypes holds the information for reporting if a
-          type was loaded (or requested) in eager-loading or not.
-        items:
-          type: boolean
-        type: array
     type: object
   ent.TypeRoom:
     properties:
-      debug:
-        description: debug enable a debug logging.
-        type: boolean
-      driver:
-        description: driver used for executing database requests.
-        type: string
       edges:
         $ref: '#/definitions/ent.TypeRoomEdges'
         description: |-
           Edges holds the relations/edges for other nodes in the graph.
           The values are being populated by the TypeRoomQuery when eager-loading is set.
-        type: object
-      hooks:
-        $ref: '#/definitions/ent.hooks'
-        description: hooks to execute on mutations.
         type: object
       id:
         description: ID of the ent.
@@ -821,84 +511,9 @@ definitions:
         items:
           $ref: '#/definitions/ent.DataRoom'
         type: array
-      loadedTypes:
-        description: |-
-          loadedTypes holds the information for reporting if a
-          type was loaded (or requested) in eager-loading or not.
-        items:
-          type: boolean
-        type: array
-    type: object
-  ent.hooks:
-    properties:
-      checkIn:
-        items:
-          $ref: '#/definitions/ent.Hook'
-        type: array
-      checkout:
-        items:
-          $ref: '#/definitions/ent.Hook'
-        type: array
-      counterStaff:
-        items:
-          $ref: '#/definitions/ent.Hook'
-        type: array
-      customer:
-        items:
-          $ref: '#/definitions/ent.Hook'
-        type: array
-      dataRoom:
-        items:
-          $ref: '#/definitions/ent.Hook'
-        type: array
-      fixRoom:
-        items:
-          $ref: '#/definitions/ent.Hook'
-        type: array
-      furniture:
-        items:
-          $ref: '#/definitions/ent.Hook'
-        type: array
-      furnitureDetail:
-        items:
-          $ref: '#/definitions/ent.Hook'
-        type: array
-      furnitureType:
-        items:
-          $ref: '#/definitions/ent.Hook'
-        type: array
-      promotion:
-        items:
-          $ref: '#/definitions/ent.Hook'
-        type: array
-      reserveRoom:
-        items:
-          $ref: '#/definitions/ent.Hook'
-        type: array
-      status:
-        items:
-          $ref: '#/definitions/ent.Hook'
-        type: array
-      statusCheckIn:
-        items:
-          $ref: '#/definitions/ent.Hook'
-        type: array
-      statusReserve:
-        items:
-          $ref: '#/definitions/ent.Hook'
-        type: array
-      statusRoom:
-        items:
-          $ref: '#/definitions/ent.Hook'
-        type: array
-      typeRoom:
-        items:
-          $ref: '#/definitions/ent.Hook'
-        type: array
     type: object
   gin.H:
-    additionalProperties:
-      type: object
+    additionalProperties: true
     type: object
 host: localhost:8080
 info:
@@ -957,7 +572,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ent.CounterStaff'
-          type: object
       produces:
       - application/json
       responses:
@@ -1050,7 +664,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ent.CounterStaff'
-          type: object
       produces:
       - application/json
       responses:
@@ -1207,7 +820,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ent.ReserveRoom'
-          type: object
       produces:
       - application/json
       responses:
@@ -1300,7 +912,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ent.ReserveRoom'
-          type: object
       produces:
       - application/json
       responses:
@@ -1392,7 +1003,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ent.CheckIn'
-          type: object
       produces:
       - application/json
       responses:
@@ -1485,7 +1095,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ent.CheckIn'
-          type: object
       produces:
       - application/json
       responses:
@@ -1567,7 +1176,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ent.Checkout'
-          type: object
       produces:
       - application/json
       responses:
@@ -1752,7 +1360,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ent.DataRoom'
-          type: object
       produces:
       - application/json
       responses:
@@ -1816,7 +1423,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ent.DataRoom'
-          type: object
       produces:
       - application/json
       responses:
@@ -1876,7 +1482,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ent.FixRoom'
-          type: object
       produces:
       - application/json
       responses:
@@ -1995,7 +1600,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ent.FurnitureDetail'
-          type: object
       produces:
       - application/json
       responses:
@@ -2207,7 +1811,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ent.Promotion'
-          type: object
       produces:
       - application/json
       responses:
@@ -2297,7 +1900,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ent.Status'
-          type: object
       produces:
       - application/json
       responses:
@@ -2416,7 +2018,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ent.Status'
-          type: object
       produces:
       - application/json
       responses:
@@ -2535,7 +2136,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ent.StatusRoom'
-          type: object
       produces:
       - application/json
       responses:
@@ -2625,7 +2225,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ent.Status'
-          type: object
       produces:
       - application/json
       responses:
@@ -2744,7 +2343,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/ent.TypeRoom'
-          type: object
       produces:
       - application/json
       responses:
@@ -2806,6 +2404,7 @@ securityDefinitions:
     tokenUrl: https://example.com/oauth/token
     type: oauth2
   OAuth2Application:
+    authorizationUrl: ""
     flow: application
     scopes:
       admin: ' Grants read and write access to administrative information'
@@ -2820,6 +2419,7 @@ securityDefinitions:
       write: ' Grants write access'
     type: oauth2
   OAuth2Password:
+    authorizationUrl: ""
     flow: password
     scopes:
       admin: ' Grants read and write access to administrative information'
