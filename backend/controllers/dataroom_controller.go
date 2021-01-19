@@ -65,6 +65,7 @@ func (ctl *DataRoomController) CreateDataRoom(c *gin.Context) {
 		return
 	}
 
+	//success
 	c.JSON(200, gin.H{
 		"status": false,
 		"data":   d,
