@@ -100,13 +100,6 @@ func ReserveDate(v time.Time) predicate.ReserveRoom {
 	})
 }
 
-// Duration applies equality check predicate on the "duration" field. It's identical to DurationEQ.
-func Duration(v int) predicate.ReserveRoom {
-	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDuration), v))
-	})
-}
-
 // Province applies equality check predicate on the "province" field. It's identical to ProvinceEQ.
 func Province(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
@@ -121,10 +114,10 @@ func Amount(v int) predicate.ReserveRoom {
 	})
 }
 
-// Tel applies equality check predicate on the "tel" field. It's identical to TelEQ.
-func Tel(v string) predicate.ReserveRoom {
+// PhoneNumber applies equality check predicate on the "phone_number" field. It's identical to PhoneNumberEQ.
+func PhoneNumber(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTel), v))
+		s.Where(sql.EQ(s.C(FieldPhoneNumber), v))
 	})
 }
 
@@ -208,82 +201,6 @@ func ReserveDateLT(v time.Time) predicate.ReserveRoom {
 func ReserveDateLTE(v time.Time) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldReserveDate), v))
-	})
-}
-
-// DurationEQ applies the EQ predicate on the "duration" field.
-func DurationEQ(v int) predicate.ReserveRoom {
-	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDuration), v))
-	})
-}
-
-// DurationNEQ applies the NEQ predicate on the "duration" field.
-func DurationNEQ(v int) predicate.ReserveRoom {
-	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldDuration), v))
-	})
-}
-
-// DurationIn applies the In predicate on the "duration" field.
-func DurationIn(vs ...int) predicate.ReserveRoom {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.ReserveRoom(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.In(s.C(FieldDuration), v...))
-	})
-}
-
-// DurationNotIn applies the NotIn predicate on the "duration" field.
-func DurationNotIn(vs ...int) predicate.ReserveRoom {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.ReserveRoom(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.NotIn(s.C(FieldDuration), v...))
-	})
-}
-
-// DurationGT applies the GT predicate on the "duration" field.
-func DurationGT(v int) predicate.ReserveRoom {
-	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldDuration), v))
-	})
-}
-
-// DurationGTE applies the GTE predicate on the "duration" field.
-func DurationGTE(v int) predicate.ReserveRoom {
-	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldDuration), v))
-	})
-}
-
-// DurationLT applies the LT predicate on the "duration" field.
-func DurationLT(v int) predicate.ReserveRoom {
-	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldDuration), v))
-	})
-}
-
-// DurationLTE applies the LTE predicate on the "duration" field.
-func DurationLTE(v int) predicate.ReserveRoom {
-	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldDuration), v))
 	})
 }
 
@@ -474,22 +391,22 @@ func AmountLTE(v int) predicate.ReserveRoom {
 	})
 }
 
-// TelEQ applies the EQ predicate on the "tel" field.
-func TelEQ(v string) predicate.ReserveRoom {
+// PhoneNumberEQ applies the EQ predicate on the "phone_number" field.
+func PhoneNumberEQ(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTel), v))
+		s.Where(sql.EQ(s.C(FieldPhoneNumber), v))
 	})
 }
 
-// TelNEQ applies the NEQ predicate on the "tel" field.
-func TelNEQ(v string) predicate.ReserveRoom {
+// PhoneNumberNEQ applies the NEQ predicate on the "phone_number" field.
+func PhoneNumberNEQ(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldTel), v))
+		s.Where(sql.NEQ(s.C(FieldPhoneNumber), v))
 	})
 }
 
-// TelIn applies the In predicate on the "tel" field.
-func TelIn(vs ...string) predicate.ReserveRoom {
+// PhoneNumberIn applies the In predicate on the "phone_number" field.
+func PhoneNumberIn(vs ...string) predicate.ReserveRoom {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -501,12 +418,12 @@ func TelIn(vs ...string) predicate.ReserveRoom {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldTel), v...))
+		s.Where(sql.In(s.C(FieldPhoneNumber), v...))
 	})
 }
 
-// TelNotIn applies the NotIn predicate on the "tel" field.
-func TelNotIn(vs ...string) predicate.ReserveRoom {
+// PhoneNumberNotIn applies the NotIn predicate on the "phone_number" field.
+func PhoneNumberNotIn(vs ...string) predicate.ReserveRoom {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -518,70 +435,70 @@ func TelNotIn(vs ...string) predicate.ReserveRoom {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldTel), v...))
+		s.Where(sql.NotIn(s.C(FieldPhoneNumber), v...))
 	})
 }
 
-// TelGT applies the GT predicate on the "tel" field.
-func TelGT(v string) predicate.ReserveRoom {
+// PhoneNumberGT applies the GT predicate on the "phone_number" field.
+func PhoneNumberGT(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldTel), v))
+		s.Where(sql.GT(s.C(FieldPhoneNumber), v))
 	})
 }
 
-// TelGTE applies the GTE predicate on the "tel" field.
-func TelGTE(v string) predicate.ReserveRoom {
+// PhoneNumberGTE applies the GTE predicate on the "phone_number" field.
+func PhoneNumberGTE(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldTel), v))
+		s.Where(sql.GTE(s.C(FieldPhoneNumber), v))
 	})
 }
 
-// TelLT applies the LT predicate on the "tel" field.
-func TelLT(v string) predicate.ReserveRoom {
+// PhoneNumberLT applies the LT predicate on the "phone_number" field.
+func PhoneNumberLT(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldTel), v))
+		s.Where(sql.LT(s.C(FieldPhoneNumber), v))
 	})
 }
 
-// TelLTE applies the LTE predicate on the "tel" field.
-func TelLTE(v string) predicate.ReserveRoom {
+// PhoneNumberLTE applies the LTE predicate on the "phone_number" field.
+func PhoneNumberLTE(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldTel), v))
+		s.Where(sql.LTE(s.C(FieldPhoneNumber), v))
 	})
 }
 
-// TelContains applies the Contains predicate on the "tel" field.
-func TelContains(v string) predicate.ReserveRoom {
+// PhoneNumberContains applies the Contains predicate on the "phone_number" field.
+func PhoneNumberContains(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldTel), v))
+		s.Where(sql.Contains(s.C(FieldPhoneNumber), v))
 	})
 }
 
-// TelHasPrefix applies the HasPrefix predicate on the "tel" field.
-func TelHasPrefix(v string) predicate.ReserveRoom {
+// PhoneNumberHasPrefix applies the HasPrefix predicate on the "phone_number" field.
+func PhoneNumberHasPrefix(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldTel), v))
+		s.Where(sql.HasPrefix(s.C(FieldPhoneNumber), v))
 	})
 }
 
-// TelHasSuffix applies the HasSuffix predicate on the "tel" field.
-func TelHasSuffix(v string) predicate.ReserveRoom {
+// PhoneNumberHasSuffix applies the HasSuffix predicate on the "phone_number" field.
+func PhoneNumberHasSuffix(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldTel), v))
+		s.Where(sql.HasSuffix(s.C(FieldPhoneNumber), v))
 	})
 }
 
-// TelEqualFold applies the EqualFold predicate on the "tel" field.
-func TelEqualFold(v string) predicate.ReserveRoom {
+// PhoneNumberEqualFold applies the EqualFold predicate on the "phone_number" field.
+func PhoneNumberEqualFold(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldTel), v))
+		s.Where(sql.EqualFold(s.C(FieldPhoneNumber), v))
 	})
 }
 
-// TelContainsFold applies the ContainsFold predicate on the "tel" field.
-func TelContainsFold(v string) predicate.ReserveRoom {
+// PhoneNumberContainsFold applies the ContainsFold predicate on the "phone_number" field.
+func PhoneNumberContainsFold(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldTel), v))
+		s.Where(sql.ContainsFold(s.C(FieldPhoneNumber), v))
 	})
 }
 

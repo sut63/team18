@@ -9,14 +9,12 @@ const (
 	FieldID = "id"
 	// FieldReserveDate holds the string denoting the reserve_date field in the database.
 	FieldReserveDate = "reserve_date"
-	// FieldDuration holds the string denoting the duration field in the database.
-	FieldDuration = "duration"
 	// FieldProvince holds the string denoting the province field in the database.
 	FieldProvince = "province"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
-	// FieldTel holds the string denoting the tel field in the database.
-	FieldTel = "tel"
+	// FieldPhoneNumber holds the string denoting the phone_number field in the database.
+	FieldPhoneNumber = "phone_number"
 	// FieldNetPrice holds the string denoting the net_price field in the database.
 	FieldNetPrice = "net_price"
 
@@ -74,10 +72,9 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldReserveDate,
-	FieldDuration,
 	FieldProvince,
 	FieldAmount,
-	FieldTel,
+	FieldPhoneNumber,
 	FieldNetPrice,
 }
 
@@ -90,14 +87,12 @@ var ForeignKeys = []string{
 }
 
 var (
-	// DurationValidator is a validator for the "duration" field. It is called by the builders before save.
-	DurationValidator func(int) error
 	// ProvinceValidator is a validator for the "province" field. It is called by the builders before save.
 	ProvinceValidator func(string) error
 	// AmountValidator is a validator for the "amount" field. It is called by the builders before save.
 	AmountValidator func(int) error
-	// TelValidator is a validator for the "tel" field. It is called by the builders before save.
-	TelValidator func(string) error
+	// PhoneNumberValidator is a validator for the "phone_number" field. It is called by the builders before save.
+	PhoneNumberValidator func(string) error
 	// NetPriceValidator is a validator for the "net_price" field. It is called by the builders before save.
 	NetPriceValidator func(float64) error
 )

@@ -45,6 +45,12 @@ export interface EntDataRoom {
      */
     price?: number;
     /**
+     * Roomdetail holds the value of the "roomdetail" field.
+     * @type {string}
+     * @memberof EntDataRoom
+     */
+    roomdetail?: string;
+    /**
      * Roomnumber holds the value of the "roomnumber" field.
      * @type {string}
      * @memberof EntDataRoom
@@ -65,6 +71,7 @@ export function EntDataRoomFromJSONTyped(json: any, ignoreDiscriminator: boolean
         'edges': !exists(json, 'edges') ? undefined : EntDataRoomEdgesFromJSON(json['edges']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'price': !exists(json, 'price') ? undefined : json['price'],
+        'roomdetail': !exists(json, 'roomdetail') ? undefined : json['roomdetail'],
         'roomnumber': !exists(json, 'roomnumber') ? undefined : json['roomnumber'],
     };
 }
@@ -81,6 +88,7 @@ export function EntDataRoomToJSON(value?: EntDataRoom | null): any {
         'edges': EntDataRoomEdgesToJSON(value.edges),
         'id': value.id,
         'price': value.price,
+        'roomdetail': value.roomdetail,
         'roomnumber': value.roomnumber,
     };
 }

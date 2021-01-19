@@ -27,11 +27,11 @@ import {
  */
 export interface EntReserveRoom {
     /**
-     * DateOut holds the value of the "date_out" field.
-     * @type {string}
+     * Amount holds the value of the "amount" field.
+     * @type {number}
      * @memberof EntReserveRoom
      */
-    dateOut?: string;
+    amount?: number;
     /**
      * 
      * @type {EntReserveRoomEdges}
@@ -51,6 +51,18 @@ export interface EntReserveRoom {
      */
     netPrice?: number;
     /**
+     * PhoneNumber holds the value of the "phone_number" field.
+     * @type {string}
+     * @memberof EntReserveRoom
+     */
+    phoneNumber?: string;
+    /**
+     * Province holds the value of the "province" field.
+     * @type {string}
+     * @memberof EntReserveRoom
+     */
+    province?: string;
+    /**
      * ReserveDate holds the value of the "reserve_date" field.
      * @type {string}
      * @memberof EntReserveRoom
@@ -68,10 +80,12 @@ export function EntReserveRoomFromJSONTyped(json: any, ignoreDiscriminator: bool
     }
     return {
         
-        'dateOut': !exists(json, 'date_out') ? undefined : json['date_out'],
+        'amount': !exists(json, 'amount') ? undefined : json['amount'],
         'edges': !exists(json, 'edges') ? undefined : EntReserveRoomEdgesFromJSON(json['edges']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'netPrice': !exists(json, 'net_price') ? undefined : json['net_price'],
+        'phoneNumber': !exists(json, 'phone_number') ? undefined : json['phone_number'],
+        'province': !exists(json, 'province') ? undefined : json['province'],
         'reserveDate': !exists(json, 'reserve_date') ? undefined : json['reserve_date'],
     };
 }
@@ -85,10 +99,12 @@ export function EntReserveRoomToJSON(value?: EntReserveRoom | null): any {
     }
     return {
         
-        'date_out': value.dateOut,
+        'amount': value.amount,
         'edges': EntReserveRoomEdgesToJSON(value.edges),
         'id': value.id,
         'net_price': value.netPrice,
+        'phone_number': value.phoneNumber,
+        'province': value.province,
         'reserve_date': value.reserveDate,
     };
 }

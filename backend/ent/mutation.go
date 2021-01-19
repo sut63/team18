@@ -5811,12 +5811,10 @@ type ReserveRoomMutation struct {
 	typ              string
 	id               *int
 	reserve_date     *time.Time
-	duration         *int
-	addduration      *int
 	province         *string
 	amount           *int
 	addamount        *int
-	tel              *string
+	phone_number     *string
 	net_price        *float64
 	addnet_price     *float64
 	clearedFields    map[string]struct{}
@@ -5950,63 +5948,6 @@ func (m *ReserveRoomMutation) ResetReserveDate() {
 	m.reserve_date = nil
 }
 
-// SetDuration sets the duration field.
-func (m *ReserveRoomMutation) SetDuration(i int) {
-	m.duration = &i
-	m.addduration = nil
-}
-
-// Duration returns the duration value in the mutation.
-func (m *ReserveRoomMutation) Duration() (r int, exists bool) {
-	v := m.duration
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDuration returns the old duration value of the ReserveRoom.
-// If the ReserveRoom object wasn't provided to the builder, the object is fetched
-// from the database.
-// An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ReserveRoomMutation) OldDuration(ctx context.Context) (v int, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldDuration is allowed only on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldDuration requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDuration: %w", err)
-	}
-	return oldValue.Duration, nil
-}
-
-// AddDuration adds i to duration.
-func (m *ReserveRoomMutation) AddDuration(i int) {
-	if m.addduration != nil {
-		*m.addduration += i
-	} else {
-		m.addduration = &i
-	}
-}
-
-// AddedDuration returns the value that was added to the duration field in this mutation.
-func (m *ReserveRoomMutation) AddedDuration() (r int, exists bool) {
-	v := m.addduration
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetDuration reset all changes of the "duration" field.
-func (m *ReserveRoomMutation) ResetDuration() {
-	m.duration = nil
-	m.addduration = nil
-}
-
 // SetProvince sets the province field.
 func (m *ReserveRoomMutation) SetProvince(s string) {
 	m.province = &s
@@ -6101,41 +6042,41 @@ func (m *ReserveRoomMutation) ResetAmount() {
 	m.addamount = nil
 }
 
-// SetTel sets the tel field.
-func (m *ReserveRoomMutation) SetTel(s string) {
-	m.tel = &s
+// SetPhoneNumber sets the phone_number field.
+func (m *ReserveRoomMutation) SetPhoneNumber(s string) {
+	m.phone_number = &s
 }
 
-// Tel returns the tel value in the mutation.
-func (m *ReserveRoomMutation) Tel() (r string, exists bool) {
-	v := m.tel
+// PhoneNumber returns the phone_number value in the mutation.
+func (m *ReserveRoomMutation) PhoneNumber() (r string, exists bool) {
+	v := m.phone_number
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldTel returns the old tel value of the ReserveRoom.
+// OldPhoneNumber returns the old phone_number value of the ReserveRoom.
 // If the ReserveRoom object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ReserveRoomMutation) OldTel(ctx context.Context) (v string, err error) {
+func (m *ReserveRoomMutation) OldPhoneNumber(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldTel is allowed only on UpdateOne operations")
+		return v, fmt.Errorf("OldPhoneNumber is allowed only on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldTel requires an ID field in the mutation")
+		return v, fmt.Errorf("OldPhoneNumber requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTel: %w", err)
+		return v, fmt.Errorf("querying old value for OldPhoneNumber: %w", err)
 	}
-	return oldValue.Tel, nil
+	return oldValue.PhoneNumber, nil
 }
 
-// ResetTel reset all changes of the "tel" field.
-func (m *ReserveRoomMutation) ResetTel() {
-	m.tel = nil
+// ResetPhoneNumber reset all changes of the "phone_number" field.
+func (m *ReserveRoomMutation) ResetPhoneNumber() {
+	m.phone_number = nil
 }
 
 // SetNetPrice sets the net_price field.
@@ -6407,12 +6348,9 @@ func (m *ReserveRoomMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *ReserveRoomMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 5)
 	if m.reserve_date != nil {
 		fields = append(fields, reserveroom.FieldReserveDate)
-	}
-	if m.duration != nil {
-		fields = append(fields, reserveroom.FieldDuration)
 	}
 	if m.province != nil {
 		fields = append(fields, reserveroom.FieldProvince)
@@ -6420,8 +6358,8 @@ func (m *ReserveRoomMutation) Fields() []string {
 	if m.amount != nil {
 		fields = append(fields, reserveroom.FieldAmount)
 	}
-	if m.tel != nil {
-		fields = append(fields, reserveroom.FieldTel)
+	if m.phone_number != nil {
+		fields = append(fields, reserveroom.FieldPhoneNumber)
 	}
 	if m.net_price != nil {
 		fields = append(fields, reserveroom.FieldNetPrice)
@@ -6436,14 +6374,12 @@ func (m *ReserveRoomMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case reserveroom.FieldReserveDate:
 		return m.ReserveDate()
-	case reserveroom.FieldDuration:
-		return m.Duration()
 	case reserveroom.FieldProvince:
 		return m.Province()
 	case reserveroom.FieldAmount:
 		return m.Amount()
-	case reserveroom.FieldTel:
-		return m.Tel()
+	case reserveroom.FieldPhoneNumber:
+		return m.PhoneNumber()
 	case reserveroom.FieldNetPrice:
 		return m.NetPrice()
 	}
@@ -6457,14 +6393,12 @@ func (m *ReserveRoomMutation) OldField(ctx context.Context, name string) (ent.Va
 	switch name {
 	case reserveroom.FieldReserveDate:
 		return m.OldReserveDate(ctx)
-	case reserveroom.FieldDuration:
-		return m.OldDuration(ctx)
 	case reserveroom.FieldProvince:
 		return m.OldProvince(ctx)
 	case reserveroom.FieldAmount:
 		return m.OldAmount(ctx)
-	case reserveroom.FieldTel:
-		return m.OldTel(ctx)
+	case reserveroom.FieldPhoneNumber:
+		return m.OldPhoneNumber(ctx)
 	case reserveroom.FieldNetPrice:
 		return m.OldNetPrice(ctx)
 	}
@@ -6483,13 +6417,6 @@ func (m *ReserveRoomMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetReserveDate(v)
 		return nil
-	case reserveroom.FieldDuration:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDuration(v)
-		return nil
 	case reserveroom.FieldProvince:
 		v, ok := value.(string)
 		if !ok {
@@ -6504,12 +6431,12 @@ func (m *ReserveRoomMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAmount(v)
 		return nil
-	case reserveroom.FieldTel:
+	case reserveroom.FieldPhoneNumber:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetTel(v)
+		m.SetPhoneNumber(v)
 		return nil
 	case reserveroom.FieldNetPrice:
 		v, ok := value.(float64)
@@ -6526,9 +6453,6 @@ func (m *ReserveRoomMutation) SetField(name string, value ent.Value) error {
 // or decremented during this mutation.
 func (m *ReserveRoomMutation) AddedFields() []string {
 	var fields []string
-	if m.addduration != nil {
-		fields = append(fields, reserveroom.FieldDuration)
-	}
 	if m.addamount != nil {
 		fields = append(fields, reserveroom.FieldAmount)
 	}
@@ -6543,8 +6467,6 @@ func (m *ReserveRoomMutation) AddedFields() []string {
 // that this field was not set, or was not define in the schema.
 func (m *ReserveRoomMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case reserveroom.FieldDuration:
-		return m.AddedDuration()
 	case reserveroom.FieldAmount:
 		return m.AddedAmount()
 	case reserveroom.FieldNetPrice:
@@ -6558,13 +6480,6 @@ func (m *ReserveRoomMutation) AddedField(name string) (ent.Value, bool) {
 // type mismatch the field type.
 func (m *ReserveRoomMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case reserveroom.FieldDuration:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddDuration(v)
-		return nil
 	case reserveroom.FieldAmount:
 		v, ok := value.(int)
 		if !ok {
@@ -6610,17 +6525,14 @@ func (m *ReserveRoomMutation) ResetField(name string) error {
 	case reserveroom.FieldReserveDate:
 		m.ResetReserveDate()
 		return nil
-	case reserveroom.FieldDuration:
-		m.ResetDuration()
-		return nil
 	case reserveroom.FieldProvince:
 		m.ResetProvince()
 		return nil
 	case reserveroom.FieldAmount:
 		m.ResetAmount()
 		return nil
-	case reserveroom.FieldTel:
-		m.ResetTel()
+	case reserveroom.FieldPhoneNumber:
+		m.ResetPhoneNumber()
 		return nil
 	case reserveroom.FieldNetPrice:
 		m.ResetNetPrice()
