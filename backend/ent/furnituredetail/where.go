@@ -100,6 +100,27 @@ func DateAdd(v time.Time) predicate.FurnitureDetail {
 	})
 }
 
+// FurnitureAmount applies equality check predicate on the "furniture_amount" field. It's identical to FurnitureAmountEQ.
+func FurnitureAmount(v int) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldFurnitureAmount), v))
+	})
+}
+
+// FurnitureColour applies equality check predicate on the "furniture_colour" field. It's identical to FurnitureColourEQ.
+func FurnitureColour(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldFurnitureColour), v))
+	})
+}
+
+// FurnitureDetail applies equality check predicate on the "furniture_detail" field. It's identical to FurnitureDetailEQ.
+func FurnitureDetail(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldFurnitureDetail), v))
+	})
+}
+
 // DateAddEQ applies the EQ predicate on the "date_add" field.
 func DateAddEQ(v time.Time) predicate.FurnitureDetail {
 	return predicate.FurnitureDetail(func(s *sql.Selector) {
@@ -173,6 +194,304 @@ func DateAddLT(v time.Time) predicate.FurnitureDetail {
 func DateAddLTE(v time.Time) predicate.FurnitureDetail {
 	return predicate.FurnitureDetail(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldDateAdd), v))
+	})
+}
+
+// FurnitureAmountEQ applies the EQ predicate on the "furniture_amount" field.
+func FurnitureAmountEQ(v int) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldFurnitureAmount), v))
+	})
+}
+
+// FurnitureAmountNEQ applies the NEQ predicate on the "furniture_amount" field.
+func FurnitureAmountNEQ(v int) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldFurnitureAmount), v))
+	})
+}
+
+// FurnitureAmountIn applies the In predicate on the "furniture_amount" field.
+func FurnitureAmountIn(vs ...int) predicate.FurnitureDetail {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldFurnitureAmount), v...))
+	})
+}
+
+// FurnitureAmountNotIn applies the NotIn predicate on the "furniture_amount" field.
+func FurnitureAmountNotIn(vs ...int) predicate.FurnitureDetail {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldFurnitureAmount), v...))
+	})
+}
+
+// FurnitureAmountGT applies the GT predicate on the "furniture_amount" field.
+func FurnitureAmountGT(v int) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldFurnitureAmount), v))
+	})
+}
+
+// FurnitureAmountGTE applies the GTE predicate on the "furniture_amount" field.
+func FurnitureAmountGTE(v int) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldFurnitureAmount), v))
+	})
+}
+
+// FurnitureAmountLT applies the LT predicate on the "furniture_amount" field.
+func FurnitureAmountLT(v int) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldFurnitureAmount), v))
+	})
+}
+
+// FurnitureAmountLTE applies the LTE predicate on the "furniture_amount" field.
+func FurnitureAmountLTE(v int) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldFurnitureAmount), v))
+	})
+}
+
+// FurnitureColourEQ applies the EQ predicate on the "furniture_colour" field.
+func FurnitureColourEQ(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldFurnitureColour), v))
+	})
+}
+
+// FurnitureColourNEQ applies the NEQ predicate on the "furniture_colour" field.
+func FurnitureColourNEQ(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldFurnitureColour), v))
+	})
+}
+
+// FurnitureColourIn applies the In predicate on the "furniture_colour" field.
+func FurnitureColourIn(vs ...string) predicate.FurnitureDetail {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldFurnitureColour), v...))
+	})
+}
+
+// FurnitureColourNotIn applies the NotIn predicate on the "furniture_colour" field.
+func FurnitureColourNotIn(vs ...string) predicate.FurnitureDetail {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldFurnitureColour), v...))
+	})
+}
+
+// FurnitureColourGT applies the GT predicate on the "furniture_colour" field.
+func FurnitureColourGT(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldFurnitureColour), v))
+	})
+}
+
+// FurnitureColourGTE applies the GTE predicate on the "furniture_colour" field.
+func FurnitureColourGTE(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldFurnitureColour), v))
+	})
+}
+
+// FurnitureColourLT applies the LT predicate on the "furniture_colour" field.
+func FurnitureColourLT(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldFurnitureColour), v))
+	})
+}
+
+// FurnitureColourLTE applies the LTE predicate on the "furniture_colour" field.
+func FurnitureColourLTE(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldFurnitureColour), v))
+	})
+}
+
+// FurnitureColourContains applies the Contains predicate on the "furniture_colour" field.
+func FurnitureColourContains(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldFurnitureColour), v))
+	})
+}
+
+// FurnitureColourHasPrefix applies the HasPrefix predicate on the "furniture_colour" field.
+func FurnitureColourHasPrefix(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldFurnitureColour), v))
+	})
+}
+
+// FurnitureColourHasSuffix applies the HasSuffix predicate on the "furniture_colour" field.
+func FurnitureColourHasSuffix(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldFurnitureColour), v))
+	})
+}
+
+// FurnitureColourEqualFold applies the EqualFold predicate on the "furniture_colour" field.
+func FurnitureColourEqualFold(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldFurnitureColour), v))
+	})
+}
+
+// FurnitureColourContainsFold applies the ContainsFold predicate on the "furniture_colour" field.
+func FurnitureColourContainsFold(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldFurnitureColour), v))
+	})
+}
+
+// FurnitureDetailEQ applies the EQ predicate on the "furniture_detail" field.
+func FurnitureDetailEQ(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldFurnitureDetail), v))
+	})
+}
+
+// FurnitureDetailNEQ applies the NEQ predicate on the "furniture_detail" field.
+func FurnitureDetailNEQ(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldFurnitureDetail), v))
+	})
+}
+
+// FurnitureDetailIn applies the In predicate on the "furniture_detail" field.
+func FurnitureDetailIn(vs ...string) predicate.FurnitureDetail {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldFurnitureDetail), v...))
+	})
+}
+
+// FurnitureDetailNotIn applies the NotIn predicate on the "furniture_detail" field.
+func FurnitureDetailNotIn(vs ...string) predicate.FurnitureDetail {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldFurnitureDetail), v...))
+	})
+}
+
+// FurnitureDetailGT applies the GT predicate on the "furniture_detail" field.
+func FurnitureDetailGT(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldFurnitureDetail), v))
+	})
+}
+
+// FurnitureDetailGTE applies the GTE predicate on the "furniture_detail" field.
+func FurnitureDetailGTE(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldFurnitureDetail), v))
+	})
+}
+
+// FurnitureDetailLT applies the LT predicate on the "furniture_detail" field.
+func FurnitureDetailLT(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldFurnitureDetail), v))
+	})
+}
+
+// FurnitureDetailLTE applies the LTE predicate on the "furniture_detail" field.
+func FurnitureDetailLTE(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldFurnitureDetail), v))
+	})
+}
+
+// FurnitureDetailContains applies the Contains predicate on the "furniture_detail" field.
+func FurnitureDetailContains(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldFurnitureDetail), v))
+	})
+}
+
+// FurnitureDetailHasPrefix applies the HasPrefix predicate on the "furniture_detail" field.
+func FurnitureDetailHasPrefix(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldFurnitureDetail), v))
+	})
+}
+
+// FurnitureDetailHasSuffix applies the HasSuffix predicate on the "furniture_detail" field.
+func FurnitureDetailHasSuffix(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldFurnitureDetail), v))
+	})
+}
+
+// FurnitureDetailEqualFold applies the EqualFold predicate on the "furniture_detail" field.
+func FurnitureDetailEqualFold(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldFurnitureDetail), v))
+	})
+}
+
+// FurnitureDetailContainsFold applies the ContainsFold predicate on the "furniture_detail" field.
+func FurnitureDetailContainsFold(v string) predicate.FurnitureDetail {
+	return predicate.FurnitureDetail(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldFurnitureDetail), v))
 	})
 }
 

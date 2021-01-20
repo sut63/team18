@@ -31,6 +31,24 @@ func (fdc *FurnitureDetailCreate) SetDateAdd(t time.Time) *FurnitureDetailCreate
 	return fdc
 }
 
+// SetFurnitureAmount sets the furniture_amount field.
+func (fdc *FurnitureDetailCreate) SetFurnitureAmount(i int) *FurnitureDetailCreate {
+	fdc.mutation.SetFurnitureAmount(i)
+	return fdc
+}
+
+// SetFurnitureColour sets the furniture_colour field.
+func (fdc *FurnitureDetailCreate) SetFurnitureColour(s string) *FurnitureDetailCreate {
+	fdc.mutation.SetFurnitureColour(s)
+	return fdc
+}
+
+// SetFurnitureDetail sets the furniture_detail field.
+func (fdc *FurnitureDetailCreate) SetFurnitureDetail(s string) *FurnitureDetailCreate {
+	fdc.mutation.SetFurnitureDetail(s)
+	return fdc
+}
+
 // AddFixIDs adds the fixs edge to FixRoom by ids.
 func (fdc *FurnitureDetailCreate) AddFixIDs(ids ...int) *FurnitureDetailCreate {
 	fdc.mutation.AddFixIDs(ids...)
@@ -132,6 +150,30 @@ func (fdc *FurnitureDetailCreate) Save(ctx context.Context) (*FurnitureDetail, e
 	if _, ok := fdc.mutation.DateAdd(); !ok {
 		return nil, &ValidationError{Name: "date_add", err: errors.New("ent: missing required field \"date_add\"")}
 	}
+	if _, ok := fdc.mutation.FurnitureAmount(); !ok {
+		return nil, &ValidationError{Name: "furniture_amount", err: errors.New("ent: missing required field \"furniture_amount\"")}
+	}
+	if v, ok := fdc.mutation.FurnitureAmount(); ok {
+		if err := furnituredetail.FurnitureAmountValidator(v); err != nil {
+			return nil, &ValidationError{Name: "furniture_amount", err: fmt.Errorf("ent: validator failed for field \"furniture_amount\": %w", err)}
+		}
+	}
+	if _, ok := fdc.mutation.FurnitureColour(); !ok {
+		return nil, &ValidationError{Name: "furniture_colour", err: errors.New("ent: missing required field \"furniture_colour\"")}
+	}
+	if v, ok := fdc.mutation.FurnitureColour(); ok {
+		if err := furnituredetail.FurnitureColourValidator(v); err != nil {
+			return nil, &ValidationError{Name: "furniture_colour", err: fmt.Errorf("ent: validator failed for field \"furniture_colour\": %w", err)}
+		}
+	}
+	if _, ok := fdc.mutation.FurnitureDetail(); !ok {
+		return nil, &ValidationError{Name: "furniture_detail", err: errors.New("ent: missing required field \"furniture_detail\"")}
+	}
+	if v, ok := fdc.mutation.FurnitureDetail(); ok {
+		if err := furnituredetail.FurnitureDetailValidator(v); err != nil {
+			return nil, &ValidationError{Name: "furniture_detail", err: fmt.Errorf("ent: validator failed for field \"furniture_detail\": %w", err)}
+		}
+	}
 	var (
 		err  error
 		node *FurnitureDetail
@@ -199,6 +241,30 @@ func (fdc *FurnitureDetailCreate) createSpec() (*FurnitureDetail, *sqlgraph.Crea
 			Column: furnituredetail.FieldDateAdd,
 		})
 		fd.DateAdd = value
+	}
+	if value, ok := fdc.mutation.FurnitureAmount(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: furnituredetail.FieldFurnitureAmount,
+		})
+		fd.FurnitureAmount = value
+	}
+	if value, ok := fdc.mutation.FurnitureColour(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: furnituredetail.FieldFurnitureColour,
+		})
+		fd.FurnitureColour = value
+	}
+	if value, ok := fdc.mutation.FurnitureDetail(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: furnituredetail.FieldFurnitureDetail,
+		})
+		fd.FurnitureDetail = value
 	}
 	if nodes := fdc.mutation.FixsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

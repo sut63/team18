@@ -277,6 +277,15 @@ definitions:
           Edges holds the relations/edges for other nodes in the graph.
           The values are being populated by the FurnitureDetailQuery when eager-loading is set.
         type: object
+      furniture_amount:
+        description: FurnitureAmount holds the value of the "furniture_amount" field.
+        type: integer
+      furniture_colour:
+        description: FurnitureColour holds the value of the "furniture_colour" field.
+        type: string
+      furniture_detail:
+        description: FurnitureDetail holds the value of the "furniture_detail" field.
+        type: string
       id:
         description: ID of the ent.
         type: integer
