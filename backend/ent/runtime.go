@@ -7,6 +7,7 @@ import (
 	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/customer"
 	"github.com/team18/app/ent/dataroom"
+	"github.com/team18/app/ent/fixroom"
 	"github.com/team18/app/ent/furniture"
 	"github.com/team18/app/ent/promotion"
 	"github.com/team18/app/ent/reserveroom"
@@ -120,6 +121,20 @@ func init() {
 	dataroomDescRoomdetail := dataroomFields[2].Descriptor()
 	// dataroom.RoomdetailValidator is a validator for the "roomdetail" field. It is called by the builders before save.
 	dataroom.RoomdetailValidator = dataroomDescRoomdetail.Validators[0].(func(string) error)
+	fixroomFields := schema.FixRoom{}.Fields()
+	_ = fixroomFields
+	// fixroomDescFixDetail is the schema descriptor for fix_detail field.
+	fixroomDescFixDetail := fixroomFields[0].Descriptor()
+	// fixroom.FixDetailValidator is a validator for the "fix_detail" field. It is called by the builders before save.
+	fixroom.FixDetailValidator = fixroomDescFixDetail.Validators[0].(func(string) error)
+	// fixroomDescPhoneNumber is the schema descriptor for phone_number field.
+	fixroomDescPhoneNumber := fixroomFields[1].Descriptor()
+	// fixroom.PhoneNumberValidator is a validator for the "phone_number" field. It is called by the builders before save.
+	fixroom.PhoneNumberValidator = fixroomDescPhoneNumber.Validators[0].(func(string) error)
+	// fixroomDescFacebook is the schema descriptor for facebook field.
+	fixroomDescFacebook := fixroomFields[2].Descriptor()
+	// fixroom.FacebookValidator is a validator for the "facebook" field. It is called by the builders before save.
+	fixroom.FacebookValidator = fixroomDescFacebook.Validators[0].(func(string) error)
 	furnitureFields := schema.Furniture{}.Fields()
 	_ = furnitureFields
 	// furnitureDescFurnitureName is the schema descriptor for furniture_name field.

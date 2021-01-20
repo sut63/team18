@@ -3467,6 +3467,8 @@ type FixRoomMutation struct {
 	typ                    string
 	id                     *int
 	fix_detail             *string
+	phone_number           *string
+	facebook               *string
 	clearedFields          map[string]struct{}
 	customer               *int
 	clearedcustomer        bool
@@ -3592,6 +3594,80 @@ func (m *FixRoomMutation) OldFixDetail(ctx context.Context) (v string, err error
 // ResetFixDetail reset all changes of the "fix_detail" field.
 func (m *FixRoomMutation) ResetFixDetail() {
 	m.fix_detail = nil
+}
+
+// SetPhoneNumber sets the phone_number field.
+func (m *FixRoomMutation) SetPhoneNumber(s string) {
+	m.phone_number = &s
+}
+
+// PhoneNumber returns the phone_number value in the mutation.
+func (m *FixRoomMutation) PhoneNumber() (r string, exists bool) {
+	v := m.phone_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPhoneNumber returns the old phone_number value of the FixRoom.
+// If the FixRoom object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FixRoomMutation) OldPhoneNumber(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldPhoneNumber is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldPhoneNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPhoneNumber: %w", err)
+	}
+	return oldValue.PhoneNumber, nil
+}
+
+// ResetPhoneNumber reset all changes of the "phone_number" field.
+func (m *FixRoomMutation) ResetPhoneNumber() {
+	m.phone_number = nil
+}
+
+// SetFacebook sets the facebook field.
+func (m *FixRoomMutation) SetFacebook(s string) {
+	m.facebook = &s
+}
+
+// Facebook returns the facebook value in the mutation.
+func (m *FixRoomMutation) Facebook() (r string, exists bool) {
+	v := m.facebook
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFacebook returns the old facebook value of the FixRoom.
+// If the FixRoom object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *FixRoomMutation) OldFacebook(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldFacebook is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldFacebook requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFacebook: %w", err)
+	}
+	return oldValue.Facebook, nil
+}
+
+// ResetFacebook reset all changes of the "facebook" field.
+func (m *FixRoomMutation) ResetFacebook() {
+	m.facebook = nil
 }
 
 // SetCustomerID sets the customer edge to Customer by id.
@@ -3725,9 +3801,15 @@ func (m *FixRoomMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *FixRoomMutation) Fields() []string {
-	fields := make([]string, 0, 1)
+	fields := make([]string, 0, 3)
 	if m.fix_detail != nil {
 		fields = append(fields, fixroom.FieldFixDetail)
+	}
+	if m.phone_number != nil {
+		fields = append(fields, fixroom.FieldPhoneNumber)
+	}
+	if m.facebook != nil {
+		fields = append(fields, fixroom.FieldFacebook)
 	}
 	return fields
 }
@@ -3739,6 +3821,10 @@ func (m *FixRoomMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case fixroom.FieldFixDetail:
 		return m.FixDetail()
+	case fixroom.FieldPhoneNumber:
+		return m.PhoneNumber()
+	case fixroom.FieldFacebook:
+		return m.Facebook()
 	}
 	return nil, false
 }
@@ -3750,6 +3836,10 @@ func (m *FixRoomMutation) OldField(ctx context.Context, name string) (ent.Value,
 	switch name {
 	case fixroom.FieldFixDetail:
 		return m.OldFixDetail(ctx)
+	case fixroom.FieldPhoneNumber:
+		return m.OldPhoneNumber(ctx)
+	case fixroom.FieldFacebook:
+		return m.OldFacebook(ctx)
 	}
 	return nil, fmt.Errorf("unknown FixRoom field %s", name)
 }
@@ -3765,6 +3855,20 @@ func (m *FixRoomMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetFixDetail(v)
+		return nil
+	case fixroom.FieldPhoneNumber:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPhoneNumber(v)
+		return nil
+	case fixroom.FieldFacebook:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFacebook(v)
 		return nil
 	}
 	return fmt.Errorf("unknown FixRoom field %s", name)
@@ -3818,6 +3922,12 @@ func (m *FixRoomMutation) ResetField(name string) error {
 	switch name {
 	case fixroom.FieldFixDetail:
 		m.ResetFixDetail()
+		return nil
+	case fixroom.FieldPhoneNumber:
+		m.ResetPhoneNumber()
+		return nil
+	case fixroom.FieldFacebook:
+		m.ResetFacebook()
 		return nil
 	}
 	return fmt.Errorf("unknown FixRoom field %s", name)

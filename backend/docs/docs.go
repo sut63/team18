@@ -3116,6 +3116,10 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/ent.FixRoomEdges"
                 },
+                "facebook": {
+                    "description": "Facebook holds the value of the \"facebook\" field.",
+                    "type": "string"
+                },
                 "fix_detail": {
                     "description": "FixDetail holds the value of the \"fix_detail\" field.",
                     "type": "string"
@@ -3123,6 +3127,10 @@ var doc = `{
                 "id": {
                     "description": "ID of the ent.",
                     "type": "integer"
+                },
+                "phone_number": {
+                    "description": "PhoneNumber holds the value of the \"phone_number\" field.",
+                    "type": "string"
                 }
             }
         },
