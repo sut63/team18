@@ -145,6 +145,7 @@ const DataRoom: FC<{}> = () => {
         setError("รายละเอียดมีความยาวมากเกินไป")
         return;
       default:
+        setError("กรุณาเลือก combobox ให้ครบ")
         return;
     }
   };
