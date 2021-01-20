@@ -27,7 +27,7 @@ type FurnitureDetail struct {
 	Dataroom        int
 	FurnitureAmount int
 	FurnitureColour string
-	FurnitureDetail string
+	Detail          string
 }
 
 // CreateFurnitureDetail handles POST requests for adding furnituredetail entities
@@ -96,7 +96,7 @@ func (ctl *FurnitureDetailController) CreateFurnitureDetail(c *gin.Context) {
 		SetRooms(dr).
 		SetFurnitureAmount(obj.FurnitureAmount).
 		SetFurnitureColour(obj.FurnitureColour).
-		SetFurnitureDetail(obj.FurnitureDetail).
+		SetDetail(obj.Detail).
 		Save(context.Background())
 
 	if err != nil {

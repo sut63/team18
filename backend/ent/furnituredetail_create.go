@@ -43,9 +43,9 @@ func (fdc *FurnitureDetailCreate) SetFurnitureColour(s string) *FurnitureDetailC
 	return fdc
 }
 
-// SetFurnitureDetail sets the furniture_detail field.
-func (fdc *FurnitureDetailCreate) SetFurnitureDetail(s string) *FurnitureDetailCreate {
-	fdc.mutation.SetFurnitureDetail(s)
+// SetDetail sets the detail field.
+func (fdc *FurnitureDetailCreate) SetDetail(s string) *FurnitureDetailCreate {
+	fdc.mutation.SetDetail(s)
 	return fdc
 }
 
@@ -166,12 +166,12 @@ func (fdc *FurnitureDetailCreate) Save(ctx context.Context) (*FurnitureDetail, e
 			return nil, &ValidationError{Name: "furniture_colour", err: fmt.Errorf("ent: validator failed for field \"furniture_colour\": %w", err)}
 		}
 	}
-	if _, ok := fdc.mutation.FurnitureDetail(); !ok {
-		return nil, &ValidationError{Name: "furniture_detail", err: errors.New("ent: missing required field \"furniture_detail\"")}
+	if _, ok := fdc.mutation.Detail(); !ok {
+		return nil, &ValidationError{Name: "detail", err: errors.New("ent: missing required field \"detail\"")}
 	}
-	if v, ok := fdc.mutation.FurnitureDetail(); ok {
-		if err := furnituredetail.FurnitureDetailValidator(v); err != nil {
-			return nil, &ValidationError{Name: "furniture_detail", err: fmt.Errorf("ent: validator failed for field \"furniture_detail\": %w", err)}
+	if v, ok := fdc.mutation.Detail(); ok {
+		if err := furnituredetail.DetailValidator(v); err != nil {
+			return nil, &ValidationError{Name: "detail", err: fmt.Errorf("ent: validator failed for field \"detail\": %w", err)}
 		}
 	}
 	var (
@@ -258,13 +258,13 @@ func (fdc *FurnitureDetailCreate) createSpec() (*FurnitureDetail, *sqlgraph.Crea
 		})
 		fd.FurnitureColour = value
 	}
-	if value, ok := fdc.mutation.FurnitureDetail(); ok {
+	if value, ok := fdc.mutation.Detail(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: furnituredetail.FieldFurnitureDetail,
+			Column: furnituredetail.FieldDetail,
 		})
-		fd.FurnitureDetail = value
+		fd.Detail = value
 	}
 	if nodes := fdc.mutation.FixsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

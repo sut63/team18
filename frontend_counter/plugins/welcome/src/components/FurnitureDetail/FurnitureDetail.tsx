@@ -60,6 +60,9 @@ interface FurnitureDetail {
   Furniture: number;
   CounterStaff: number;
   DateAdd: Date;
+  FurnitureAmount : number;
+	FurnitureColour: string;
+	Detail:          string;
   // create_by: number;
 }
 
@@ -79,7 +82,7 @@ const FurnitureDetail: FC<{}> = () => {
 
    //อันหลักสำหรับสร้าง การ furniture_detail
   const [furniture_detail, setFurnitureDetail] = React.useState<Partial<FurnitureDetail>>({});
-
+  furniture_detail.FurnitureAmount = Number(furniture_detail.FurnitureAmount)
   // data room List
   const [dataroom, setdataroom] = React.useState<EntDataRoom[]>([]);
   const getDataRoom = async () => {
@@ -95,6 +98,9 @@ const FurnitureDetail: FC<{}> = () => {
     setFurniture(res);
   };
   
+  const [FurnitureAmountError, setFurnitureAmountError] = React.useState('');
+  const [FurnitureColourError, setFurnitureColourError] = React.useState('');
+  const [DetailError, setDetailError] = React.useState('');
 
   //counterstaff
   const [counterstaffs, setCounterStaffs] = React.useState<EntCounterStaff>();
@@ -107,10 +113,55 @@ const FurnitureDetail: FC<{}> = () => {
   //set time
   const [dateAdd, setDateAdd] = React.useState<any>(0)
   
+  const validateFurnitureColour = (val: string) => {
+    return val.length > 10 ? false : true;
+  }
+  
+  const validateFurnitureAmount = (val: Number) => {
+    return val > 0 && val <= 10 ? true : false;
+  }
+
+  // ฟังก์ชั่นสำหรับ validate รหัสนักศึกษา
+  const validateDetail = (val: string) => {
+    return val.length > 50 ? false : true;
+  }
+//checkpatten
+  const checkPattern  = (id: string, value: string) => {
+    switch(id) {
+      case 'FurnitureColour':
+        validateFurnitureColour(value) ? setFurnitureColourError('') : setFurnitureColourError('ห้ามเกิน 10 ตัวอักษร');
+        return;
+      case 'FurnitureAmount':
+        validateFurnitureAmount(Number(value)) ? setFurnitureAmountError('') : setFurnitureAmountError('เฟอร์นิเจอร์ไม่เกิน 10 ชิ้น');
+        return;
+      case 'Detail':
+        validateDetail(value) ? setDetailError('') : setDetailError('ห้ามเกิน 50 ตัวอักษร')
+        return;
+      default:
+        return;
+    }
+  }
+
+  const checkerror = (s :string) => {
+    switch(s) {
+      case 'furniture_colour':
+        setError("รายละเอียดมีความยาวมากเกินไป")
+        return;
+      case 'furniture_amount':
+        setError("จำนวนเฟอร์นิเจอร์ไม่ถูกต้อง")
+        return;
+      case 'detail':
+        setError("รายละเอียดมีความยาวมากเกินไป")
+        return;
+      default:
+        return;
+    }
+  };
+
   // alert setting
   const [open, setOpen] = React.useState(false);
   const [fail, setFail] = React.useState(false);
-
+  const [errors, setError] = React.useState(String);
   //close alert 
   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
     if (reason === 'clickaway') {
@@ -140,6 +191,8 @@ const FurnitureDetail: FC<{}> = () => {
     const name = event.target.name as keyof typeof FurnitureDetail;
     const { value } = event.target;
     setFurnitureDetail({ ...furniture_detail, [name]: value });
+    const validateValue = value.toString() 
+    checkPattern(name, validateValue)
     console.log(furniture_detail);
   };
 
@@ -184,10 +237,11 @@ const FurnitureDetail: FC<{}> = () => {
       .then(response => response.json())
       .then(data => {
         console.log(data.status);
-        if (data.id != null) {
+        if (data.status === true) {
           clear();
           setOpen(true);
         } else {
+          checkerror(data.error.Name)
           setFail(true);
         }
       });
@@ -291,6 +345,55 @@ const FurnitureDetail: FC<{}> = () => {
               </FormControl>
             </Grid>
 
+            <Grid item xs={3}>
+              <div className={classes.paper}>Detail</div>
+            </Grid>
+            <Grid item xs={9}>
+            <FormControl variant="outlined" className={classes.formControl}>
+                <TextField
+                  error = {DetailError ? true : false}
+                  helperText={DetailError}
+                  name="Detail"
+                  label="รายละเอียด"
+                  variant="outlined"
+                  value={furniture_detail.Detail || ''}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={3}>
+              <div className={classes.paper}>Furniture Colour</div>
+            </Grid>
+            <Grid item xs={9}>
+            <FormControl variant="outlined" className={classes.formControl}>
+                <TextField
+                  error = {FurnitureColourError ? true : false}
+                  helperText={FurnitureColourError}
+                  name="FurnitureColour"
+                  label="สีของเฟอร์นิเจอร์"
+                  variant="outlined"
+                  value={furniture_detail.FurnitureColour || ''}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={3}>
+              <div className={classes.paper}>จำนวนเฟอร์นิเจอร์</div>
+            </Grid>
+            <Grid item xs={9}>
+              <TextField
+                error = {FurnitureAmountError ? true : false}
+                helperText={FurnitureAmountError}
+                type={"number"}
+                value={furniture_detail.FurnitureAmount || ''}
+                label="จำนวนเฟอร์นิเจอร์"
+                name="FurnitureAmount"
+                variant="outlined"
+                onChange={handleChange} />
+            </Grid>
+
                                       
             <Grid item xs={3}></Grid>
             <Grid item xs={9}>
@@ -314,7 +417,7 @@ const FurnitureDetail: FC<{}> = () => {
 
           <Snackbar open={fail} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="error">
-              This is a error message!
+            {errors}
         </Alert>
           </Snackbar>
         </Container>

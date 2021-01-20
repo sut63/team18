@@ -26,8 +26,8 @@ type FurnitureDetail struct {
 	FurnitureAmount int `json:"furniture_amount,omitempty"`
 	// FurnitureColour holds the value of the "furniture_colour" field.
 	FurnitureColour string `json:"furniture_colour,omitempty"`
-	// FurnitureDetail holds the value of the "furniture_detail" field.
-	FurnitureDetail string `json:"furniture_detail,omitempty"`
+	// Detail holds the value of the "detail" field.
+	Detail string `json:"detail,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FurnitureDetailQuery when eager-loading is set.
 	Edges        FurnitureDetailEdges `json:"edges"`
@@ -126,7 +126,7 @@ func (*FurnitureDetail) scanValues() []interface{} {
 		&sql.NullTime{},   // date_add
 		&sql.NullInt64{},  // furniture_amount
 		&sql.NullString{}, // furniture_colour
-		&sql.NullString{}, // furniture_detail
+		&sql.NullString{}, // detail
 	}
 }
 
@@ -168,9 +168,9 @@ func (fd *FurnitureDetail) assignValues(values ...interface{}) error {
 		fd.FurnitureColour = value.String
 	}
 	if value, ok := values[3].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field furniture_detail", values[3])
+		return fmt.Errorf("unexpected type %T for field detail", values[3])
 	} else if value.Valid {
-		fd.FurnitureDetail = value.String
+		fd.Detail = value.String
 	}
 	values = values[4:]
 	if len(values) == len(furnituredetail.ForeignKeys) {
@@ -256,8 +256,8 @@ func (fd *FurnitureDetail) String() string {
 	builder.WriteString(fmt.Sprintf("%v", fd.FurnitureAmount))
 	builder.WriteString(", furniture_colour=")
 	builder.WriteString(fd.FurnitureColour)
-	builder.WriteString(", furniture_detail=")
-	builder.WriteString(fd.FurnitureDetail)
+	builder.WriteString(", detail=")
+	builder.WriteString(fd.Detail)
 	builder.WriteByte(')')
 	return builder.String()
 }

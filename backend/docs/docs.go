@@ -3179,6 +3179,10 @@ var doc = `{
                     "description": "DateAdd holds the value of the \"date_add\" field.",
                     "type": "string"
                 },
+                "detail": {
+                    "description": "Detail holds the value of the \"detail\" field.",
+                    "type": "string"
+                },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the FurnitureDetailQuery when eager-loading is set.",
                     "type": "object",
@@ -3190,10 +3194,6 @@ var doc = `{
                 },
                 "furniture_colour": {
                     "description": "FurnitureColour holds the value of the \"furniture_colour\" field.",
-                    "type": "string"
-                },
-                "furniture_detail": {
-                    "description": "FurnitureDetail holds the value of the \"furniture_detail\" field.",
                     "type": "string"
                 },
                 "id": {
