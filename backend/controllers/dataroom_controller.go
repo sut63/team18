@@ -10,6 +10,7 @@ import (
 	"github.com/team18/app/ent/promotion"
 	"github.com/team18/app/ent/reserveroom"
 	"github.com/team18/app/ent/statusroom"
+	"github.com/team18/app/ent/typeroom"
 )
 
 // DataRoomController defines the struct for the dataroom controller
@@ -47,15 +48,45 @@ func (ctl *DataRoomController) CreateDataRoom(c *gin.Context) {
 		})
 		return
 	}
+	p, err := ctl.client.StatusRoom.
+		Query().
+		Where(statusroom.IDEQ(int(obj.StatusRoom))).
+		Only(context.Background())
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "status not found",
+		})
+		return
+	}
 
+	pr, err := ctl.client.Promotion.
+		Query().
+		Where(promotion.IDEQ(int(obj.Promotion))).
+		Only(context.Background())
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "promotion not found",
+		})
+		return
+	}
+	t, err := ctl.client.TypeRoom.
+		Query().
+		Where(typeroom.IDEQ(int(obj.TypeRoom))).
+		Only(context.Background())
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "typeroom not found",
+		})
+		return
+	}
 	d, err := ctl.client.DataRoom.
 		Create().
+		SetRoomnumber(obj.RoomNumber).
 		SetPrice(obj.Price).
 		SetRoomdetail(obj.RoomDetail).
-		SetRoomnumber(obj.RoomNumber).
-		SetPromotionID(obj.Promotion).
-		SetStatusroomID(obj.StatusRoom).
-		SetTyperoomID(obj.TypeRoom).
+		SetPromotion(pr).
+		SetStatusroom(p).
+		SetTyperoom(t).
 		Save(context.Background())
 		//fail something
 	if err != nil {
