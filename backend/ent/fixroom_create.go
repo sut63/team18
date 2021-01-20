@@ -28,6 +28,18 @@ func (frc *FixRoomCreate) SetFixDetail(s string) *FixRoomCreate {
 	return frc
 }
 
+// SetPhoneNumber sets the phone_number field.
+func (frc *FixRoomCreate) SetPhoneNumber(s string) *FixRoomCreate {
+	frc.mutation.SetPhoneNumber(s)
+	return frc
+}
+
+// SetFacebook sets the facebook field.
+func (frc *FixRoomCreate) SetFacebook(s string) *FixRoomCreate {
+	frc.mutation.SetFacebook(s)
+	return frc
+}
+
 // SetCustomerID sets the customer edge to Customer by id.
 func (frc *FixRoomCreate) SetCustomerID(id int) *FixRoomCreate {
 	frc.mutation.SetCustomerID(id)
@@ -94,6 +106,27 @@ func (frc *FixRoomCreate) Mutation() *FixRoomMutation {
 func (frc *FixRoomCreate) Save(ctx context.Context) (*FixRoom, error) {
 	if _, ok := frc.mutation.FixDetail(); !ok {
 		return nil, &ValidationError{Name: "fix_detail", err: errors.New("ent: missing required field \"fix_detail\"")}
+	}
+	if v, ok := frc.mutation.FixDetail(); ok {
+		if err := fixroom.FixDetailValidator(v); err != nil {
+			return nil, &ValidationError{Name: "fix_detail", err: fmt.Errorf("ent: validator failed for field \"fix_detail\": %w", err)}
+		}
+	}
+	if _, ok := frc.mutation.PhoneNumber(); !ok {
+		return nil, &ValidationError{Name: "phone_number", err: errors.New("ent: missing required field \"phone_number\"")}
+	}
+	if v, ok := frc.mutation.PhoneNumber(); ok {
+		if err := fixroom.PhoneNumberValidator(v); err != nil {
+			return nil, &ValidationError{Name: "phone_number", err: fmt.Errorf("ent: validator failed for field \"phone_number\": %w", err)}
+		}
+	}
+	if _, ok := frc.mutation.Facebook(); !ok {
+		return nil, &ValidationError{Name: "facebook", err: errors.New("ent: missing required field \"facebook\"")}
+	}
+	if v, ok := frc.mutation.Facebook(); ok {
+		if err := fixroom.FacebookValidator(v); err != nil {
+			return nil, &ValidationError{Name: "facebook", err: fmt.Errorf("ent: validator failed for field \"facebook\": %w", err)}
+		}
 	}
 	var (
 		err  error
@@ -162,6 +195,22 @@ func (frc *FixRoomCreate) createSpec() (*FixRoom, *sqlgraph.CreateSpec) {
 			Column: fixroom.FieldFixDetail,
 		})
 		fr.FixDetail = value
+	}
+	if value, ok := frc.mutation.PhoneNumber(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: fixroom.FieldPhoneNumber,
+		})
+		fr.PhoneNumber = value
+	}
+	if value, ok := frc.mutation.Facebook(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: fixroom.FieldFacebook,
+		})
+		fr.Facebook = value
 	}
 	if nodes := frc.mutation.CustomerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

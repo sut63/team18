@@ -21,10 +21,13 @@ type FurnitureDetailController struct {
 
 // FurnitureDetail struct
 type FurnitureDetail struct {
-	DateAdd      string
-	CounterStaff int
-	Furniture    int
-	Dataroom     int
+	DateAdd         string
+	CounterStaff    int
+	Furniture       int
+	Dataroom        int
+	FurnitureAmount int
+	FurnitureColour string
+	FurnitureDetail string
 }
 
 // CreateFurnitureDetail handles POST requests for adding furnituredetail entities
@@ -85,22 +88,29 @@ func (ctl *FurnitureDetailController) CreateFurnitureDetail(c *gin.Context) {
 		})
 	}
 
-	ch, err := ctl.client.FurnitureDetail.
+	fd, err := ctl.client.FurnitureDetail.
 		Create().
 		SetDateAdd(time).
 		SetCounterstaffs(cs).
 		SetFurnitures(fur).
 		SetRooms(dr).
+		SetFurnitureAmount(obj.FurnitureAmount).
+		SetFurnitureColour(obj.FurnitureColour).
+		SetFurnitureDetail(obj.FurnitureDetail).
 		Save(context.Background())
 
 	if err != nil {
 		c.JSON(400, gin.H{
-			"error": "Create FurnitureDetail error",
+			"error":  err,
+			"Status": false,
 		})
 		return
 	}
 
-	c.JSON(200, ch)
+	c.JSON(200, gin.H{
+		"status": true,
+		"data":   fd,
+	})
 }
 
 // GetFurnitureDetail handles GET requests to retrieve a furnituredetail entity

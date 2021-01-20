@@ -171,7 +171,9 @@ var (
 	// FixRoomsColumns holds the columns for the "fix_rooms" table.
 	FixRoomsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "fix_detail", Type: field.TypeString},
+		{Name: "fix_detail", Type: field.TypeString, Size: 50},
+		{Name: "phone_number", Type: field.TypeString},
+		{Name: "facebook", Type: field.TypeString, Size: 50},
 		{Name: "customer_id", Type: field.TypeInt, Nullable: true},
 		{Name: "room_id", Type: field.TypeInt, Nullable: true},
 		{Name: "object_id", Type: field.TypeInt, Nullable: true},
@@ -184,21 +186,21 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "fix_rooms_customers_fixs",
-				Columns: []*schema.Column{FixRoomsColumns[2]},
+				Columns: []*schema.Column{FixRoomsColumns[4]},
 
 				RefColumns: []*schema.Column{CustomersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "fix_rooms_data_rooms_fixs",
-				Columns: []*schema.Column{FixRoomsColumns[3]},
+				Columns: []*schema.Column{FixRoomsColumns[5]},
 
 				RefColumns: []*schema.Column{DataRoomsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "fix_rooms_furniture_details_fixs",
-				Columns: []*schema.Column{FixRoomsColumns[4]},
+				Columns: []*schema.Column{FixRoomsColumns[6]},
 
 				RefColumns: []*schema.Column{FurnitureDetailsColumns[0]},
 				OnDelete:   schema.SetNull,
@@ -221,6 +223,9 @@ var (
 	FurnitureDetailsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "date_add", Type: field.TypeTime},
+		{Name: "furniture_amount", Type: field.TypeInt},
+		{Name: "furniture_colour", Type: field.TypeString, Size: 10},
+		{Name: "furniture_detail", Type: field.TypeString, Size: 50},
 		{Name: "staff_id", Type: field.TypeInt, Nullable: true},
 		{Name: "room_id", Type: field.TypeInt, Nullable: true},
 		{Name: "furniture_id", Type: field.TypeInt, Nullable: true},
@@ -234,28 +239,28 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "furniture_details_counter_staffs_details",
-				Columns: []*schema.Column{FurnitureDetailsColumns[2]},
+				Columns: []*schema.Column{FurnitureDetailsColumns[5]},
 
 				RefColumns: []*schema.Column{CounterStaffsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "furniture_details_data_rooms_details",
-				Columns: []*schema.Column{FurnitureDetailsColumns[3]},
+				Columns: []*schema.Column{FurnitureDetailsColumns[6]},
 
 				RefColumns: []*schema.Column{DataRoomsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "furniture_details_furnitures_details",
-				Columns: []*schema.Column{FurnitureDetailsColumns[4]},
+				Columns: []*schema.Column{FurnitureDetailsColumns[7]},
 
 				RefColumns: []*schema.Column{FurnituresColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "furniture_details_furniture_types_details",
-				Columns: []*schema.Column{FurnitureDetailsColumns[5]},
+				Columns: []*schema.Column{FurnitureDetailsColumns[8]},
 
 				RefColumns: []*schema.Column{FurnitureTypesColumns[0]},
 				OnDelete:   schema.SetNull,

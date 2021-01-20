@@ -3116,6 +3116,10 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/ent.FixRoomEdges"
                 },
+                "facebook": {
+                    "description": "Facebook holds the value of the \"facebook\" field.",
+                    "type": "string"
+                },
                 "fix_detail": {
                     "description": "FixDetail holds the value of the \"fix_detail\" field.",
                     "type": "string"
@@ -3123,6 +3127,10 @@ var doc = `{
                 "id": {
                     "description": "ID of the ent.",
                     "type": "integer"
+                },
+                "phone_number": {
+                    "description": "PhoneNumber holds the value of the \"phone_number\" field.",
+                    "type": "string"
                 }
             }
         },
@@ -3175,6 +3183,18 @@ var doc = `{
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the FurnitureDetailQuery when eager-loading is set.",
                     "type": "object",
                     "$ref": "#/definitions/ent.FurnitureDetailEdges"
+                },
+                "furniture_amount": {
+                    "description": "FurnitureAmount holds the value of the \"furniture_amount\" field.",
+                    "type": "integer"
+                },
+                "furniture_colour": {
+                    "description": "FurnitureColour holds the value of the \"furniture_colour\" field.",
+                    "type": "string"
+                },
+                "furniture_detail": {
+                    "description": "FurnitureDetail holds the value of the \"furniture_detail\" field.",
+                    "type": "string"
                 },
                 "id": {
                     "description": "ID of the ent.",

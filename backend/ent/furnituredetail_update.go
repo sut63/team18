@@ -39,6 +39,31 @@ func (fdu *FurnitureDetailUpdate) SetDateAdd(t time.Time) *FurnitureDetailUpdate
 	return fdu
 }
 
+// SetFurnitureAmount sets the furniture_amount field.
+func (fdu *FurnitureDetailUpdate) SetFurnitureAmount(i int) *FurnitureDetailUpdate {
+	fdu.mutation.ResetFurnitureAmount()
+	fdu.mutation.SetFurnitureAmount(i)
+	return fdu
+}
+
+// AddFurnitureAmount adds i to furniture_amount.
+func (fdu *FurnitureDetailUpdate) AddFurnitureAmount(i int) *FurnitureDetailUpdate {
+	fdu.mutation.AddFurnitureAmount(i)
+	return fdu
+}
+
+// SetFurnitureColour sets the furniture_colour field.
+func (fdu *FurnitureDetailUpdate) SetFurnitureColour(s string) *FurnitureDetailUpdate {
+	fdu.mutation.SetFurnitureColour(s)
+	return fdu
+}
+
+// SetFurnitureDetail sets the furniture_detail field.
+func (fdu *FurnitureDetailUpdate) SetFurnitureDetail(s string) *FurnitureDetailUpdate {
+	fdu.mutation.SetFurnitureDetail(s)
+	return fdu
+}
+
 // AddFixIDs adds the fixs edge to FixRoom by ids.
 func (fdu *FurnitureDetailUpdate) AddFixIDs(ids ...int) *FurnitureDetailUpdate {
 	fdu.mutation.AddFixIDs(ids...)
@@ -176,6 +201,21 @@ func (fdu *FurnitureDetailUpdate) ClearRooms() *FurnitureDetailUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (fdu *FurnitureDetailUpdate) Save(ctx context.Context) (int, error) {
+	if v, ok := fdu.mutation.FurnitureAmount(); ok {
+		if err := furnituredetail.FurnitureAmountValidator(v); err != nil {
+			return 0, &ValidationError{Name: "furniture_amount", err: fmt.Errorf("ent: validator failed for field \"furniture_amount\": %w", err)}
+		}
+	}
+	if v, ok := fdu.mutation.FurnitureColour(); ok {
+		if err := furnituredetail.FurnitureColourValidator(v); err != nil {
+			return 0, &ValidationError{Name: "furniture_colour", err: fmt.Errorf("ent: validator failed for field \"furniture_colour\": %w", err)}
+		}
+	}
+	if v, ok := fdu.mutation.FurnitureDetail(); ok {
+		if err := furnituredetail.FurnitureDetailValidator(v); err != nil {
+			return 0, &ValidationError{Name: "furniture_detail", err: fmt.Errorf("ent: validator failed for field \"furniture_detail\": %w", err)}
+		}
+	}
 
 	var (
 		err      error
@@ -249,6 +289,34 @@ func (fdu *FurnitureDetailUpdate) sqlSave(ctx context.Context) (n int, err error
 			Type:   field.TypeTime,
 			Value:  value,
 			Column: furnituredetail.FieldDateAdd,
+		})
+	}
+	if value, ok := fdu.mutation.FurnitureAmount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: furnituredetail.FieldFurnitureAmount,
+		})
+	}
+	if value, ok := fdu.mutation.AddedFurnitureAmount(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: furnituredetail.FieldFurnitureAmount,
+		})
+	}
+	if value, ok := fdu.mutation.FurnitureColour(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: furnituredetail.FieldFurnitureColour,
+		})
+	}
+	if value, ok := fdu.mutation.FurnitureDetail(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: furnituredetail.FieldFurnitureDetail,
 		})
 	}
 	if nodes := fdu.mutation.RemovedFixsIDs(); len(nodes) > 0 {
@@ -453,6 +521,31 @@ func (fduo *FurnitureDetailUpdateOne) SetDateAdd(t time.Time) *FurnitureDetailUp
 	return fduo
 }
 
+// SetFurnitureAmount sets the furniture_amount field.
+func (fduo *FurnitureDetailUpdateOne) SetFurnitureAmount(i int) *FurnitureDetailUpdateOne {
+	fduo.mutation.ResetFurnitureAmount()
+	fduo.mutation.SetFurnitureAmount(i)
+	return fduo
+}
+
+// AddFurnitureAmount adds i to furniture_amount.
+func (fduo *FurnitureDetailUpdateOne) AddFurnitureAmount(i int) *FurnitureDetailUpdateOne {
+	fduo.mutation.AddFurnitureAmount(i)
+	return fduo
+}
+
+// SetFurnitureColour sets the furniture_colour field.
+func (fduo *FurnitureDetailUpdateOne) SetFurnitureColour(s string) *FurnitureDetailUpdateOne {
+	fduo.mutation.SetFurnitureColour(s)
+	return fduo
+}
+
+// SetFurnitureDetail sets the furniture_detail field.
+func (fduo *FurnitureDetailUpdateOne) SetFurnitureDetail(s string) *FurnitureDetailUpdateOne {
+	fduo.mutation.SetFurnitureDetail(s)
+	return fduo
+}
+
 // AddFixIDs adds the fixs edge to FixRoom by ids.
 func (fduo *FurnitureDetailUpdateOne) AddFixIDs(ids ...int) *FurnitureDetailUpdateOne {
 	fduo.mutation.AddFixIDs(ids...)
@@ -590,6 +683,21 @@ func (fduo *FurnitureDetailUpdateOne) ClearRooms() *FurnitureDetailUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (fduo *FurnitureDetailUpdateOne) Save(ctx context.Context) (*FurnitureDetail, error) {
+	if v, ok := fduo.mutation.FurnitureAmount(); ok {
+		if err := furnituredetail.FurnitureAmountValidator(v); err != nil {
+			return nil, &ValidationError{Name: "furniture_amount", err: fmt.Errorf("ent: validator failed for field \"furniture_amount\": %w", err)}
+		}
+	}
+	if v, ok := fduo.mutation.FurnitureColour(); ok {
+		if err := furnituredetail.FurnitureColourValidator(v); err != nil {
+			return nil, &ValidationError{Name: "furniture_colour", err: fmt.Errorf("ent: validator failed for field \"furniture_colour\": %w", err)}
+		}
+	}
+	if v, ok := fduo.mutation.FurnitureDetail(); ok {
+		if err := furnituredetail.FurnitureDetailValidator(v); err != nil {
+			return nil, &ValidationError{Name: "furniture_detail", err: fmt.Errorf("ent: validator failed for field \"furniture_detail\": %w", err)}
+		}
+	}
 
 	var (
 		err  error
@@ -661,6 +769,34 @@ func (fduo *FurnitureDetailUpdateOne) sqlSave(ctx context.Context) (fd *Furnitur
 			Type:   field.TypeTime,
 			Value:  value,
 			Column: furnituredetail.FieldDateAdd,
+		})
+	}
+	if value, ok := fduo.mutation.FurnitureAmount(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: furnituredetail.FieldFurnitureAmount,
+		})
+	}
+	if value, ok := fduo.mutation.AddedFurnitureAmount(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: furnituredetail.FieldFurnitureAmount,
+		})
+	}
+	if value, ok := fduo.mutation.FurnitureColour(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: furnituredetail.FieldFurnitureColour,
+		})
+	}
+	if value, ok := fduo.mutation.FurnitureDetail(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: furnituredetail.FieldFurnitureDetail,
 		})
 	}
 	if nodes := fduo.mutation.RemovedFixsIDs(); len(nodes) > 0 {

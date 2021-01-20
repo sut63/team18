@@ -15,6 +15,9 @@ type FurnitureDetail struct {
 func (FurnitureDetail) Fields() []ent.Field {
 	return []ent.Field{
 		field.Time("date_add"),
+		field.Int("furniture_amount").Max(10).Positive(),
+		field.String("furniture_colour").MaxLen(10),
+		field.String("furniture_detail").MaxLen(50),
 	}
 }
 
