@@ -98,6 +98,20 @@ func FixDetail(v string) predicate.FixRoom {
 	})
 }
 
+// PhoneNumber applies equality check predicate on the "phone_number" field. It's identical to PhoneNumberEQ.
+func PhoneNumber(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// Facebook applies equality check predicate on the "facebook" field. It's identical to FacebookEQ.
+func Facebook(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldFacebook), v))
+	})
+}
+
 // FixDetailEQ applies the EQ predicate on the "fix_detail" field.
 func FixDetailEQ(v string) predicate.FixRoom {
 	return predicate.FixRoom(func(s *sql.Selector) {
@@ -206,6 +220,228 @@ func FixDetailEqualFold(v string) predicate.FixRoom {
 func FixDetailContainsFold(v string) predicate.FixRoom {
 	return predicate.FixRoom(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldFixDetail), v))
+	})
+}
+
+// PhoneNumberEQ applies the EQ predicate on the "phone_number" field.
+func PhoneNumberEQ(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberNEQ applies the NEQ predicate on the "phone_number" field.
+func PhoneNumberNEQ(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberIn applies the In predicate on the "phone_number" field.
+func PhoneNumberIn(vs ...string) predicate.FixRoom {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FixRoom(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldPhoneNumber), v...))
+	})
+}
+
+// PhoneNumberNotIn applies the NotIn predicate on the "phone_number" field.
+func PhoneNumberNotIn(vs ...string) predicate.FixRoom {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FixRoom(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldPhoneNumber), v...))
+	})
+}
+
+// PhoneNumberGT applies the GT predicate on the "phone_number" field.
+func PhoneNumberGT(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberGTE applies the GTE predicate on the "phone_number" field.
+func PhoneNumberGTE(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberLT applies the LT predicate on the "phone_number" field.
+func PhoneNumberLT(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberLTE applies the LTE predicate on the "phone_number" field.
+func PhoneNumberLTE(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberContains applies the Contains predicate on the "phone_number" field.
+func PhoneNumberContains(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberHasPrefix applies the HasPrefix predicate on the "phone_number" field.
+func PhoneNumberHasPrefix(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberHasSuffix applies the HasSuffix predicate on the "phone_number" field.
+func PhoneNumberHasSuffix(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberEqualFold applies the EqualFold predicate on the "phone_number" field.
+func PhoneNumberEqualFold(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// PhoneNumberContainsFold applies the ContainsFold predicate on the "phone_number" field.
+func PhoneNumberContainsFold(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldPhoneNumber), v))
+	})
+}
+
+// FacebookEQ applies the EQ predicate on the "facebook" field.
+func FacebookEQ(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldFacebook), v))
+	})
+}
+
+// FacebookNEQ applies the NEQ predicate on the "facebook" field.
+func FacebookNEQ(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldFacebook), v))
+	})
+}
+
+// FacebookIn applies the In predicate on the "facebook" field.
+func FacebookIn(vs ...string) predicate.FixRoom {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FixRoom(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldFacebook), v...))
+	})
+}
+
+// FacebookNotIn applies the NotIn predicate on the "facebook" field.
+func FacebookNotIn(vs ...string) predicate.FixRoom {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.FixRoom(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldFacebook), v...))
+	})
+}
+
+// FacebookGT applies the GT predicate on the "facebook" field.
+func FacebookGT(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldFacebook), v))
+	})
+}
+
+// FacebookGTE applies the GTE predicate on the "facebook" field.
+func FacebookGTE(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldFacebook), v))
+	})
+}
+
+// FacebookLT applies the LT predicate on the "facebook" field.
+func FacebookLT(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldFacebook), v))
+	})
+}
+
+// FacebookLTE applies the LTE predicate on the "facebook" field.
+func FacebookLTE(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldFacebook), v))
+	})
+}
+
+// FacebookContains applies the Contains predicate on the "facebook" field.
+func FacebookContains(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldFacebook), v))
+	})
+}
+
+// FacebookHasPrefix applies the HasPrefix predicate on the "facebook" field.
+func FacebookHasPrefix(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldFacebook), v))
+	})
+}
+
+// FacebookHasSuffix applies the HasSuffix predicate on the "facebook" field.
+func FacebookHasSuffix(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldFacebook), v))
+	})
+}
+
+// FacebookEqualFold applies the EqualFold predicate on the "facebook" field.
+func FacebookEqualFold(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldFacebook), v))
+	})
+}
+
+// FacebookContainsFold applies the ContainsFold predicate on the "facebook" field.
+func FacebookContainsFold(v string) predicate.FixRoom {
+	return predicate.FixRoom(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldFacebook), v))
 	})
 }
 

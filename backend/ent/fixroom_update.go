@@ -36,6 +36,18 @@ func (fru *FixRoomUpdate) SetFixDetail(s string) *FixRoomUpdate {
 	return fru
 }
 
+// SetPhoneNumber sets the phone_number field.
+func (fru *FixRoomUpdate) SetPhoneNumber(s string) *FixRoomUpdate {
+	fru.mutation.SetPhoneNumber(s)
+	return fru
+}
+
+// SetFacebook sets the facebook field.
+func (fru *FixRoomUpdate) SetFacebook(s string) *FixRoomUpdate {
+	fru.mutation.SetFacebook(s)
+	return fru
+}
+
 // SetCustomerID sets the customer edge to Customer by id.
 func (fru *FixRoomUpdate) SetCustomerID(id int) *FixRoomUpdate {
 	fru.mutation.SetCustomerID(id)
@@ -118,6 +130,21 @@ func (fru *FixRoomUpdate) ClearRoom() *FixRoomUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (fru *FixRoomUpdate) Save(ctx context.Context) (int, error) {
+	if v, ok := fru.mutation.FixDetail(); ok {
+		if err := fixroom.FixDetailValidator(v); err != nil {
+			return 0, &ValidationError{Name: "fix_detail", err: fmt.Errorf("ent: validator failed for field \"fix_detail\": %w", err)}
+		}
+	}
+	if v, ok := fru.mutation.PhoneNumber(); ok {
+		if err := fixroom.PhoneNumberValidator(v); err != nil {
+			return 0, &ValidationError{Name: "phone_number", err: fmt.Errorf("ent: validator failed for field \"phone_number\": %w", err)}
+		}
+	}
+	if v, ok := fru.mutation.Facebook(); ok {
+		if err := fixroom.FacebookValidator(v); err != nil {
+			return 0, &ValidationError{Name: "facebook", err: fmt.Errorf("ent: validator failed for field \"facebook\": %w", err)}
+		}
+	}
 
 	var (
 		err      error
@@ -191,6 +218,20 @@ func (fru *FixRoomUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeString,
 			Value:  value,
 			Column: fixroom.FieldFixDetail,
+		})
+	}
+	if value, ok := fru.mutation.PhoneNumber(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: fixroom.FieldPhoneNumber,
+		})
+	}
+	if value, ok := fru.mutation.Facebook(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: fixroom.FieldFacebook,
 		})
 	}
 	if fru.mutation.CustomerCleared() {
@@ -322,6 +363,18 @@ func (fruo *FixRoomUpdateOne) SetFixDetail(s string) *FixRoomUpdateOne {
 	return fruo
 }
 
+// SetPhoneNumber sets the phone_number field.
+func (fruo *FixRoomUpdateOne) SetPhoneNumber(s string) *FixRoomUpdateOne {
+	fruo.mutation.SetPhoneNumber(s)
+	return fruo
+}
+
+// SetFacebook sets the facebook field.
+func (fruo *FixRoomUpdateOne) SetFacebook(s string) *FixRoomUpdateOne {
+	fruo.mutation.SetFacebook(s)
+	return fruo
+}
+
 // SetCustomerID sets the customer edge to Customer by id.
 func (fruo *FixRoomUpdateOne) SetCustomerID(id int) *FixRoomUpdateOne {
 	fruo.mutation.SetCustomerID(id)
@@ -404,6 +457,21 @@ func (fruo *FixRoomUpdateOne) ClearRoom() *FixRoomUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (fruo *FixRoomUpdateOne) Save(ctx context.Context) (*FixRoom, error) {
+	if v, ok := fruo.mutation.FixDetail(); ok {
+		if err := fixroom.FixDetailValidator(v); err != nil {
+			return nil, &ValidationError{Name: "fix_detail", err: fmt.Errorf("ent: validator failed for field \"fix_detail\": %w", err)}
+		}
+	}
+	if v, ok := fruo.mutation.PhoneNumber(); ok {
+		if err := fixroom.PhoneNumberValidator(v); err != nil {
+			return nil, &ValidationError{Name: "phone_number", err: fmt.Errorf("ent: validator failed for field \"phone_number\": %w", err)}
+		}
+	}
+	if v, ok := fruo.mutation.Facebook(); ok {
+		if err := fixroom.FacebookValidator(v); err != nil {
+			return nil, &ValidationError{Name: "facebook", err: fmt.Errorf("ent: validator failed for field \"facebook\": %w", err)}
+		}
+	}
 
 	var (
 		err  error
@@ -475,6 +543,20 @@ func (fruo *FixRoomUpdateOne) sqlSave(ctx context.Context) (fr *FixRoom, err err
 			Type:   field.TypeString,
 			Value:  value,
 			Column: fixroom.FieldFixDetail,
+		})
+	}
+	if value, ok := fruo.mutation.PhoneNumber(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: fixroom.FieldPhoneNumber,
+		})
+	}
+	if value, ok := fruo.mutation.Facebook(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: fixroom.FieldFacebook,
 		})
 	}
 	if fruo.mutation.CustomerCleared() {

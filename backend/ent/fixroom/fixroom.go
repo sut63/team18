@@ -9,6 +9,10 @@ const (
 	FieldID = "id"
 	// FieldFixDetail holds the string denoting the fix_detail field in the database.
 	FieldFixDetail = "fix_detail"
+	// FieldPhoneNumber holds the string denoting the phone_number field in the database.
+	FieldPhoneNumber = "phone_number"
+	// FieldFacebook holds the string denoting the facebook field in the database.
+	FieldFacebook = "facebook"
 
 	// EdgeCustomer holds the string denoting the customer edge name in mutations.
 	EdgeCustomer = "customer"
@@ -46,6 +50,8 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldFixDetail,
+	FieldPhoneNumber,
+	FieldFacebook,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the FixRoom type.
@@ -54,3 +60,12 @@ var ForeignKeys = []string{
 	"room_id",
 	"object_id",
 }
+
+var (
+	// FixDetailValidator is a validator for the "fix_detail" field. It is called by the builders before save.
+	FixDetailValidator func(string) error
+	// PhoneNumberValidator is a validator for the "phone_number" field. It is called by the builders before save.
+	PhoneNumberValidator func(string) error
+	// FacebookValidator is a validator for the "facebook" field. It is called by the builders before save.
+	FacebookValidator func(string) error
+)

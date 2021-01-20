@@ -25,6 +25,8 @@ type FixRoom struct {
 	Customer        int
 	FurnitureDetail int
 	Room            int
+	Facebook        string
+	Tel             string
 }
 
 // CreateFixRoom handles POST requests for adding fixroom entities
@@ -86,10 +88,14 @@ func (ctl *FixRoomController) CreateFixRoom(c *gin.Context) {
 		SetCustomer(cus).
 		SetFurnitureDetail(fur).
 		SetRoom(r).
+		SetFacebook(obj.Facebook).
+		SetPhoneNumber(obj.Tel).
 		Save(context.Background())
+
 	if err != nil {
 		c.JSON(400, gin.H{
-			"error": "saving failed",
+			"error":  err,
+			"Status": false,
 		})
 		return
 	}
