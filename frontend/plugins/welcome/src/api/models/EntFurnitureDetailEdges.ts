@@ -86,7 +86,7 @@ export function EntFurnitureDetailEdgesFromJSONTyped(json: any, ignoreDiscrimina
         
         'counterstaffs': !exists(json, 'counterstaffs') ? undefined : EntCounterStaffFromJSON(json['counterstaffs']),
         'fixs': !exists(json, 'fixs') ? undefined : ((json['fixs'] as Array<any>).map(EntFixRoomFromJSON)),
-        'furnitures': !exists(json, 'furnitures') ? undefined : EntFurnitureFromJSON(json['furnitures']),
+        'furnitures': !exists(json, 'Furnitures') ? undefined : EntFurnitureFromJSON(json['Furnitures']),
         'rooms': !exists(json, 'rooms') ? undefined : EntDataRoomFromJSON(json['rooms']),
         'types': !exists(json, 'types') ? undefined : EntFurnitureTypeFromJSON(json['types']),
     };
@@ -103,7 +103,7 @@ export function EntFurnitureDetailEdgesToJSON(value?: EntFurnitureDetailEdges | 
         
         'counterstaffs': EntCounterStaffToJSON(value.counterstaffs),
         'fixs': value.fixs === undefined ? undefined : ((value.fixs as Array<any>).map(EntFixRoomToJSON)),
-        'furnitures': EntFurnitureToJSON(value.furnitures),
+        'Furnitures': EntFurnitureToJSON(value.furnitures),
         'rooms': EntDataRoomToJSON(value.rooms),
         'types': EntFurnitureTypeToJSON(value.types),
     };
