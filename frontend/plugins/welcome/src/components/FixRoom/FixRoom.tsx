@@ -62,6 +62,8 @@ interface FixRoom {
   FurnitureDetail: number;
   Customer: number;
   FixDetail: string;
+  Tel: string;
+  Facebook: string;
   // create_by: number;
 }
 
@@ -103,6 +105,60 @@ const FixRoom: FC<{}> = () => {
   const [open, setOpen] = React.useState(false);
   const [fail, setFail] = React.useState(false);
 
+   // สำหรับตรวยสอบความถูกต้อง
+   const [FixDetailError, setFixDetailError] = React.useState('');
+   const [PhoneNumberError, setPhoneNumberError] = React.useState('');
+   const [FacebookError, setFacebookError] = React.useState('');
+   const [errors, setError] = React.useState(String);
+  
+  //validate
+  const validatePhoneNumber = (val: string) => {
+    return val.match("[0]\\d{9}") && val.length <= 10;
+  }
+
+  const validateFacebook = (val: string) => {
+    return val.length > 50 ? false : true;
+  }
+
+  // ฟังก์ชั่นสำหรับ validate รายละเอียดอุปกรณ์ที่ชำรุด
+  const validateFixDetail = (val: string) => {
+    return val.length > 50 ? false : true;
+  }
+
+  // checkPattern
+  const checkPattern  = (id: string, value: string) => {
+    switch(id) { 
+      case 'Facebook':
+        validateFacebook(value) ? setFacebookError('') : setFacebookError('ห้ามเกิน 50 ตัวอักษร');
+        return;
+      case 'Tel': 
+        validatePhoneNumber(value) ? setPhoneNumberError('') : setPhoneNumberError('Ex 0850583300');
+        return;
+      case 'FixDetail':
+        validateFixDetail(value) ? setFixDetailError('') : setFixDetailError('ห้ามเกิน 50 ตัวอักษร');
+        return;
+      default:
+        return;
+    }
+  }
+
+  //กำหนดข้อความ error
+  const checkerror = (s :string) => {
+    switch(s) {
+      case 'fix_detail':
+        setError("จำนวนตัวอักษรเกิน 50 ตัวอักษร")
+        return;
+      case 'phone_number':
+        setError("รูปแบบเบอร์โทรศัพท์ไม่ถูกต้อง")
+        return;
+      case 'facebook':
+        setError("จำนวนตัวอักษรเกิน 50 ตัวอักษร")
+        return;
+      default:
+        setError("กรุณกรอกข้อมูลให้ครบถ้วน")
+        return;
+    }
+  }; 
   // Lifecycle Hooks
   useEffect(() => {
     getCustomer();
@@ -126,6 +182,8 @@ const FixRoom: FC<{}> = () => {
     const { value } = event.target;
     setFixRoom({ ...FixRoom, [name]: value });
     setDIds(event.target.value);
+    const validateValue = value.toString() 
+    checkPattern(name, validateValue)
     console.log(FixRoom);
   };
 
@@ -163,11 +221,12 @@ const FixRoom: FC<{}> = () => {
     fetch(apiUrl, requestOptions)
       .then(response => response.json())
       .then(data => {
-        console.log(data.status);
+        console.log(data);
         if (data.status === true) {
           clear();
           setOpen(true);
         } else {
+          checkerror(data.error.Name);
           setFail(true);
         }
       });
@@ -254,14 +313,51 @@ const FixRoom: FC<{}> = () => {
             <Grid item xs={9}>
               <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
-                  multiline
-                  rows={4}
+                  error = {FixDetailError ? true : false}
+                  helperText={FixDetailError}
                   name="FixDetail"
+                  variant="outlined"
                   value={FixRoom.FixDetail || ''}
                   onChange={handleChange}
                 />
               </FormControl>
             </Grid>
+
+            <Grid item xs={3}>
+              <div className={classes.paper}>Phone number</div>
+            </Grid>
+            <Grid item xs={9}>
+            <FormControl variant="outlined" className={classes.formControl}>
+                <TextField
+                  error = {PhoneNumberError ? true : false}
+                  helperText={PhoneNumberError}
+                  name="Tel"
+                  label="เบอร์โทรศัพท์"
+                  variant="outlined"
+                  value={FixRoom.Tel || ''}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={3}>
+              <div className={classes.paper}>Facebook</div>
+            </Grid>
+            <Grid item xs={9}>
+            <FormControl variant="outlined" className={classes.formControl}>
+                <TextField
+                  error = {FacebookError ? true : false}
+                  helperText={FacebookError}
+                  name="Facebook"
+                  label="Facebook"
+                  variant="outlined"
+                  value={FixRoom.Facebook || ''}
+                  onChange={handleChange}
+                />
+              </FormControl>
+            </Grid>
+
+
             <Grid item xs={3}></Grid>
             <Grid item xs={9}>
               <Button
@@ -285,7 +381,7 @@ const FixRoom: FC<{}> = () => {
 
           <Snackbar open={fail} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="error">
-              This is a error message!
+              {errors}
         </Alert>
           </Snackbar>
 
