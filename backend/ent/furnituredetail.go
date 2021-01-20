@@ -22,6 +22,12 @@ type FurnitureDetail struct {
 	ID int `json:"id,omitempty"`
 	// DateAdd holds the value of the "date_add" field.
 	DateAdd time.Time `json:"date_add,omitempty"`
+	// FurnitureAmount holds the value of the "furniture_amount" field.
+	FurnitureAmount int `json:"furniture_amount,omitempty"`
+	// FurnitureColour holds the value of the "furniture_colour" field.
+	FurnitureColour string `json:"furniture_colour,omitempty"`
+	// FurnitureDetail holds the value of the "furniture_detail" field.
+	FurnitureDetail string `json:"furniture_detail,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the FurnitureDetailQuery when eager-loading is set.
 	Edges        FurnitureDetailEdges `json:"edges"`
@@ -116,8 +122,11 @@ func (e FurnitureDetailEdges) RoomsOrErr() (*DataRoom, error) {
 // scanValues returns the types for scanning values from sql.Rows.
 func (*FurnitureDetail) scanValues() []interface{} {
 	return []interface{}{
-		&sql.NullInt64{}, // id
-		&sql.NullTime{},  // date_add
+		&sql.NullInt64{},  // id
+		&sql.NullTime{},   // date_add
+		&sql.NullInt64{},  // furniture_amount
+		&sql.NullString{}, // furniture_colour
+		&sql.NullString{}, // furniture_detail
 	}
 }
 
@@ -148,7 +157,22 @@ func (fd *FurnitureDetail) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		fd.DateAdd = value.Time
 	}
-	values = values[1:]
+	if value, ok := values[1].(*sql.NullInt64); !ok {
+		return fmt.Errorf("unexpected type %T for field furniture_amount", values[1])
+	} else if value.Valid {
+		fd.FurnitureAmount = int(value.Int64)
+	}
+	if value, ok := values[2].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field furniture_colour", values[2])
+	} else if value.Valid {
+		fd.FurnitureColour = value.String
+	}
+	if value, ok := values[3].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field furniture_detail", values[3])
+	} else if value.Valid {
+		fd.FurnitureDetail = value.String
+	}
+	values = values[4:]
 	if len(values) == len(furnituredetail.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field staff_id", value)
@@ -228,6 +252,12 @@ func (fd *FurnitureDetail) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v", fd.ID))
 	builder.WriteString(", date_add=")
 	builder.WriteString(fd.DateAdd.Format(time.ANSIC))
+	builder.WriteString(", furniture_amount=")
+	builder.WriteString(fmt.Sprintf("%v", fd.FurnitureAmount))
+	builder.WriteString(", furniture_colour=")
+	builder.WriteString(fd.FurnitureColour)
+	builder.WriteString(", furniture_detail=")
+	builder.WriteString(fd.FurnitureDetail)
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -3184,6 +3184,18 @@ var doc = `{
                     "type": "object",
                     "$ref": "#/definitions/ent.FurnitureDetailEdges"
                 },
+                "furniture_amount": {
+                    "description": "FurnitureAmount holds the value of the \"furniture_amount\" field.",
+                    "type": "integer"
+                },
+                "furniture_colour": {
+                    "description": "FurnitureColour holds the value of the \"furniture_colour\" field.",
+                    "type": "string"
+                },
+                "furniture_detail": {
+                    "description": "FurnitureDetail holds the value of the \"furniture_detail\" field.",
+                    "type": "string"
+                },
                 "id": {
                     "description": "ID of the ent.",
                     "type": "integer"

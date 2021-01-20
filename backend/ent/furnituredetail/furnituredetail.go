@@ -9,6 +9,12 @@ const (
 	FieldID = "id"
 	// FieldDateAdd holds the string denoting the date_add field in the database.
 	FieldDateAdd = "date_add"
+	// FieldFurnitureAmount holds the string denoting the furniture_amount field in the database.
+	FieldFurnitureAmount = "furniture_amount"
+	// FieldFurnitureColour holds the string denoting the furniture_colour field in the database.
+	FieldFurnitureColour = "furniture_colour"
+	// FieldFurnitureDetail holds the string denoting the furniture_detail field in the database.
+	FieldFurnitureDetail = "furniture_detail"
 
 	// EdgeFixs holds the string denoting the fixs edge name in mutations.
 	EdgeFixs = "fixs"
@@ -64,6 +70,9 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldDateAdd,
+	FieldFurnitureAmount,
+	FieldFurnitureColour,
+	FieldFurnitureDetail,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the FurnitureDetail type.
@@ -73,3 +82,12 @@ var ForeignKeys = []string{
 	"furniture_id",
 	"type_id",
 }
+
+var (
+	// FurnitureAmountValidator is a validator for the "furniture_amount" field. It is called by the builders before save.
+	FurnitureAmountValidator func(int) error
+	// FurnitureColourValidator is a validator for the "furniture_colour" field. It is called by the builders before save.
+	FurnitureColourValidator func(string) error
+	// FurnitureDetailValidator is a validator for the "furniture_detail" field. It is called by the builders before save.
+	FurnitureDetailValidator func(string) error
+)
