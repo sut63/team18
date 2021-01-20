@@ -225,7 +225,7 @@ var (
 		{Name: "date_add", Type: field.TypeTime},
 		{Name: "furniture_amount", Type: field.TypeInt},
 		{Name: "furniture_colour", Type: field.TypeString, Size: 10},
-		{Name: "furniture_detail", Type: field.TypeString, Size: 50},
+		{Name: "detail", Type: field.TypeString, Size: 50},
 		{Name: "staff_id", Type: field.TypeInt, Nullable: true},
 		{Name: "room_id", Type: field.TypeInt, Nullable: true},
 		{Name: "furniture_id", Type: field.TypeInt, Nullable: true},

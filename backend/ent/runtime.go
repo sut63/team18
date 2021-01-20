@@ -182,10 +182,10 @@ func init() {
 	furnituredetailDescFurnitureColour := furnituredetailFields[2].Descriptor()
 	// furnituredetail.FurnitureColourValidator is a validator for the "furniture_colour" field. It is called by the builders before save.
 	furnituredetail.FurnitureColourValidator = furnituredetailDescFurnitureColour.Validators[0].(func(string) error)
-	// furnituredetailDescFurnitureDetail is the schema descriptor for furniture_detail field.
-	furnituredetailDescFurnitureDetail := furnituredetailFields[3].Descriptor()
-	// furnituredetail.FurnitureDetailValidator is a validator for the "furniture_detail" field. It is called by the builders before save.
-	furnituredetail.FurnitureDetailValidator = furnituredetailDescFurnitureDetail.Validators[0].(func(string) error)
+	// furnituredetailDescDetail is the schema descriptor for detail field.
+	furnituredetailDescDetail := furnituredetailFields[3].Descriptor()
+	// furnituredetail.DetailValidator is a validator for the "detail" field. It is called by the builders before save.
+	furnituredetail.DetailValidator = furnituredetailDescDetail.Validators[0].(func(string) error)
 	promotionFields := schema.Promotion{}.Fields()
 	_ = promotionFields
 	// promotionDescPromotionName is the schema descriptor for promotion_name field.

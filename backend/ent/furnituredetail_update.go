@@ -58,9 +58,9 @@ func (fdu *FurnitureDetailUpdate) SetFurnitureColour(s string) *FurnitureDetailU
 	return fdu
 }
 
-// SetFurnitureDetail sets the furniture_detail field.
-func (fdu *FurnitureDetailUpdate) SetFurnitureDetail(s string) *FurnitureDetailUpdate {
-	fdu.mutation.SetFurnitureDetail(s)
+// SetDetail sets the detail field.
+func (fdu *FurnitureDetailUpdate) SetDetail(s string) *FurnitureDetailUpdate {
+	fdu.mutation.SetDetail(s)
 	return fdu
 }
 
@@ -211,9 +211,9 @@ func (fdu *FurnitureDetailUpdate) Save(ctx context.Context) (int, error) {
 			return 0, &ValidationError{Name: "furniture_colour", err: fmt.Errorf("ent: validator failed for field \"furniture_colour\": %w", err)}
 		}
 	}
-	if v, ok := fdu.mutation.FurnitureDetail(); ok {
-		if err := furnituredetail.FurnitureDetailValidator(v); err != nil {
-			return 0, &ValidationError{Name: "furniture_detail", err: fmt.Errorf("ent: validator failed for field \"furniture_detail\": %w", err)}
+	if v, ok := fdu.mutation.Detail(); ok {
+		if err := furnituredetail.DetailValidator(v); err != nil {
+			return 0, &ValidationError{Name: "detail", err: fmt.Errorf("ent: validator failed for field \"detail\": %w", err)}
 		}
 	}
 
@@ -312,11 +312,11 @@ func (fdu *FurnitureDetailUpdate) sqlSave(ctx context.Context) (n int, err error
 			Column: furnituredetail.FieldFurnitureColour,
 		})
 	}
-	if value, ok := fdu.mutation.FurnitureDetail(); ok {
+	if value, ok := fdu.mutation.Detail(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: furnituredetail.FieldFurnitureDetail,
+			Column: furnituredetail.FieldDetail,
 		})
 	}
 	if nodes := fdu.mutation.RemovedFixsIDs(); len(nodes) > 0 {
@@ -540,9 +540,9 @@ func (fduo *FurnitureDetailUpdateOne) SetFurnitureColour(s string) *FurnitureDet
 	return fduo
 }
 
-// SetFurnitureDetail sets the furniture_detail field.
-func (fduo *FurnitureDetailUpdateOne) SetFurnitureDetail(s string) *FurnitureDetailUpdateOne {
-	fduo.mutation.SetFurnitureDetail(s)
+// SetDetail sets the detail field.
+func (fduo *FurnitureDetailUpdateOne) SetDetail(s string) *FurnitureDetailUpdateOne {
+	fduo.mutation.SetDetail(s)
 	return fduo
 }
 
@@ -693,9 +693,9 @@ func (fduo *FurnitureDetailUpdateOne) Save(ctx context.Context) (*FurnitureDetai
 			return nil, &ValidationError{Name: "furniture_colour", err: fmt.Errorf("ent: validator failed for field \"furniture_colour\": %w", err)}
 		}
 	}
-	if v, ok := fduo.mutation.FurnitureDetail(); ok {
-		if err := furnituredetail.FurnitureDetailValidator(v); err != nil {
-			return nil, &ValidationError{Name: "furniture_detail", err: fmt.Errorf("ent: validator failed for field \"furniture_detail\": %w", err)}
+	if v, ok := fduo.mutation.Detail(); ok {
+		if err := furnituredetail.DetailValidator(v); err != nil {
+			return nil, &ValidationError{Name: "detail", err: fmt.Errorf("ent: validator failed for field \"detail\": %w", err)}
 		}
 	}
 
@@ -792,11 +792,11 @@ func (fduo *FurnitureDetailUpdateOne) sqlSave(ctx context.Context) (fd *Furnitur
 			Column: furnituredetail.FieldFurnitureColour,
 		})
 	}
-	if value, ok := fduo.mutation.FurnitureDetail(); ok {
+	if value, ok := fduo.mutation.Detail(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: furnituredetail.FieldFurnitureDetail,
+			Column: furnituredetail.FieldDetail,
 		})
 	}
 	if nodes := fduo.mutation.RemovedFixsIDs(); len(nodes) > 0 {

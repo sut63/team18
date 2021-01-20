@@ -114,10 +114,10 @@ func FurnitureColour(v string) predicate.FurnitureDetail {
 	})
 }
 
-// FurnitureDetail applies equality check predicate on the "furniture_detail" field. It's identical to FurnitureDetailEQ.
-func FurnitureDetail(v string) predicate.FurnitureDetail {
+// Detail applies equality check predicate on the "detail" field. It's identical to DetailEQ.
+func Detail(v string) predicate.FurnitureDetail {
 	return predicate.FurnitureDetail(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldFurnitureDetail), v))
+		s.Where(sql.EQ(s.C(FieldDetail), v))
 	})
 }
 
@@ -384,22 +384,22 @@ func FurnitureColourContainsFold(v string) predicate.FurnitureDetail {
 	})
 }
 
-// FurnitureDetailEQ applies the EQ predicate on the "furniture_detail" field.
-func FurnitureDetailEQ(v string) predicate.FurnitureDetail {
+// DetailEQ applies the EQ predicate on the "detail" field.
+func DetailEQ(v string) predicate.FurnitureDetail {
 	return predicate.FurnitureDetail(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldFurnitureDetail), v))
+		s.Where(sql.EQ(s.C(FieldDetail), v))
 	})
 }
 
-// FurnitureDetailNEQ applies the NEQ predicate on the "furniture_detail" field.
-func FurnitureDetailNEQ(v string) predicate.FurnitureDetail {
+// DetailNEQ applies the NEQ predicate on the "detail" field.
+func DetailNEQ(v string) predicate.FurnitureDetail {
 	return predicate.FurnitureDetail(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldFurnitureDetail), v))
+		s.Where(sql.NEQ(s.C(FieldDetail), v))
 	})
 }
 
-// FurnitureDetailIn applies the In predicate on the "furniture_detail" field.
-func FurnitureDetailIn(vs ...string) predicate.FurnitureDetail {
+// DetailIn applies the In predicate on the "detail" field.
+func DetailIn(vs ...string) predicate.FurnitureDetail {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -411,12 +411,12 @@ func FurnitureDetailIn(vs ...string) predicate.FurnitureDetail {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldFurnitureDetail), v...))
+		s.Where(sql.In(s.C(FieldDetail), v...))
 	})
 }
 
-// FurnitureDetailNotIn applies the NotIn predicate on the "furniture_detail" field.
-func FurnitureDetailNotIn(vs ...string) predicate.FurnitureDetail {
+// DetailNotIn applies the NotIn predicate on the "detail" field.
+func DetailNotIn(vs ...string) predicate.FurnitureDetail {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -428,70 +428,70 @@ func FurnitureDetailNotIn(vs ...string) predicate.FurnitureDetail {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldFurnitureDetail), v...))
+		s.Where(sql.NotIn(s.C(FieldDetail), v...))
 	})
 }
 
-// FurnitureDetailGT applies the GT predicate on the "furniture_detail" field.
-func FurnitureDetailGT(v string) predicate.FurnitureDetail {
+// DetailGT applies the GT predicate on the "detail" field.
+func DetailGT(v string) predicate.FurnitureDetail {
 	return predicate.FurnitureDetail(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldFurnitureDetail), v))
+		s.Where(sql.GT(s.C(FieldDetail), v))
 	})
 }
 
-// FurnitureDetailGTE applies the GTE predicate on the "furniture_detail" field.
-func FurnitureDetailGTE(v string) predicate.FurnitureDetail {
+// DetailGTE applies the GTE predicate on the "detail" field.
+func DetailGTE(v string) predicate.FurnitureDetail {
 	return predicate.FurnitureDetail(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldFurnitureDetail), v))
+		s.Where(sql.GTE(s.C(FieldDetail), v))
 	})
 }
 
-// FurnitureDetailLT applies the LT predicate on the "furniture_detail" field.
-func FurnitureDetailLT(v string) predicate.FurnitureDetail {
+// DetailLT applies the LT predicate on the "detail" field.
+func DetailLT(v string) predicate.FurnitureDetail {
 	return predicate.FurnitureDetail(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldFurnitureDetail), v))
+		s.Where(sql.LT(s.C(FieldDetail), v))
 	})
 }
 
-// FurnitureDetailLTE applies the LTE predicate on the "furniture_detail" field.
-func FurnitureDetailLTE(v string) predicate.FurnitureDetail {
+// DetailLTE applies the LTE predicate on the "detail" field.
+func DetailLTE(v string) predicate.FurnitureDetail {
 	return predicate.FurnitureDetail(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldFurnitureDetail), v))
+		s.Where(sql.LTE(s.C(FieldDetail), v))
 	})
 }
 
-// FurnitureDetailContains applies the Contains predicate on the "furniture_detail" field.
-func FurnitureDetailContains(v string) predicate.FurnitureDetail {
+// DetailContains applies the Contains predicate on the "detail" field.
+func DetailContains(v string) predicate.FurnitureDetail {
 	return predicate.FurnitureDetail(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldFurnitureDetail), v))
+		s.Where(sql.Contains(s.C(FieldDetail), v))
 	})
 }
 
-// FurnitureDetailHasPrefix applies the HasPrefix predicate on the "furniture_detail" field.
-func FurnitureDetailHasPrefix(v string) predicate.FurnitureDetail {
+// DetailHasPrefix applies the HasPrefix predicate on the "detail" field.
+func DetailHasPrefix(v string) predicate.FurnitureDetail {
 	return predicate.FurnitureDetail(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldFurnitureDetail), v))
+		s.Where(sql.HasPrefix(s.C(FieldDetail), v))
 	})
 }
 
-// FurnitureDetailHasSuffix applies the HasSuffix predicate on the "furniture_detail" field.
-func FurnitureDetailHasSuffix(v string) predicate.FurnitureDetail {
+// DetailHasSuffix applies the HasSuffix predicate on the "detail" field.
+func DetailHasSuffix(v string) predicate.FurnitureDetail {
 	return predicate.FurnitureDetail(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldFurnitureDetail), v))
+		s.Where(sql.HasSuffix(s.C(FieldDetail), v))
 	})
 }
 
-// FurnitureDetailEqualFold applies the EqualFold predicate on the "furniture_detail" field.
-func FurnitureDetailEqualFold(v string) predicate.FurnitureDetail {
+// DetailEqualFold applies the EqualFold predicate on the "detail" field.
+func DetailEqualFold(v string) predicate.FurnitureDetail {
 	return predicate.FurnitureDetail(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldFurnitureDetail), v))
+		s.Where(sql.EqualFold(s.C(FieldDetail), v))
 	})
 }
 
-// FurnitureDetailContainsFold applies the ContainsFold predicate on the "furniture_detail" field.
-func FurnitureDetailContainsFold(v string) predicate.FurnitureDetail {
+// DetailContainsFold applies the ContainsFold predicate on the "detail" field.
+func DetailContainsFold(v string) predicate.FurnitureDetail {
 	return predicate.FurnitureDetail(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldFurnitureDetail), v))
+		s.Where(sql.ContainsFold(s.C(FieldDetail), v))
 	})
 }
 

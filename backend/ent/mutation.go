@@ -4428,7 +4428,7 @@ type FurnitureDetailMutation struct {
 	furniture_amount     *int
 	addfurniture_amount  *int
 	furniture_colour     *string
-	furniture_detail     *string
+	detail               *string
 	clearedFields        map[string]struct{}
 	fixs                 map[int]struct{}
 	removedfixs          map[int]struct{}
@@ -4654,41 +4654,41 @@ func (m *FurnitureDetailMutation) ResetFurnitureColour() {
 	m.furniture_colour = nil
 }
 
-// SetFurnitureDetail sets the furniture_detail field.
-func (m *FurnitureDetailMutation) SetFurnitureDetail(s string) {
-	m.furniture_detail = &s
+// SetDetail sets the detail field.
+func (m *FurnitureDetailMutation) SetDetail(s string) {
+	m.detail = &s
 }
 
-// FurnitureDetail returns the furniture_detail value in the mutation.
-func (m *FurnitureDetailMutation) FurnitureDetail() (r string, exists bool) {
-	v := m.furniture_detail
+// Detail returns the detail value in the mutation.
+func (m *FurnitureDetailMutation) Detail() (r string, exists bool) {
+	v := m.detail
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldFurnitureDetail returns the old furniture_detail value of the FurnitureDetail.
+// OldDetail returns the old detail value of the FurnitureDetail.
 // If the FurnitureDetail object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *FurnitureDetailMutation) OldFurnitureDetail(ctx context.Context) (v string, err error) {
+func (m *FurnitureDetailMutation) OldDetail(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldFurnitureDetail is allowed only on UpdateOne operations")
+		return v, fmt.Errorf("OldDetail is allowed only on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldFurnitureDetail requires an ID field in the mutation")
+		return v, fmt.Errorf("OldDetail requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldFurnitureDetail: %w", err)
+		return v, fmt.Errorf("querying old value for OldDetail: %w", err)
 	}
-	return oldValue.FurnitureDetail, nil
+	return oldValue.Detail, nil
 }
 
-// ResetFurnitureDetail reset all changes of the "furniture_detail" field.
-func (m *FurnitureDetailMutation) ResetFurnitureDetail() {
-	m.furniture_detail = nil
+// ResetDetail reset all changes of the "detail" field.
+func (m *FurnitureDetailMutation) ResetDetail() {
+	m.detail = nil
 }
 
 // AddFixIDs adds the fixs edge to FixRoom by ids.
@@ -4913,8 +4913,8 @@ func (m *FurnitureDetailMutation) Fields() []string {
 	if m.furniture_colour != nil {
 		fields = append(fields, furnituredetail.FieldFurnitureColour)
 	}
-	if m.furniture_detail != nil {
-		fields = append(fields, furnituredetail.FieldFurnitureDetail)
+	if m.detail != nil {
+		fields = append(fields, furnituredetail.FieldDetail)
 	}
 	return fields
 }
@@ -4930,8 +4930,8 @@ func (m *FurnitureDetailMutation) Field(name string) (ent.Value, bool) {
 		return m.FurnitureAmount()
 	case furnituredetail.FieldFurnitureColour:
 		return m.FurnitureColour()
-	case furnituredetail.FieldFurnitureDetail:
-		return m.FurnitureDetail()
+	case furnituredetail.FieldDetail:
+		return m.Detail()
 	}
 	return nil, false
 }
@@ -4947,8 +4947,8 @@ func (m *FurnitureDetailMutation) OldField(ctx context.Context, name string) (en
 		return m.OldFurnitureAmount(ctx)
 	case furnituredetail.FieldFurnitureColour:
 		return m.OldFurnitureColour(ctx)
-	case furnituredetail.FieldFurnitureDetail:
-		return m.OldFurnitureDetail(ctx)
+	case furnituredetail.FieldDetail:
+		return m.OldDetail(ctx)
 	}
 	return nil, fmt.Errorf("unknown FurnitureDetail field %s", name)
 }
@@ -4979,12 +4979,12 @@ func (m *FurnitureDetailMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetFurnitureColour(v)
 		return nil
-	case furnituredetail.FieldFurnitureDetail:
+	case furnituredetail.FieldDetail:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetFurnitureDetail(v)
+		m.SetDetail(v)
 		return nil
 	}
 	return fmt.Errorf("unknown FurnitureDetail field %s", name)
@@ -5060,8 +5060,8 @@ func (m *FurnitureDetailMutation) ResetField(name string) error {
 	case furnituredetail.FieldFurnitureColour:
 		m.ResetFurnitureColour()
 		return nil
-	case furnituredetail.FieldFurnitureDetail:
-		m.ResetFurnitureDetail()
+	case furnituredetail.FieldDetail:
+		m.ResetDetail()
 		return nil
 	}
 	return fmt.Errorf("unknown FurnitureDetail field %s", name)
