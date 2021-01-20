@@ -18,8 +18,8 @@ func (CheckIn) Fields() []ent.Field {
 	return []ent.Field{
 		field.Time("checkin_date"),
 		field.String("mobile_key").MinLen(10).MaxLen(10),
-		field.String("phone_number").Match(regexp.MustCompile("[0]\\d{9}")),
-		field.String("person_number").MinLen(13).MaxLen(13),
+		field.String("phone_number").Match(regexp.MustCompile("[0]\\d{9}")).MinLen(10).MaxLen(10),
+		field.String("person_number").Match(regexp.MustCompile("[0-9]\\d{12}")).MinLen(13).MaxLen(13),
 	}
 }
 

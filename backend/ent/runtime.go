@@ -45,7 +45,22 @@ func init() {
 	// checkinDescPhoneNumber is the schema descriptor for phone_number field.
 	checkinDescPhoneNumber := checkinFields[2].Descriptor()
 	// checkin.PhoneNumberValidator is a validator for the "phone_number" field. It is called by the builders before save.
-	checkin.PhoneNumberValidator = checkinDescPhoneNumber.Validators[0].(func(string) error)
+	checkin.PhoneNumberValidator = func() func(string) error {
+		validators := checkinDescPhoneNumber.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+			validators[2].(func(string) error),
+		}
+		return func(phone_number string) error {
+			for _, fn := range fns {
+				if err := fn(phone_number); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// checkinDescPersonNumber is the schema descriptor for person_number field.
 	checkinDescPersonNumber := checkinFields[3].Descriptor()
 	// checkin.PersonNumberValidator is a validator for the "person_number" field. It is called by the builders before save.
@@ -54,6 +69,7 @@ func init() {
 		fns := [...]func(string) error{
 			validators[0].(func(string) error),
 			validators[1].(func(string) error),
+			validators[2].(func(string) error),
 		}
 		return func(person_number string) error {
 			for _, fn := range fns {

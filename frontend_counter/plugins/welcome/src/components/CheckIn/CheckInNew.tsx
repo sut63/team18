@@ -127,10 +127,10 @@ const CheckIn: FC<{}> = () => {
     return val.length == 10 ? true:false;
   }
   const validatePhoneNumber = (val: string) => {
-    return val.match("[0]\\d{9}");
+    return val.match("[0]\\d{9}") && val.length == 10 ? true:false;
   }
   const validatePersonNumber = (val: string) => {
-    return val.length == 13 ? true:false;
+    return val.match("[0-9]\\d{12}") && val.length == 13 ? true:false;
   }
 
   // checkPattern
@@ -140,10 +140,10 @@ const CheckIn: FC<{}> = () => {
         validateMobileKey(value) ? setMobileKeyError('') : setMobileKeyError('ความปลอดภัยต่ำ กรุณาใส่ 10 ตัว');
         return;
       case 'PhoneNumber': 
-        validatePhoneNumber(value) ? setPhoneNumberError('') : setPhoneNumberError('Ex 0850583300');
+        validatePhoneNumber(value) ? setPhoneNumberError('') : setPhoneNumberError('Ex 0600000000');
         return;
       case 'PersonNumber':
-        validatePersonNumber(value) ? setPersonNumberError('') : setPersonNumberError('Ex 1119700054000')
+        validatePersonNumber(value) ? setPersonNumberError('') : setPersonNumberError('Ex 1110000000000')
         return;
       default:
         return;
@@ -185,15 +185,16 @@ const CheckIn: FC<{}> = () => {
   const checkerror = (s :string) => {
     switch(s) {
       case 'phone_number':
-        setError("จำนวนเบอร์โทรผิดพลาด และ ต้องขึ้นต้นด้วย 0") 
+        setError("เบอร์โทรต้องเป็นตัวเลข 10 หลักและขึ้นต้นด้วย 0") 
         return;
       case 'mobile_key':
-        setError("ต้อง 10 ตัว!!!")
+        setError("Mobile Key ต้องมีความยาว 10 ตัว")
         return;
       case 'person_number':
-        setError("เลขบัตรประชาชนต้อง 13 ตัว")
+        setError("เลขบัตรประชาชนต้องเป็นตัวเลข 13 หลัก")
         return;
       default:
+        setError("กรุณากรอกข้อมูลให้ครบถ้วน")
         return;
     }
   };

@@ -33,12 +33,6 @@ export interface EntReserveRoom {
      */
     amount?: number;
     /**
-     * Duration holds the value of the "duration" field.
-     * @type {number}
-     * @memberof EntReserveRoom
-     */
-    duration?: number;
-    /**
      * 
      * @type {EntReserveRoomEdges}
      * @memberof EntReserveRoom
@@ -57,6 +51,12 @@ export interface EntReserveRoom {
      */
     netPrice?: number;
     /**
+     * PhoneNumber holds the value of the "phone_number" field.
+     * @type {string}
+     * @memberof EntReserveRoom
+     */
+    phoneNumber?: string;
+    /**
      * Province holds the value of the "province" field.
      * @type {string}
      * @memberof EntReserveRoom
@@ -68,12 +68,6 @@ export interface EntReserveRoom {
      * @memberof EntReserveRoom
      */
     reserveDate?: string;
-    /**
-     * Tel holds the value of the "tel" field.
-     * @type {string}
-     * @memberof EntReserveRoom
-     */
-    tel?: string;
 }
 
 export function EntReserveRoomFromJSON(json: any): EntReserveRoom {
@@ -87,13 +81,12 @@ export function EntReserveRoomFromJSONTyped(json: any, ignoreDiscriminator: bool
     return {
         
         'amount': !exists(json, 'amount') ? undefined : json['amount'],
-        'duration': !exists(json, 'duration') ? undefined : json['duration'],
         'edges': !exists(json, 'edges') ? undefined : EntReserveRoomEdgesFromJSON(json['edges']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'netPrice': !exists(json, 'net_price') ? undefined : json['net_price'],
+        'phoneNumber': !exists(json, 'phone_number') ? undefined : json['phone_number'],
         'province': !exists(json, 'province') ? undefined : json['province'],
         'reserveDate': !exists(json, 'reserve_date') ? undefined : json['reserve_date'],
-        'tel': !exists(json, 'tel') ? undefined : json['tel'],
     };
 }
 
@@ -107,13 +100,12 @@ export function EntReserveRoomToJSON(value?: EntReserveRoom | null): any {
     return {
         
         'amount': value.amount,
-        'duration': value.duration,
         'edges': EntReserveRoomEdgesToJSON(value.edges),
         'id': value.id,
         'net_price': value.netPrice,
+        'phone_number': value.phoneNumber,
         'province': value.province,
         'reserve_date': value.reserveDate,
-        'tel': value.tel,
     };
 }
 

@@ -13,7 +13,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "checkin_date", Type: field.TypeTime},
 		{Name: "mobile_key", Type: field.TypeString, Size: 10},
-		{Name: "phone_number", Type: field.TypeString},
+		{Name: "phone_number", Type: field.TypeString, Size: 10},
 		{Name: "person_number", Type: field.TypeString, Size: 13},
 		{Name: "staff_id", Type: field.TypeInt, Nullable: true},
 		{Name: "customer_id", Type: field.TypeInt, Nullable: true},
