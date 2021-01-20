@@ -190,7 +190,7 @@ const DataRoom: FC<{}> = () => {
     fetch(apiUrl, requestOptions)
       .then(response => response.json())
       .then(data => {
-        console.log(data.status);
+        console.log(data);
         if (data.status == true) {
           clear();
           setOpen(true);

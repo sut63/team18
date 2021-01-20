@@ -19,7 +19,7 @@ func (DataRoom) Fields() []ent.Field {
 	return []ent.Field{
 		field.Float("price").Min(0).Positive(),
 		field.String("roomnumber").Validate(func(s string) error {
-			match, _ := regexp.MatchString("[A-Z]\\d3", s)
+			match, _ := regexp.MatchString("[A-Z]\\d{3}", s)
 			if !match {
 				return errors.New("รูปแบบหมายเลขห้องพักไม่ถูกต้อง")
 			}
