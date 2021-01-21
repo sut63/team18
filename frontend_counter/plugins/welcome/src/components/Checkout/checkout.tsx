@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Content, Header, Page, pageTheme } from '@backstage/core';
+import {  Content, Header, Page, pageTheme } from '@backstage/core';
 import SaveIcon from '@material-ui/icons/Save'; // icon save
 import {Cookies} from '../../Cookie'
 import {
@@ -13,6 +13,7 @@ import {
   TextField,
   Avatar,
   Button,
+  Typography
 } from '@material-ui/core';
 import { DefaultApi } from '../../api/apis'; // Api Gennerate From Command
 // me
@@ -20,6 +21,7 @@ import { EntCheckIn } from '../../api/models/EntCheckIn'; // import interface ch
 import { EntStatus } from '../../api/models/EntStatus'; // import interface Status
 import { EntCounterStaff } from '../../api/models/EntCounterStaff'; // import interface CounterStaff
 import { EntStatusOpinion } from '../../api/models/EntStatusOpinion'; // import interface status opinion
+import { EntReserveRoom } from '../../api/models/EntReserveRoom'; // import interface status ReserveRoom
 
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
@@ -86,6 +88,8 @@ const checkout: FC<{}> = () => {
     setFail(false);
     setOpen(false);
   };
+
+
 
   // get chackin
   const [Checkin, setCheckin] = React.useState<EntCheckIn[]>([]); 
@@ -192,11 +196,27 @@ const checkerror = (s :string) => {
     const name = event.target.name as keyof typeof CheckOut;
     const { value } = event.target;
     setCheckout({ ...CheckOut, [name]: value });
-    //console.log(CheckOut);
+    
     const validateValue = value.toString()
     checkPattern(name, validateValue)
+    if (name == "CheckinsID"){
+      getReserveroom(value)
+    } 
   };
+
   
+  //get reserveroom
+  const [idReserveroom, setidReserveroom] = React.useState<Number>(0); 
+  const [Reserveroom, setReserveroom] = React.useState<EntReserveRoom>(); 
+  const getReserveroom = async (id:number) => {
+    const res = await api.getGetCheckout2({ id:id})
+    console.log("res = ==== ");
+    console.log(res);
+    setReserveroom(res)
+  }
+  useEffect(() => {
+
+  },[])
   
 
   // function save data
@@ -267,7 +287,7 @@ const checkerror = (s :string) => {
       <Content>
         <Container maxWidth="sm">
           <Grid container spacing={3}>
-
+            
             
             <Grid item xs={3}>
               <div className={classes.paper}>check in</div>
@@ -325,6 +345,9 @@ const checkerror = (s :string) => {
                   value={counter?.name}
                 />
               </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+            <Typography variant="h5"  color="primary" >จำนวนเงินที่ต้องจ่าย {Reserveroom?.netPrice}</Typography>
             </Grid>
             <Grid item xs={3}>
             <div className={classes.paper}>จำนวนเงินที่จ่าย</div>

@@ -1115,6 +1115,51 @@ var doc = `{
                 }
             }
         },
+        "/checkouts2/{id}": {
+            "get": {
+                "description": "get GetCheckout2 by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get a GetCheckout2 entity by ID",
+                "operationId": "get-GetCheckout2",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Checkout ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ent.ReserveRoom"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            }
+        },
         "/dataroomcustomer/{id}": {
             "get": {
                 "description": "get dataroomcustomer by ID",

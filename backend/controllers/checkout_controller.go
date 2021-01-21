@@ -254,6 +254,50 @@ func (ctl *CheckoutController) GetCheckout(c *gin.Context) {
 	c.JSON(200, u)
 }
 
+// GetCheckout2 handles GET requests to retrieve a GetCheckout2 entity
+// @Summary Get a GetCheckout2 entity by ID
+// @Description get GetCheckout2 by ID
+// @ID get-GetCheckout2
+// @Produce  json
+// @Param id path int true "Checkout ID"
+// @Success 200 {object} ent.ReserveRoom
+// @Failure 400 {object} gin.H
+// @Failure 404 {object} gin.H
+// @Failure 500 {object} gin.H
+// @Router /checkouts2/{id} [get]
+func (ctl *CheckoutController) GetCheckout2(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	u, err := ctl.client.CheckIn.
+		Query().
+		Where(checkin.IDEQ(int(id))).
+		Only(context.Background())
+	if err != nil {
+		c.JSON(404, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	r, err := ctl.client.CheckIn.
+		QueryReserveroom(u).
+		Only(context.Background())
+	if err != nil {
+		c.JSON(404, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, r)
+}
+
 // DeleteCheckout handles DELETE requests to delete a checkout entity
 // @Summary Delete a checkout entity by ID
 // @Description get checkout by ID
@@ -300,11 +344,13 @@ func NewCheckoutController(router gin.IRouter, client *ent.Client) *CheckoutCont
 // InitCheckoutController registers routes to the main engine
 func (ctl *CheckoutController) register() {
 	checkouts := ctl.router.Group("/checkouts")
+	checkouts2 := ctl.router.Group("/checkouts2")
 
 	checkouts.GET("", ctl.ListCheckout)
 
 	// CRUD
 	checkouts.POST("", ctl.CreateCheckout)
 	checkouts.GET(":id", ctl.GetCheckout)
+	checkouts2.GET(":id", ctl.GetCheckout2)
 	checkouts.DELETE(":id", ctl.DeleteCheckout)
 }
