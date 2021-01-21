@@ -57,7 +57,7 @@ interface reserve {
   ReserveDate: Date;
   NetPrice: number;
   Amount: number;
-  Province: string;
+  Request: string;
   PhoneNumber: string;
   // create_by: number;
 }
@@ -76,7 +76,7 @@ const ReserveRoom: FC<{}> = () => {
   reserve_room.Amount = Number(reserve_room.Amount)
 
   // สำหรับตรวยสอบความถูกต้อง
-  const [ProvinceError, setProvinceError] = React.useState('');
+  const [RequestError, setRequestError] = React.useState('');
   const [PhoneNumberError, setPhoneNumberError] = React.useState('');
   const [AmountError, setAmountError] = React.useState('');
   const [errors, setError] = React.useState(String);
@@ -155,18 +155,18 @@ const ReserveRoom: FC<{}> = () => {
   }
 
   // ฟังก์ชั่นสำหรับ validate รหัสนักศึกษา
-  const validateProvince = (val: string) => {
+  const validateRequest = (val: string) => {
     return val.length > 50 ? false : true;
   }
 
   // checkPattern
   const checkPattern  = (id: string, value: string) => {
     switch(id) { 
-      case 'Province':
-        validateProvince(value) ? setProvinceError('') : setProvinceError('ห้ามเกิน 50 ตัวอักษร');
+      case 'Request':
+        validateRequest(value) ? setRequestError('') : setRequestError('ห้ามเกิน 50 ตัวอักษร');
         return;
       case 'PhoneNumber': 
-        validatePhoneNumber(value) ? setPhoneNumberError('') : setPhoneNumberError('Ex 0850583300');
+        validatePhoneNumber(value) ? setPhoneNumberError('') : setPhoneNumberError('เบอร์โทรศัพท์ต้องมีในรูปแบบ 0XXXXXXXXX');
         return;
       case 'Amount':
         validateAmount(Number(value)) ? setAmountError('') : setAmountError('เข้าพักได้ไม่เกินห้องละ 5 คน')
@@ -179,13 +179,13 @@ const ReserveRoom: FC<{}> = () => {
   //กำหนดข้อความ error
   const checkerror = (s :string) => {
     switch(s) {
-      case 'Province':
-        setError("รูปแบบจังหวัดไม่ถูกต้อง")
+      case 'request':
+        setError("ยาวไปไม่อ่าน")
         return;
-      case 'PhoneNumber':
+      case 'phone_number':
         setError("รูปแบบเบอร์โทรศัพท์ไม่ถูกต้อง")
         return;
-      case 'Amount':
+      case 'amount':
         setError("จำนวนคนไม่ตรงตามเงื่อนไขการเข้าพัก")
         return;
       default:
@@ -443,17 +443,17 @@ const ReserveRoom: FC<{}> = () => {
             </Grid>
 
             <Grid item xs={3}>
-              <div className={classes.paper}>จังหวัด</div>
+              <div className={classes.paper}>Request</div>
             </Grid>
             <Grid item xs={9}>
             <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
-                  error = {ProvinceError ? true : false}
-                  helperText={ProvinceError}
-                  name="Province"
-                  label="จังหวัด"
+                  error = {RequestError ? true : false}
+                  helperText={RequestError}
+                  name="Request"
+                  label="Request"
                   variant="outlined"
-                  value={reserve_room.Province || ''}
+                  value={reserve_room.Request || ''}
                   onChange={handleChange}
                 />
               </FormControl>

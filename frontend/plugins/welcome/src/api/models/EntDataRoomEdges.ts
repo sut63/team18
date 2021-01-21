@@ -107,10 +107,10 @@ export function EntDataRoomEdgesFromJSONTyped(json: any, ignoreDiscriminator: bo
         'checkins': !exists(json, 'checkins') ? undefined : ((json['checkins'] as Array<any>).map(EntCheckInFromJSON)),
         'details': !exists(json, 'details') ? undefined : ((json['details'] as Array<any>).map(EntFurnitureDetailFromJSON)),
         'fixs': !exists(json, 'fixs') ? undefined : ((json['fixs'] as Array<any>).map(EntFixRoomFromJSON)),
-        'promotion': !exists(json, 'promotion') ? undefined : EntPromotionFromJSON(json['promotion']),
+        'promotion': !exists(json, 'Promotion') ? undefined : EntPromotionFromJSON(json['Promotion']),
         'reserves': !exists(json, 'reserves') ? undefined : ((json['reserves'] as Array<any>).map(EntReserveRoomFromJSON)),
-        'statusroom': !exists(json, 'statusroom') ? undefined : EntStatusRoomFromJSON(json['statusroom']),
-        'typeroom': !exists(json, 'typeroom') ? undefined : EntTypeRoomFromJSON(json['typeroom']),
+        'statusroom': !exists(json, 'Statusroom') ? undefined : EntStatusRoomFromJSON(json['Statusroom']),
+        'typeroom': !exists(json, 'Typeroom') ? undefined : EntTypeRoomFromJSON(json['Typeroom']),
     };
 }
 
@@ -126,10 +126,10 @@ export function EntDataRoomEdgesToJSON(value?: EntDataRoomEdges | null): any {
         'checkins': value.checkins === undefined ? undefined : ((value.checkins as Array<any>).map(EntCheckInToJSON)),
         'details': value.details === undefined ? undefined : ((value.details as Array<any>).map(EntFurnitureDetailToJSON)),
         'fixs': value.fixs === undefined ? undefined : ((value.fixs as Array<any>).map(EntFixRoomToJSON)),
-        'promotion': EntPromotionToJSON(value.promotion),
+        'Promotion': EntPromotionToJSON(value.promotion),
         'reserves': value.reserves === undefined ? undefined : ((value.reserves as Array<any>).map(EntReserveRoomToJSON)),
-        'statusroom': EntStatusRoomToJSON(value.statusroom),
-        'typeroom': EntTypeRoomToJSON(value.typeroom),
+        'Statusroom': EntStatusRoomToJSON(value.statusroom),
+        'Typeroom': EntTypeRoomToJSON(value.typeroom),
     };
 }
 
