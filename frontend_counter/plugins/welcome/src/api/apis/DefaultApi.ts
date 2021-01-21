@@ -200,6 +200,10 @@ export interface GetFurnituretypeRequest {
     id: number;
 }
 
+export interface GetGetCheckout2Request {
+    id: number;
+}
+
 export interface GetPromotionRequest {
     id: number;
 }
@@ -1453,6 +1457,38 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getFurnituretype(requestParameters: GetFurnituretypeRequest): Promise<EntFurnitureType> {
         const response = await this.getFurnituretypeRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * get GetCheckout2 by ID
+     * Get a GetCheckout2 entity by ID
+     */
+    async getGetCheckout2Raw(requestParameters: GetGetCheckout2Request): Promise<runtime.ApiResponse<EntReserveRoom>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getGetCheckout2.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/checkouts2/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntReserveRoomFromJSON(jsonValue));
+    }
+
+    /**
+     * get GetCheckout2 by ID
+     * Get a GetCheckout2 entity by ID
+     */
+    async getGetCheckout2(requestParameters: GetGetCheckout2Request): Promise<EntReserveRoom> {
+        const response = await this.getGetCheckout2Raw(requestParameters);
         return await response.value();
     }
 
