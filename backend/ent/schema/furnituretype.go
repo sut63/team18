@@ -14,7 +14,7 @@ type FurnitureType struct {
 // Fields of the FurnitureType.
 func (FurnitureType) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("furniture_type"),
+		field.String("furniture_type").Unique(),
 	}
 }
 
