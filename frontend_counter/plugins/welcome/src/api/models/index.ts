@@ -24,6 +24,8 @@ export * from './EntStatus';
 export * from './EntStatusCheckIn';
 export * from './EntStatusCheckInEdges';
 export * from './EntStatusEdges';
+export * from './EntStatusOpinion';
+export * from './EntStatusOpinionEdges';
 export * from './EntStatusReserve';
 export * from './EntStatusReserveEdges';
 export * from './EntStatusRoom';

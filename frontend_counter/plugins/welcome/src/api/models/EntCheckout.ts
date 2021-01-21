@@ -33,6 +33,12 @@ export interface EntCheckout {
      */
     checkoutDate?: string;
     /**
+     * Comment holds the value of the "comment" field.
+     * @type {string}
+     * @memberof EntCheckout
+     */
+    comment?: string;
+    /**
      * 
      * @type {EntCheckoutEdges}
      * @memberof EntCheckout
@@ -44,6 +50,18 @@ export interface EntCheckout {
      * @memberof EntCheckout
      */
     id?: number;
+    /**
+     * IdentityCard holds the value of the "identity_card" field.
+     * @type {string}
+     * @memberof EntCheckout
+     */
+    identityCard?: string;
+    /**
+     * Price holds the value of the "price" field.
+     * @type {number}
+     * @memberof EntCheckout
+     */
+    price?: number;
 }
 
 export function EntCheckoutFromJSON(json: any): EntCheckout {
@@ -57,8 +75,11 @@ export function EntCheckoutFromJSONTyped(json: any, ignoreDiscriminator: boolean
     return {
         
         'checkoutDate': !exists(json, 'checkout_date') ? undefined : json['checkout_date'],
+        'comment': !exists(json, 'comment') ? undefined : json['comment'],
         'edges': !exists(json, 'edges') ? undefined : EntCheckoutEdgesFromJSON(json['edges']),
         'id': !exists(json, 'id') ? undefined : json['id'],
+        'identityCard': !exists(json, 'identity_card') ? undefined : json['identity_card'],
+        'price': !exists(json, 'price') ? undefined : json['price'],
     };
 }
 
@@ -72,8 +93,11 @@ export function EntCheckoutToJSON(value?: EntCheckout | null): any {
     return {
         
         'checkout_date': value.checkoutDate,
+        'comment': value.comment,
         'edges': EntCheckoutEdgesToJSON(value.edges),
         'id': value.id,
+        'identity_card': value.identityCard,
+        'price': value.price,
     };
 }
 

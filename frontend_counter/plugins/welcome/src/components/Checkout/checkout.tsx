@@ -19,6 +19,8 @@ import { DefaultApi } from '../../api/apis'; // Api Gennerate From Command
 import { EntCheckIn } from '../../api/models/EntCheckIn'; // import interface checkin
 import { EntStatus } from '../../api/models/EntStatus'; // import interface Status
 import { EntCounterStaff } from '../../api/models/EntCounterStaff'; // import interface CounterStaff
+import { EntStatusOpinion } from '../../api/models/EntStatusOpinion'; // import interface status opinion
+
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
 
@@ -47,7 +49,7 @@ const useStyles = makeStyles(theme => ({
     flexWrap: 'wrap',
   },
   textField: {
-    width: 300,
+    width: 500,
   },
 }));
 
@@ -55,23 +57,23 @@ interface CheckOut {
     CheckinsID: number;
     StatussID: number;
     CounterstaffsID: number;
+    Identitycard:    string;
+	  StatusopinionID: number;
+	  Comment:         string;
+	  Price:           number;
 }
 
 const checkout: FC<{}> = () => {
   const classes = useStyles();
   const api = new DefaultApi();
 
+  // Cookie
   var ck = new Cookies()
   var cookieName = ck.GetCookie()
+  var cookieID = ck.GetID()
 
   const [CheckOut, setCheckout] = React.useState<Partial<CheckOut>>({});
-
-  // checkout
-  const [Checkin, setCheckin] = React.useState<EntCheckIn[]>([]);  
-  const [Status, setStatus] =   React.useState<EntStatus[]>([]);
-  const [CounterStaff, setCounterStaff] =   React.useState<EntCounterStaff[]>([]);
-  //
-
+  CheckOut.Price = Number(CheckOut.Price)
   // alert setting
   const [open, setOpen] = React.useState(false);
   const [fail, setFail] = React.useState(false);
@@ -85,47 +87,117 @@ const checkout: FC<{}> = () => {
     setOpen(false);
   };
 
-  // set data for checkout
+  // get chackin
+  const [Checkin, setCheckin] = React.useState<EntCheckIn[]>([]); 
   const getcheckIn = async () => {
     const res = await api.listGetCheckInStatus();
     setCheckin(res);
   };
 
+  //get status pay
+  const [Status, setStatus] =   React.useState<EntStatus[]>([]);
   const getstatus = async () => {
     const res = await api.listStatus({ limit: 10, offset: 0 });
     setStatus(res);
   };
-  
-  
-  const getstaff = async () => {
-    const res = await api.listCounterStaff({ limit: 10, offset: 0 });
-    setCounterStaff(res);
-  };
-  
 
+  // get couterstaff
+  const [counter, setCounter] = React.useState<EntCounterStaff>()
+  const getCounterStaff = async () => {
+    const res = await api.getCounterStaff({ id: Number(cookieID) })
+    setCounter(res)
+  }
+  
+  // get opinion
+  const [opinion, setopinion] = React.useState<EntStatusOpinion[]>([]);
+  const getstatusopinion = async () => {
+    const res = await api.listStatusopinion({ limit: 10, offset: 0 });
+    setopinion(res);
+  };
   // Lifecycle Hooks
   useEffect(() => {
 
-    // me 
+    getstatusopinion(); 
     getcheckIn();
     getstatus();
-    getstaff();
-  }, []);
+    getCounterStaff();
+  }, [CheckOut.CheckinsID,CheckOut.CounterstaffsID,CheckOut.StatussID,CheckOut.StatusopinionID]);
+
+  useEffect(() => {
+    setCheckout({ ...CheckOut, ['CounterstaffsID']: counter?.id })
+  }, [counter]);
+
+  
+  // สำหรับตรวจสอบความถูกต้อง
+  const [Identitycard, setIdentitycardError] = React.useState('');
+  const [Comment, setCommentError] = React.useState('');
+  const [Price, setPriceError] = React.useState('');
+
+  
+
+  //valid functions  
+  const validateIdentitycard = (val: string) => {
+    return val.length == 13 ? true:false;
+  }
+
+  const validatePrice = (val: Number) => {
+    return val > 0 ? true : false;
+  }
+
+  const validateComment = (val: string) => {
+    return val.length > 70 ? false : true;
+  }
+
+  // checkPattern
+  const checkPattern  = (id: string, value: string) => {
+    switch(id) { 
+      case 'Comment':
+        validateComment(value) ? setCommentError('') : setCommentError('ความเห็นยาวเกินขนาด 70 ตัวอักษร');
+        return;
+      case 'Price': 
+      validatePrice(Number(value)) ? setPriceError('') : setPriceError('จำนวนเงินไม่ถูกต้อง');
+        return;
+      case 'Identitycard':
+        validateIdentitycard(value) ? setIdentitycardError('') : setIdentitycardError('ตัวเลขไม่ครบ 13 หลัก')
+        return;
+      default:
+        return;
+    }
+  }
+
+
+// func checkerror
+const [errors, setError] = React.useState(String);
+const checkerror = (s :string) => {
+  switch(s) {
+    case 'identity_card':
+      setError("เลขประจำตัวไม่ครบ 13 หลัก") 
+      return;
+    case 'price':
+      setError("ตัวเลขไม่ถูกต้อง")
+      return;
+    case 'comment':
+      setError("ข้อความยาวเกิน 70 ตัวอักษร")
+      return;
+    default:
+      setError("บันทึกไม่สำเร็จ")
+      return;
+  }
+};
 
   // set data to object DataRoom
   const handleChange = (
-    event: React.ChangeEvent<{ name?: string; value: unknown }>,
+    event: React.ChangeEvent<{ name?: string; value: any }>,
   ) => {
     const name = event.target.name as keyof typeof CheckOut;
     const { value } = event.target;
     setCheckout({ ...CheckOut, [name]: value });
-    console.log(CheckOut);
+    //console.log(CheckOut);
+    const validateValue = value.toString()
+    checkPattern(name, validateValue)
   };
   
-  // clear input form
-  function clear() {
-    setCheckout({});
-  }
+  
 
   // function save data
   function save() {
@@ -142,13 +214,25 @@ const checkout: FC<{}> = () => {
     .then(response => response.json())
     .then(data => {
       console.log(data.status);
-      if (data.id != null) {
+      console.log(data);
+      if (data.status == true) {
         clear();
         setOpen(true);
+        
+      
       } else {
+        clear();
+        checkerror(data.error.Name);
         setFail(true);
+        console.log(data);
       }
     });
+  }
+
+// clear input form
+  function clear() {
+    setCheckout({});
+    getCounterStaff();
   }
 
   function Clears() {
@@ -158,7 +242,13 @@ const checkout: FC<{}> = () => {
   function reload() {
     window.location.reload(false)
   }
-
+  function wait(ms:number){
+    var start = new Date().getTime();
+    var end = start;
+    while(end < start + ms) {
+      end = new Date().getTime();
+   }
+ }
   return (
     <Page theme={pageTheme.home}>
   
@@ -227,29 +317,86 @@ const checkout: FC<{}> = () => {
               <div className={classes.paper}>counter staff</div>
             </Grid>
             <Grid item xs={9}>
+            <FormControl variant="outlined" className={classes.formControl}>
+                <TextField
+                  disabled
+                  name="CounterstaffsID"
+                  variant="outlined"
+                  value={counter?.name}
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={3}>
+            <div className={classes.paper}>จำนวนเงินที่จ่าย</div>
+            </Grid>
+            <Grid item xs={9}>
+            <FormControl variant="outlined" className={classes.formControl}>
+            <TextField
+                error = {Price ? true : false}
+                helperText={Price}
+                label="ใส่จำนวนเงิน"
+                type={"number"}
+                name="Price"
+                value={CheckOut.Price || ''}
+                variant="outlined"
+                onChange={handleChange} />
+                </FormControl>
+           </Grid>
+           <Grid item xs={3}>
+            <div className={classes.paper}>เลขบัตรประชาชน</div>
+            </Grid>
+            <Grid item xs={9}>
+            <FormControl variant="outlined" className={classes.formControl}>
+            <TextField
+                error = {Identitycard ? true : false}
+                helperText={Identitycard}
+                label="ใส่เลข"
+                name="Identitycard"
+                variant="outlined"
+                onChange={handleChange} />
+                </FormControl>
+           </Grid>
+
+           <Grid item xs={3}>
+              <div className={classes.paper}>ความพึงพอใจลูกค้า</div>
+            </Grid>
+            <Grid item xs={9}>
               <FormControl variant="outlined" className={classes.formControl}>
                 <InputLabel>เลือก</InputLabel>
                 <Select
-                   name="CounterstaffsID"
-                   value={CheckOut.CounterstaffsID || ''} // (undefined || '') = ''
-                   onChange={handleChange}
+                  name="StatusopinionID"
+                  value={CheckOut.StatusopinionID  || ''} // (undefined || '') = ''
+                  onChange={handleChange}
                 >
-                  {CounterStaff.map(item => {
+                  {opinion.map(item => {
                     return (
                       <MenuItem key={item.id} value={item.id}>
-                        {item.name}
+                        {item.opinion}
                       </MenuItem>
                     );
                   })}
                 </Select>
               </FormControl>
-            </Grid>
-            <Grid item xs={3}>
-              
+            </Grid>        
+
+           <Grid item xs={3}>
+            <div className={classes.paper}>ความเห็นลูกค้า</div>
             </Grid>
             <Grid item xs={9}>
-           
+            <FormControl variant="outlined" className={classes.formControl}>
+            <TextField
+              multiline
+              rows={4}
+              error = {Comment ? true : false}
+                helperText={ Comment}
+                label="ใส่ความเห็น"
+                name="Comment"
+                variant="outlined"
+                onChange={handleChange} />
+                 </FormControl>
            </Grid>
+
+
            <Grid item xs={3}></Grid>
             <Grid item xs={9}>
               <Button
@@ -259,7 +406,6 @@ const checkout: FC<{}> = () => {
                 startIcon={<SaveIcon />}
                 onClick={() => {
                   save();
-                  reload();
                 }}
               >
                 check out
@@ -275,7 +421,7 @@ const checkout: FC<{}> = () => {
 
           <Snackbar open={fail} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="error">
-              This is a error message!
+              {errors}
         </Alert>
           </Snackbar>
           

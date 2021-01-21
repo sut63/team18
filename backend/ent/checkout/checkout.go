@@ -9,9 +9,17 @@ const (
 	FieldID = "id"
 	// FieldCheckoutDate holds the string denoting the checkout_date field in the database.
 	FieldCheckoutDate = "checkout_date"
+	// FieldIdentityCard holds the string denoting the identity_card field in the database.
+	FieldIdentityCard = "identity_card"
+	// FieldPrice holds the string denoting the price field in the database.
+	FieldPrice = "price"
+	// FieldComment holds the string denoting the comment field in the database.
+	FieldComment = "comment"
 
 	// EdgeStatuss holds the string denoting the statuss edge name in mutations.
 	EdgeStatuss = "statuss"
+	// EdgeStatusopinion holds the string denoting the statusopinion edge name in mutations.
+	EdgeStatusopinion = "statusopinion"
 	// EdgeCounterstaffs holds the string denoting the counterstaffs edge name in mutations.
 	EdgeCounterstaffs = "counterstaffs"
 	// EdgeCheckins holds the string denoting the checkins edge name in mutations.
@@ -26,6 +34,13 @@ const (
 	StatussInverseTable = "status"
 	// StatussColumn is the table column denoting the statuss relation/edge.
 	StatussColumn = "status_checkouts"
+	// StatusopinionTable is the table the holds the statusopinion relation/edge.
+	StatusopinionTable = "checkouts"
+	// StatusopinionInverseTable is the table name for the StatusOpinion entity.
+	// It exists in this package in order to avoid circular dependency with the "statusopinion" package.
+	StatusopinionInverseTable = "status_opinions"
+	// StatusopinionColumn is the table column denoting the statusopinion relation/edge.
+	StatusopinionColumn = "status_opinion_checkouts"
 	// CounterstaffsTable is the table the holds the counterstaffs relation/edge.
 	CounterstaffsTable = "checkouts"
 	// CounterstaffsInverseTable is the table name for the CounterStaff entity.
@@ -46,6 +61,9 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldCheckoutDate,
+	FieldIdentityCard,
+	FieldPrice,
+	FieldComment,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the Checkout type.
@@ -53,4 +71,14 @@ var ForeignKeys = []string{
 	"check_in_checkouts",
 	"staff_id",
 	"status_checkouts",
+	"status_opinion_checkouts",
 }
+
+var (
+	// IdentityCardValidator is a validator for the "identity_card" field. It is called by the builders before save.
+	IdentityCardValidator func(string) error
+	// PriceValidator is a validator for the "price" field. It is called by the builders before save.
+	PriceValidator func(float64) error
+	// CommentValidator is a validator for the "comment" field. It is called by the builders before save.
+	CommentValidator func(string) error
+)

@@ -68,9 +68,13 @@ var (
 	CheckoutsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "checkout_date", Type: field.TypeTime},
+		{Name: "identity_card", Type: field.TypeString, Size: 13},
+		{Name: "price", Type: field.TypeFloat64},
+		{Name: "comment", Type: field.TypeString, Size: 70},
 		{Name: "check_in_checkouts", Type: field.TypeInt, Unique: true, Nullable: true},
 		{Name: "staff_id", Type: field.TypeInt, Nullable: true},
 		{Name: "status_checkouts", Type: field.TypeInt, Nullable: true},
+		{Name: "status_opinion_checkouts", Type: field.TypeInt, Nullable: true},
 	}
 	// CheckoutsTable holds the schema information for the "checkouts" table.
 	CheckoutsTable = &schema.Table{
@@ -80,23 +84,30 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "checkouts_check_ins_checkouts",
-				Columns: []*schema.Column{CheckoutsColumns[2]},
+				Columns: []*schema.Column{CheckoutsColumns[5]},
 
 				RefColumns: []*schema.Column{CheckInsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "checkouts_counter_staffs_checkouts",
-				Columns: []*schema.Column{CheckoutsColumns[3]},
+				Columns: []*schema.Column{CheckoutsColumns[6]},
 
 				RefColumns: []*schema.Column{CounterStaffsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "checkouts_status_checkouts",
-				Columns: []*schema.Column{CheckoutsColumns[4]},
+				Columns: []*schema.Column{CheckoutsColumns[7]},
 
 				RefColumns: []*schema.Column{StatusColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:  "checkouts_status_opinions_checkouts",
+				Columns: []*schema.Column{CheckoutsColumns[8]},
+
+				RefColumns: []*schema.Column{StatusOpinionsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -365,6 +376,18 @@ var (
 		PrimaryKey:  []*schema.Column{StatusCheckInsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// StatusOpinionsColumns holds the columns for the "status_opinions" table.
+	StatusOpinionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "opinion", Type: field.TypeString, Unique: true},
+	}
+	// StatusOpinionsTable holds the schema information for the "status_opinions" table.
+	StatusOpinionsTable = &schema.Table{
+		Name:        "status_opinions",
+		Columns:     StatusOpinionsColumns,
+		PrimaryKey:  []*schema.Column{StatusOpinionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{},
+	}
 	// StatusReservesColumns holds the columns for the "status_reserves" table.
 	StatusReservesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -416,6 +439,7 @@ var (
 		ReserveRoomsTable,
 		StatusTable,
 		StatusCheckInsTable,
+		StatusOpinionsTable,
 		StatusReservesTable,
 		StatusRoomsTable,
 		TypeRoomsTable,
@@ -431,6 +455,7 @@ func init() {
 	CheckoutsTable.ForeignKeys[0].RefTable = CheckInsTable
 	CheckoutsTable.ForeignKeys[1].RefTable = CounterStaffsTable
 	CheckoutsTable.ForeignKeys[2].RefTable = StatusTable
+	CheckoutsTable.ForeignKeys[3].RefTable = StatusOpinionsTable
 	DataRoomsTable.ForeignKeys[0].RefTable = PromotionsTable
 	DataRoomsTable.ForeignKeys[1].RefTable = StatusRoomsTable
 	DataRoomsTable.ForeignKeys[2].RefTable = TypeRoomsTable

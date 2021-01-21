@@ -2365,6 +2365,183 @@
                 }
             }
         },
+        "/statusopinions": {
+            "get": {
+                "description": "list statusopinion entities",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "List statusopinion entities",
+                "operationId": "list-statusopinion",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ent.StatusOpinion"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create statusopinion",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Create statusopinion",
+                "operationId": "create-statusopinion",
+                "parameters": [
+                    {
+                        "description": "StatusOpinion entity",
+                        "name": "statusopinion",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ent.StatusOpinion"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ent.StatusOpinion"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            }
+        },
+        "/statusopinions/{id}": {
+            "get": {
+                "description": "get statusopinion by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get a statusopinion entity by ID",
+                "operationId": "get-statusopinion",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "StatusOpinion ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ent.StatusOpinion"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "get statusopinion by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Delete a statusopinion entity by ID",
+                "operationId": "delete-statusopinion",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "StatusOpinion ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            }
+        },
         "/statusrooms": {
             "get": {
                 "description": "list statusroom entities",
@@ -2884,6 +3061,10 @@
                     "description": "CheckoutDate holds the value of the \"checkout_date\" field.",
                     "type": "string"
                 },
+                "comment": {
+                    "description": "Comment holds the value of the \"comment\" field.",
+                    "type": "string"
+                },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the CheckoutQuery when eager-loading is set.",
                     "type": "object",
@@ -2892,6 +3073,14 @@
                 "id": {
                     "description": "ID of the ent.",
                     "type": "integer"
+                },
+                "identity_card": {
+                    "description": "IdentityCard holds the value of the \"identity_card\" field.",
+                    "type": "string"
+                },
+                "price": {
+                    "description": "Price holds the value of the \"price\" field.",
+                    "type": "number"
                 }
             }
         },
@@ -2907,6 +3096,11 @@
                     "description": "Counterstaffs holds the value of the counterstaffs edge.",
                     "type": "object",
                     "$ref": "#/definitions/ent.CounterStaff"
+                },
+                "statusopinion": {
+                    "description": "Statusopinion holds the value of the statusopinion edge.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.StatusOpinion"
                 },
                 "statuss": {
                     "description": "Statuss holds the value of the statuss edge.",
@@ -3417,6 +3611,36 @@
             }
         },
         "ent.StatusEdges": {
+            "type": "object",
+            "properties": {
+                "checkouts": {
+                    "description": "Checkouts holds the value of the checkouts edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Checkout"
+                    }
+                }
+            }
+        },
+        "ent.StatusOpinion": {
+            "type": "object",
+            "properties": {
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the StatusOpinionQuery when eager-loading is set.",
+                    "type": "object",
+                    "$ref": "#/definitions/ent.StatusOpinionEdges"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "integer"
+                },
+                "opinion": {
+                    "description": "Opinion holds the value of the \"opinion\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.StatusOpinionEdges": {
             "type": "object",
             "properties": {
                 "checkouts": {

@@ -16,6 +16,7 @@ import (
 	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/predicate"
 	"github.com/team18/app/ent/status"
+	"github.com/team18/app/ent/statusopinion"
 )
 
 // CheckoutUpdate is the builder for updating Checkout entities.
@@ -38,6 +39,31 @@ func (cu *CheckoutUpdate) SetCheckoutDate(t time.Time) *CheckoutUpdate {
 	return cu
 }
 
+// SetIdentityCard sets the identity_card field.
+func (cu *CheckoutUpdate) SetIdentityCard(s string) *CheckoutUpdate {
+	cu.mutation.SetIdentityCard(s)
+	return cu
+}
+
+// SetPrice sets the price field.
+func (cu *CheckoutUpdate) SetPrice(f float64) *CheckoutUpdate {
+	cu.mutation.ResetPrice()
+	cu.mutation.SetPrice(f)
+	return cu
+}
+
+// AddPrice adds f to price.
+func (cu *CheckoutUpdate) AddPrice(f float64) *CheckoutUpdate {
+	cu.mutation.AddPrice(f)
+	return cu
+}
+
+// SetComment sets the comment field.
+func (cu *CheckoutUpdate) SetComment(s string) *CheckoutUpdate {
+	cu.mutation.SetComment(s)
+	return cu
+}
+
 // SetStatussID sets the statuss edge to Status by id.
 func (cu *CheckoutUpdate) SetStatussID(id int) *CheckoutUpdate {
 	cu.mutation.SetStatussID(id)
@@ -55,6 +81,25 @@ func (cu *CheckoutUpdate) SetNillableStatussID(id *int) *CheckoutUpdate {
 // SetStatuss sets the statuss edge to Status.
 func (cu *CheckoutUpdate) SetStatuss(s *Status) *CheckoutUpdate {
 	return cu.SetStatussID(s.ID)
+}
+
+// SetStatusopinionID sets the statusopinion edge to StatusOpinion by id.
+func (cu *CheckoutUpdate) SetStatusopinionID(id int) *CheckoutUpdate {
+	cu.mutation.SetStatusopinionID(id)
+	return cu
+}
+
+// SetNillableStatusopinionID sets the statusopinion edge to StatusOpinion by id if the given value is not nil.
+func (cu *CheckoutUpdate) SetNillableStatusopinionID(id *int) *CheckoutUpdate {
+	if id != nil {
+		cu = cu.SetStatusopinionID(*id)
+	}
+	return cu
+}
+
+// SetStatusopinion sets the statusopinion edge to StatusOpinion.
+func (cu *CheckoutUpdate) SetStatusopinion(s *StatusOpinion) *CheckoutUpdate {
+	return cu.SetStatusopinionID(s.ID)
 }
 
 // SetCounterstaffsID sets the counterstaffs edge to CounterStaff by id.
@@ -98,6 +143,12 @@ func (cu *CheckoutUpdate) ClearStatuss() *CheckoutUpdate {
 	return cu
 }
 
+// ClearStatusopinion clears the statusopinion edge to StatusOpinion.
+func (cu *CheckoutUpdate) ClearStatusopinion() *CheckoutUpdate {
+	cu.mutation.ClearStatusopinion()
+	return cu
+}
+
 // ClearCounterstaffs clears the counterstaffs edge to CounterStaff.
 func (cu *CheckoutUpdate) ClearCounterstaffs() *CheckoutUpdate {
 	cu.mutation.ClearCounterstaffs()
@@ -112,6 +163,21 @@ func (cu *CheckoutUpdate) ClearCheckins() *CheckoutUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (cu *CheckoutUpdate) Save(ctx context.Context) (int, error) {
+	if v, ok := cu.mutation.IdentityCard(); ok {
+		if err := checkout.IdentityCardValidator(v); err != nil {
+			return 0, &ValidationError{Name: "identity_card", err: fmt.Errorf("ent: validator failed for field \"identity_card\": %w", err)}
+		}
+	}
+	if v, ok := cu.mutation.Price(); ok {
+		if err := checkout.PriceValidator(v); err != nil {
+			return 0, &ValidationError{Name: "price", err: fmt.Errorf("ent: validator failed for field \"price\": %w", err)}
+		}
+	}
+	if v, ok := cu.mutation.Comment(); ok {
+		if err := checkout.CommentValidator(v); err != nil {
+			return 0, &ValidationError{Name: "comment", err: fmt.Errorf("ent: validator failed for field \"comment\": %w", err)}
+		}
+	}
 
 	if _, ok := cu.mutation.CheckinsID(); cu.mutation.CheckinsCleared() && !ok {
 		return 0, errors.New("ent: clearing a unique edge \"checkins\"")
@@ -190,6 +256,34 @@ func (cu *CheckoutUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: checkout.FieldCheckoutDate,
 		})
 	}
+	if value, ok := cu.mutation.IdentityCard(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: checkout.FieldIdentityCard,
+		})
+	}
+	if value, ok := cu.mutation.Price(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: checkout.FieldPrice,
+		})
+	}
+	if value, ok := cu.mutation.AddedPrice(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: checkout.FieldPrice,
+		})
+	}
+	if value, ok := cu.mutation.Comment(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: checkout.FieldComment,
+		})
+	}
 	if cu.mutation.StatussCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -217,6 +311,41 @@ func (cu *CheckoutUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: status.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if cu.mutation.StatusopinionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   checkout.StatusopinionTable,
+			Columns: []string{checkout.StatusopinionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: statusopinion.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cu.mutation.StatusopinionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   checkout.StatusopinionTable,
+			Columns: []string{checkout.StatusopinionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: statusopinion.FieldID,
 				},
 			},
 		}
@@ -319,6 +448,31 @@ func (cuo *CheckoutUpdateOne) SetCheckoutDate(t time.Time) *CheckoutUpdateOne {
 	return cuo
 }
 
+// SetIdentityCard sets the identity_card field.
+func (cuo *CheckoutUpdateOne) SetIdentityCard(s string) *CheckoutUpdateOne {
+	cuo.mutation.SetIdentityCard(s)
+	return cuo
+}
+
+// SetPrice sets the price field.
+func (cuo *CheckoutUpdateOne) SetPrice(f float64) *CheckoutUpdateOne {
+	cuo.mutation.ResetPrice()
+	cuo.mutation.SetPrice(f)
+	return cuo
+}
+
+// AddPrice adds f to price.
+func (cuo *CheckoutUpdateOne) AddPrice(f float64) *CheckoutUpdateOne {
+	cuo.mutation.AddPrice(f)
+	return cuo
+}
+
+// SetComment sets the comment field.
+func (cuo *CheckoutUpdateOne) SetComment(s string) *CheckoutUpdateOne {
+	cuo.mutation.SetComment(s)
+	return cuo
+}
+
 // SetStatussID sets the statuss edge to Status by id.
 func (cuo *CheckoutUpdateOne) SetStatussID(id int) *CheckoutUpdateOne {
 	cuo.mutation.SetStatussID(id)
@@ -336,6 +490,25 @@ func (cuo *CheckoutUpdateOne) SetNillableStatussID(id *int) *CheckoutUpdateOne {
 // SetStatuss sets the statuss edge to Status.
 func (cuo *CheckoutUpdateOne) SetStatuss(s *Status) *CheckoutUpdateOne {
 	return cuo.SetStatussID(s.ID)
+}
+
+// SetStatusopinionID sets the statusopinion edge to StatusOpinion by id.
+func (cuo *CheckoutUpdateOne) SetStatusopinionID(id int) *CheckoutUpdateOne {
+	cuo.mutation.SetStatusopinionID(id)
+	return cuo
+}
+
+// SetNillableStatusopinionID sets the statusopinion edge to StatusOpinion by id if the given value is not nil.
+func (cuo *CheckoutUpdateOne) SetNillableStatusopinionID(id *int) *CheckoutUpdateOne {
+	if id != nil {
+		cuo = cuo.SetStatusopinionID(*id)
+	}
+	return cuo
+}
+
+// SetStatusopinion sets the statusopinion edge to StatusOpinion.
+func (cuo *CheckoutUpdateOne) SetStatusopinion(s *StatusOpinion) *CheckoutUpdateOne {
+	return cuo.SetStatusopinionID(s.ID)
 }
 
 // SetCounterstaffsID sets the counterstaffs edge to CounterStaff by id.
@@ -379,6 +552,12 @@ func (cuo *CheckoutUpdateOne) ClearStatuss() *CheckoutUpdateOne {
 	return cuo
 }
 
+// ClearStatusopinion clears the statusopinion edge to StatusOpinion.
+func (cuo *CheckoutUpdateOne) ClearStatusopinion() *CheckoutUpdateOne {
+	cuo.mutation.ClearStatusopinion()
+	return cuo
+}
+
 // ClearCounterstaffs clears the counterstaffs edge to CounterStaff.
 func (cuo *CheckoutUpdateOne) ClearCounterstaffs() *CheckoutUpdateOne {
 	cuo.mutation.ClearCounterstaffs()
@@ -393,6 +572,21 @@ func (cuo *CheckoutUpdateOne) ClearCheckins() *CheckoutUpdateOne {
 
 // Save executes the query and returns the updated entity.
 func (cuo *CheckoutUpdateOne) Save(ctx context.Context) (*Checkout, error) {
+	if v, ok := cuo.mutation.IdentityCard(); ok {
+		if err := checkout.IdentityCardValidator(v); err != nil {
+			return nil, &ValidationError{Name: "identity_card", err: fmt.Errorf("ent: validator failed for field \"identity_card\": %w", err)}
+		}
+	}
+	if v, ok := cuo.mutation.Price(); ok {
+		if err := checkout.PriceValidator(v); err != nil {
+			return nil, &ValidationError{Name: "price", err: fmt.Errorf("ent: validator failed for field \"price\": %w", err)}
+		}
+	}
+	if v, ok := cuo.mutation.Comment(); ok {
+		if err := checkout.CommentValidator(v); err != nil {
+			return nil, &ValidationError{Name: "comment", err: fmt.Errorf("ent: validator failed for field \"comment\": %w", err)}
+		}
+	}
 
 	if _, ok := cuo.mutation.CheckinsID(); cuo.mutation.CheckinsCleared() && !ok {
 		return nil, errors.New("ent: clearing a unique edge \"checkins\"")
@@ -469,6 +663,34 @@ func (cuo *CheckoutUpdateOne) sqlSave(ctx context.Context) (c *Checkout, err err
 			Column: checkout.FieldCheckoutDate,
 		})
 	}
+	if value, ok := cuo.mutation.IdentityCard(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: checkout.FieldIdentityCard,
+		})
+	}
+	if value, ok := cuo.mutation.Price(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: checkout.FieldPrice,
+		})
+	}
+	if value, ok := cuo.mutation.AddedPrice(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: checkout.FieldPrice,
+		})
+	}
+	if value, ok := cuo.mutation.Comment(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: checkout.FieldComment,
+		})
+	}
 	if cuo.mutation.StatussCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -496,6 +718,41 @@ func (cuo *CheckoutUpdateOne) sqlSave(ctx context.Context) (c *Checkout, err err
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: status.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if cuo.mutation.StatusopinionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   checkout.StatusopinionTable,
+			Columns: []string{checkout.StatusopinionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: statusopinion.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := cuo.mutation.StatusopinionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   checkout.StatusopinionTable,
+			Columns: []string{checkout.StatusopinionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: statusopinion.FieldID,
 				},
 			},
 		}
