@@ -12,6 +12,7 @@ import (
 	"github.com/team18/app/ent/checkout"
 	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/status"
+	"github.com/team18/app/ent/statusopinion"
 )
 
 // CheckoutController defines the struct for the checkout controller
@@ -20,11 +21,16 @@ type CheckoutController struct {
 	router gin.IRouter
 }
 
+// CheckOut struct
 type CheckOut struct {
 	CheckoutDate    string
 	StatussID       int
 	CounterstaffsID int
 	CheckinsID      int
+	Identitycard    string
+	StatusopinionID int
+	Comment         string
+	Price           float64
 }
 
 // CreateCheckout handles POST requests for adding checkout entities
@@ -70,6 +76,18 @@ func (ctl *CheckoutController) CreateCheckout(c *gin.Context) {
 		return
 	}
 
+	so, err := ctl.client.StatusOpinion.
+		Query().
+		Where(statusopinion.IDEQ(int(obj.StatusopinionID))).
+		Only(context.Background())
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": "StatusopinionID not found",
+		})
+		return
+	}
+
 	st, err := ctl.client.Status.
 		Query().
 		Where(status.IDEQ(int(obj.StatussID))).
@@ -93,6 +111,28 @@ func (ctl *CheckoutController) CreateCheckout(c *gin.Context) {
 		})
 		return
 	}
+
+	co, err := ctl.client.Checkout.
+		Create().
+		SetPrice(obj.Price).
+		SetComment(obj.Comment).
+		SetIdentityCard(obj.Identitycard).
+		SetStatusopinion(so).
+		SetCheckoutDate(time).
+		SetStatuss(st).
+		SetCounterstaffs(cou).
+		SetCheckins(ci).
+		Save(context.Background())
+	if err != nil {
+		c.JSON(400, gin.H{
+			"status": false,
+			"error":  err,
+			"this2":  "this2",
+		})
+		return
+	}
+	fmt.Print(err)
+
 	upc, err := ctl.client.CheckIn.
 		UpdateOne(ci).
 		SetStatusID(2).
@@ -115,6 +155,7 @@ func (ctl *CheckoutController) CreateCheckout(c *gin.Context) {
 		})
 		return
 	}
+	fmt.Print(err)
 
 	di, err := ctl.client.DataRoom.
 		UpdateOne(da).
@@ -127,23 +168,13 @@ func (ctl *CheckoutController) CreateCheckout(c *gin.Context) {
 		})
 		return
 	}
-
-	u, err := ctl.client.Checkout.
-		Create().
-		SetCheckoutDate(time).
-		SetStatuss(st).
-		SetCounterstaffs(cou).
-		SetCheckins(ci).
-		Save(context.Background())
-	if err != nil {
-		c.JSON(400, gin.H{
-			"error": "saving failed",
-		})
-		return
-	}
+	fmt.Print(err)
 
 	fmt.Print(upc, di)
-	c.JSON(200, u)
+	c.JSON(200, gin.H{
+		"status": true,
+		"data":   co,
+	})
 }
 
 // ListCheckout handles request to get a list of checkout entities

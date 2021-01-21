@@ -14,6 +14,14 @@ import (
 	"github.com/team18/app/ent"
 )
 
+type StatusOpinions struct {
+	StatusOpinion []StatusOpinion
+}
+
+type StatusOpinion struct {
+	Opinion string
+}
+
 type Statuss struct {
 	Status []Status
 }
@@ -184,6 +192,7 @@ func main() {
 	controllers.NewFurnitureController(v1, client)
 	controllers.NewFixRoomController(v1, client)
 	controllers.NewStatusCheckinController(v1, client)
+	controllers.NewStatusOpinionController(v1, client)
 
 	// Set StatusRoom Data
 	statusrooms := StatusRooms{
@@ -199,11 +208,27 @@ func main() {
 			Save(context.Background())
 	}
 
+	//set opinion data for checkout
+	statusopinion := StatusOpinions{
+		StatusOpinion: []StatusOpinion{
+			StatusOpinion{"พอใจมาก"},
+			StatusOpinion{"รู้สึกเฉยๆ"},
+			StatusOpinion{"ไม่พอใจ"},
+		},
+	}
+	for _, sc := range statusopinion.StatusOpinion {
+		client.StatusOpinion.
+			Create().
+			SetOpinion(sc.Opinion).
+			Save(context.Background())
+	}
+
 	// set status Data for checkout
 	statuss := Statuss{
 		Status: []Status{
-			Status{"จ่าย"},
-			Status{"ยังไม่จ่าย"},
+			Status{"ชำระเรียบร้อย"},
+			Status{"ยังไม่ชำระ"},
+			Status{"ชำระไม่ครบ"},
 		},
 	}
 	for _, sc := range statuss.Status {

@@ -56,6 +56,9 @@ definitions:
       checkout_date:
         description: CheckoutDate holds the value of the "checkout_date" field.
         type: string
+      comment:
+        description: Comment holds the value of the "comment" field.
+        type: string
       edges:
         $ref: '#/definitions/ent.CheckoutEdges'
         description: |-
@@ -65,6 +68,12 @@ definitions:
       id:
         description: ID of the ent.
         type: integer
+      identity_card:
+        description: IdentityCard holds the value of the "identity_card" field.
+        type: string
+      price:
+        description: Price holds the value of the "price" field.
+        type: number
     type: object
   ent.CheckoutEdges:
     properties:
@@ -75,6 +84,10 @@ definitions:
       counterstaffs:
         $ref: '#/definitions/ent.CounterStaff'
         description: Counterstaffs holds the value of the counterstaffs edge.
+        type: object
+      statusopinion:
+        $ref: '#/definitions/ent.StatusOpinion'
+        description: Statusopinion holds the value of the statusopinion edge.
         type: object
       statuss:
         $ref: '#/definitions/ent.Status'
@@ -466,6 +479,29 @@ definitions:
         type: array
     type: object
   ent.StatusEdges:
+    properties:
+      checkouts:
+        description: Checkouts holds the value of the checkouts edge.
+        items:
+          $ref: '#/definitions/ent.Checkout'
+        type: array
+    type: object
+  ent.StatusOpinion:
+    properties:
+      edges:
+        $ref: '#/definitions/ent.StatusOpinionEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the StatusOpinionQuery when eager-loading is set.
+        type: object
+      id:
+        description: ID of the ent.
+        type: integer
+      opinion:
+        description: Opinion holds the value of the "opinion" field.
+        type: string
+    type: object
+  ent.StatusOpinionEdges:
     properties:
       checkouts:
         description: Checkouts holds the value of the checkouts edge.
@@ -2123,6 +2159,124 @@ paths:
           schema:
             $ref: '#/definitions/gin.H'
       summary: Get a statuscheckin entity by ID
+  /statusopinions:
+    get:
+      description: list statusopinion entities
+      operationId: list-statusopinion
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/ent.StatusOpinion'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: List statusopinion entities
+    post:
+      consumes:
+      - application/json
+      description: Create statusopinion
+      operationId: create-statusopinion
+      parameters:
+      - description: StatusOpinion entity
+        in: body
+        name: statusopinion
+        required: true
+        schema:
+          $ref: '#/definitions/ent.StatusOpinion'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ent.StatusOpinion'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: Create statusopinion
+  /statusopinions/{id}:
+    delete:
+      description: get statusopinion by ID
+      operationId: delete-statusopinion
+      parameters:
+      - description: StatusOpinion ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/gin.H'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: Delete a statusopinion entity by ID
+    get:
+      description: get statusopinion by ID
+      operationId: get-statusopinion
+      parameters:
+      - description: StatusOpinion ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ent.StatusOpinion'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: Get a statusopinion entity by ID
   /statusrooms:
     get:
       description: list statusroom entities

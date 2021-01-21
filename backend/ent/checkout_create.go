@@ -14,6 +14,7 @@ import (
 	"github.com/team18/app/ent/checkout"
 	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/status"
+	"github.com/team18/app/ent/statusopinion"
 )
 
 // CheckoutCreate is the builder for creating a Checkout entity.
@@ -26,6 +27,24 @@ type CheckoutCreate struct {
 // SetCheckoutDate sets the checkout_date field.
 func (cc *CheckoutCreate) SetCheckoutDate(t time.Time) *CheckoutCreate {
 	cc.mutation.SetCheckoutDate(t)
+	return cc
+}
+
+// SetIdentityCard sets the identity_card field.
+func (cc *CheckoutCreate) SetIdentityCard(s string) *CheckoutCreate {
+	cc.mutation.SetIdentityCard(s)
+	return cc
+}
+
+// SetPrice sets the price field.
+func (cc *CheckoutCreate) SetPrice(f float64) *CheckoutCreate {
+	cc.mutation.SetPrice(f)
+	return cc
+}
+
+// SetComment sets the comment field.
+func (cc *CheckoutCreate) SetComment(s string) *CheckoutCreate {
+	cc.mutation.SetComment(s)
 	return cc
 }
 
@@ -46,6 +65,25 @@ func (cc *CheckoutCreate) SetNillableStatussID(id *int) *CheckoutCreate {
 // SetStatuss sets the statuss edge to Status.
 func (cc *CheckoutCreate) SetStatuss(s *Status) *CheckoutCreate {
 	return cc.SetStatussID(s.ID)
+}
+
+// SetStatusopinionID sets the statusopinion edge to StatusOpinion by id.
+func (cc *CheckoutCreate) SetStatusopinionID(id int) *CheckoutCreate {
+	cc.mutation.SetStatusopinionID(id)
+	return cc
+}
+
+// SetNillableStatusopinionID sets the statusopinion edge to StatusOpinion by id if the given value is not nil.
+func (cc *CheckoutCreate) SetNillableStatusopinionID(id *int) *CheckoutCreate {
+	if id != nil {
+		cc = cc.SetStatusopinionID(*id)
+	}
+	return cc
+}
+
+// SetStatusopinion sets the statusopinion edge to StatusOpinion.
+func (cc *CheckoutCreate) SetStatusopinion(s *StatusOpinion) *CheckoutCreate {
+	return cc.SetStatusopinionID(s.ID)
 }
 
 // SetCounterstaffsID sets the counterstaffs edge to CounterStaff by id.
@@ -87,6 +125,30 @@ func (cc *CheckoutCreate) Mutation() *CheckoutMutation {
 func (cc *CheckoutCreate) Save(ctx context.Context) (*Checkout, error) {
 	if _, ok := cc.mutation.CheckoutDate(); !ok {
 		return nil, &ValidationError{Name: "checkout_date", err: errors.New("ent: missing required field \"checkout_date\"")}
+	}
+	if _, ok := cc.mutation.IdentityCard(); !ok {
+		return nil, &ValidationError{Name: "identity_card", err: errors.New("ent: missing required field \"identity_card\"")}
+	}
+	if v, ok := cc.mutation.IdentityCard(); ok {
+		if err := checkout.IdentityCardValidator(v); err != nil {
+			return nil, &ValidationError{Name: "identity_card", err: fmt.Errorf("ent: validator failed for field \"identity_card\": %w", err)}
+		}
+	}
+	if _, ok := cc.mutation.Price(); !ok {
+		return nil, &ValidationError{Name: "price", err: errors.New("ent: missing required field \"price\"")}
+	}
+	if v, ok := cc.mutation.Price(); ok {
+		if err := checkout.PriceValidator(v); err != nil {
+			return nil, &ValidationError{Name: "price", err: fmt.Errorf("ent: validator failed for field \"price\": %w", err)}
+		}
+	}
+	if _, ok := cc.mutation.Comment(); !ok {
+		return nil, &ValidationError{Name: "comment", err: errors.New("ent: missing required field \"comment\"")}
+	}
+	if v, ok := cc.mutation.Comment(); ok {
+		if err := checkout.CommentValidator(v); err != nil {
+			return nil, &ValidationError{Name: "comment", err: fmt.Errorf("ent: validator failed for field \"comment\": %w", err)}
+		}
 	}
 	if _, ok := cc.mutation.CheckinsID(); !ok {
 		return nil, &ValidationError{Name: "checkins", err: errors.New("ent: missing required edge \"checkins\"")}
@@ -159,6 +221,30 @@ func (cc *CheckoutCreate) createSpec() (*Checkout, *sqlgraph.CreateSpec) {
 		})
 		c.CheckoutDate = value
 	}
+	if value, ok := cc.mutation.IdentityCard(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: checkout.FieldIdentityCard,
+		})
+		c.IdentityCard = value
+	}
+	if value, ok := cc.mutation.Price(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeFloat64,
+			Value:  value,
+			Column: checkout.FieldPrice,
+		})
+		c.Price = value
+	}
+	if value, ok := cc.mutation.Comment(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: checkout.FieldComment,
+		})
+		c.Comment = value
+	}
 	if nodes := cc.mutation.StatussIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -170,6 +256,25 @@ func (cc *CheckoutCreate) createSpec() (*Checkout, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: status.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := cc.mutation.StatusopinionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   checkout.StatusopinionTable,
+			Columns: []string{checkout.StatusopinionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: statusopinion.FieldID,
 				},
 			},
 		}

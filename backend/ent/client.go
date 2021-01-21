@@ -22,6 +22,7 @@ import (
 	"github.com/team18/app/ent/reserveroom"
 	"github.com/team18/app/ent/status"
 	"github.com/team18/app/ent/statuscheckin"
+	"github.com/team18/app/ent/statusopinion"
 	"github.com/team18/app/ent/statusreserve"
 	"github.com/team18/app/ent/statusroom"
 	"github.com/team18/app/ent/typeroom"
@@ -62,6 +63,8 @@ type Client struct {
 	Status *StatusClient
 	// StatusCheckIn is the client for interacting with the StatusCheckIn builders.
 	StatusCheckIn *StatusCheckInClient
+	// StatusOpinion is the client for interacting with the StatusOpinion builders.
+	StatusOpinion *StatusOpinionClient
 	// StatusReserve is the client for interacting with the StatusReserve builders.
 	StatusReserve *StatusReserveClient
 	// StatusRoom is the client for interacting with the StatusRoom builders.
@@ -94,6 +97,7 @@ func (c *Client) init() {
 	c.ReserveRoom = NewReserveRoomClient(c.config)
 	c.Status = NewStatusClient(c.config)
 	c.StatusCheckIn = NewStatusCheckInClient(c.config)
+	c.StatusOpinion = NewStatusOpinionClient(c.config)
 	c.StatusReserve = NewStatusReserveClient(c.config)
 	c.StatusRoom = NewStatusRoomClient(c.config)
 	c.TypeRoom = NewTypeRoomClient(c.config)
@@ -142,6 +146,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ReserveRoom:     NewReserveRoomClient(cfg),
 		Status:          NewStatusClient(cfg),
 		StatusCheckIn:   NewStatusCheckInClient(cfg),
+		StatusOpinion:   NewStatusOpinionClient(cfg),
 		StatusReserve:   NewStatusReserveClient(cfg),
 		StatusRoom:      NewStatusRoomClient(cfg),
 		TypeRoom:        NewTypeRoomClient(cfg),
@@ -173,6 +178,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ReserveRoom:     NewReserveRoomClient(cfg),
 		Status:          NewStatusClient(cfg),
 		StatusCheckIn:   NewStatusCheckInClient(cfg),
+		StatusOpinion:   NewStatusOpinionClient(cfg),
 		StatusReserve:   NewStatusReserveClient(cfg),
 		StatusRoom:      NewStatusRoomClient(cfg),
 		TypeRoom:        NewTypeRoomClient(cfg),
@@ -217,6 +223,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.ReserveRoom.Use(hooks...)
 	c.Status.Use(hooks...)
 	c.StatusCheckIn.Use(hooks...)
+	c.StatusOpinion.Use(hooks...)
 	c.StatusReserve.Use(hooks...)
 	c.StatusRoom.Use(hooks...)
 	c.TypeRoom.Use(hooks...)
@@ -488,6 +495,22 @@ func (c *CheckoutClient) QueryStatuss(ch *Checkout) *StatusQuery {
 			sqlgraph.From(checkout.Table, checkout.FieldID, id),
 			sqlgraph.To(status.Table, status.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, checkout.StatussTable, checkout.StatussColumn),
+		)
+		fromV = sqlgraph.Neighbors(ch.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryStatusopinion queries the statusopinion edge of a Checkout.
+func (c *CheckoutClient) QueryStatusopinion(ch *Checkout) *StatusOpinionQuery {
+	query := &StatusOpinionQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := ch.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(checkout.Table, checkout.FieldID, id),
+			sqlgraph.To(statusopinion.Table, statusopinion.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, checkout.StatusopinionTable, checkout.StatusopinionColumn),
 		)
 		fromV = sqlgraph.Neighbors(ch.driver.Dialect(), step)
 		return fromV, nil
@@ -1955,6 +1978,105 @@ func (c *StatusCheckInClient) QueryCheckins(sci *StatusCheckIn) *CheckInQuery {
 // Hooks returns the client hooks.
 func (c *StatusCheckInClient) Hooks() []Hook {
 	return c.hooks.StatusCheckIn
+}
+
+// StatusOpinionClient is a client for the StatusOpinion schema.
+type StatusOpinionClient struct {
+	config
+}
+
+// NewStatusOpinionClient returns a client for the StatusOpinion from the given config.
+func NewStatusOpinionClient(c config) *StatusOpinionClient {
+	return &StatusOpinionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `statusopinion.Hooks(f(g(h())))`.
+func (c *StatusOpinionClient) Use(hooks ...Hook) {
+	c.hooks.StatusOpinion = append(c.hooks.StatusOpinion, hooks...)
+}
+
+// Create returns a create builder for StatusOpinion.
+func (c *StatusOpinionClient) Create() *StatusOpinionCreate {
+	mutation := newStatusOpinionMutation(c.config, OpCreate)
+	return &StatusOpinionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Update returns an update builder for StatusOpinion.
+func (c *StatusOpinionClient) Update() *StatusOpinionUpdate {
+	mutation := newStatusOpinionMutation(c.config, OpUpdate)
+	return &StatusOpinionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *StatusOpinionClient) UpdateOne(so *StatusOpinion) *StatusOpinionUpdateOne {
+	mutation := newStatusOpinionMutation(c.config, OpUpdateOne, withStatusOpinion(so))
+	return &StatusOpinionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *StatusOpinionClient) UpdateOneID(id int) *StatusOpinionUpdateOne {
+	mutation := newStatusOpinionMutation(c.config, OpUpdateOne, withStatusOpinionID(id))
+	return &StatusOpinionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for StatusOpinion.
+func (c *StatusOpinionClient) Delete() *StatusOpinionDelete {
+	mutation := newStatusOpinionMutation(c.config, OpDelete)
+	return &StatusOpinionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *StatusOpinionClient) DeleteOne(so *StatusOpinion) *StatusOpinionDeleteOne {
+	return c.DeleteOneID(so.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *StatusOpinionClient) DeleteOneID(id int) *StatusOpinionDeleteOne {
+	builder := c.Delete().Where(statusopinion.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &StatusOpinionDeleteOne{builder}
+}
+
+// Create returns a query builder for StatusOpinion.
+func (c *StatusOpinionClient) Query() *StatusOpinionQuery {
+	return &StatusOpinionQuery{config: c.config}
+}
+
+// Get returns a StatusOpinion entity by its id.
+func (c *StatusOpinionClient) Get(ctx context.Context, id int) (*StatusOpinion, error) {
+	return c.Query().Where(statusopinion.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *StatusOpinionClient) GetX(ctx context.Context, id int) *StatusOpinion {
+	so, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return so
+}
+
+// QueryCheckouts queries the checkouts edge of a StatusOpinion.
+func (c *StatusOpinionClient) QueryCheckouts(so *StatusOpinion) *CheckoutQuery {
+	query := &CheckoutQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := so.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(statusopinion.Table, statusopinion.FieldID, id),
+			sqlgraph.To(checkout.Table, checkout.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, statusopinion.CheckoutsTable, statusopinion.CheckoutsColumn),
+		)
+		fromV = sqlgraph.Neighbors(so.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *StatusOpinionClient) Hooks() []Hook {
+	return c.hooks.StatusOpinion
 }
 
 // StatusReserveClient is a client for the StatusReserve schema.

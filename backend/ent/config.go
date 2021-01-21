@@ -37,6 +37,7 @@ type hooks struct {
 	ReserveRoom     []ent.Hook
 	Status          []ent.Hook
 	StatusCheckIn   []ent.Hook
+	StatusOpinion   []ent.Hook
 	StatusReserve   []ent.Hook
 	StatusRoom      []ent.Hook
 	TypeRoom        []ent.Hook
