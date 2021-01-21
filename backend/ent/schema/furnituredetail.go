@@ -17,7 +17,7 @@ func (FurnitureDetail) Fields() []ent.Field {
 		field.Time("date_add"),
 		field.Int("furniture_amount").Max(10).Positive(),
 		field.String("furniture_colour").MaxLen(10),
-		field.String("detail").MaxLen(50),
+		field.String("detail").Unique().MaxLen(50),
 	}
 }
 

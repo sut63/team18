@@ -133,7 +133,7 @@ var (
 	DataRoomsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "price", Type: field.TypeFloat64},
-		{Name: "roomnumber", Type: field.TypeString},
+		{Name: "roomnumber", Type: field.TypeString, Unique: true},
 		{Name: "roomdetail", Type: field.TypeString, Size: 70},
 		{Name: "promotion_id", Type: field.TypeInt, Nullable: true},
 		{Name: "statusroom_id", Type: field.TypeInt, Nullable: true},
@@ -225,7 +225,7 @@ var (
 		{Name: "date_add", Type: field.TypeTime},
 		{Name: "furniture_amount", Type: field.TypeInt},
 		{Name: "furniture_colour", Type: field.TypeString, Size: 10},
-		{Name: "detail", Type: field.TypeString, Size: 50},
+		{Name: "detail", Type: field.TypeString, Unique: true, Size: 50},
 		{Name: "staff_id", Type: field.TypeInt, Nullable: true},
 		{Name: "room_id", Type: field.TypeInt, Nullable: true},
 		{Name: "furniture_id", Type: field.TypeInt, Nullable: true},
@@ -270,7 +270,7 @@ var (
 	// FurnitureTypesColumns holds the columns for the "furniture_types" table.
 	FurnitureTypesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "furniture_type", Type: field.TypeString},
+		{Name: "furniture_type", Type: field.TypeString, Unique: true},
 	}
 	// FurnitureTypesTable holds the schema information for the "furniture_types" table.
 	FurnitureTypesTable = &schema.Table{
