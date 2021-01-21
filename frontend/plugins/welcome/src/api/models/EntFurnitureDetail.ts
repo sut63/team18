@@ -33,11 +33,29 @@ export interface EntFurnitureDetail {
      */
     dateAdd?: string;
     /**
+     * Detail holds the value of the "detail" field.
+     * @type {string}
+     * @memberof EntFurnitureDetail
+     */
+    detail?: string;
+    /**
      * 
      * @type {EntFurnitureDetailEdges}
      * @memberof EntFurnitureDetail
      */
     edges?: EntFurnitureDetailEdges;
+    /**
+     * FurnitureAmount holds the value of the "furniture_amount" field.
+     * @type {number}
+     * @memberof EntFurnitureDetail
+     */
+    furnitureAmount?: number;
+    /**
+     * FurnitureColour holds the value of the "furniture_colour" field.
+     * @type {string}
+     * @memberof EntFurnitureDetail
+     */
+    furnitureColour?: string;
     /**
      * ID of the ent.
      * @type {number}
@@ -57,7 +75,10 @@ export function EntFurnitureDetailFromJSONTyped(json: any, ignoreDiscriminator: 
     return {
         
         'dateAdd': !exists(json, 'date_add') ? undefined : json['date_add'],
+        'detail': !exists(json, 'detail') ? undefined : json['detail'],
         'edges': !exists(json, 'edges') ? undefined : EntFurnitureDetailEdgesFromJSON(json['edges']),
+        'furnitureAmount': !exists(json, 'furniture_amount') ? undefined : json['furniture_amount'],
+        'furnitureColour': !exists(json, 'furniture_colour') ? undefined : json['furniture_colour'],
         'id': !exists(json, 'id') ? undefined : json['id'],
     };
 }
@@ -72,7 +93,10 @@ export function EntFurnitureDetailToJSON(value?: EntFurnitureDetail | null): any
     return {
         
         'date_add': value.dateAdd,
+        'detail': value.detail,
         'edges': EntFurnitureDetailEdgesToJSON(value.edges),
+        'furniture_amount': value.furnitureAmount,
+        'furniture_colour': value.furnitureColour,
         'id': value.id,
     };
 }

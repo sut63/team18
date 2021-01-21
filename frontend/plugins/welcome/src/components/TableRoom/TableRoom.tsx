@@ -38,20 +38,24 @@ export default function TablesRoom() {
                 <TableHead>
                     <TableRow>
                         <TableCell align="center">หมายเลขห้อง</TableCell>
+                        <TableCell align="center">รายละเอียด</TableCell>
                         <TableCell align="center">ประเภทห้อง</TableCell>
                         <TableCell align="center">สถานะ</TableCell>
                         <TableCell align="center">ราคา</TableCell>
                         <TableCell align="center">โปรโมชั่น</TableCell>
+                        <TableCell align="center">ส่วนลด</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {rooms.map((item: EntDataRoom) => (
                         <TableRow key={item.id}>
                             <TableCell align="center">{item.roomnumber}</TableCell>
+                            <TableCell align="center">{item.roomdetail}</TableCell>
                             <TableCell align="center">{item.edges?.typeroom?.typeName}</TableCell>
                             <TableCell align="center">{item.edges?.statusroom?.statusName}</TableCell>
                             <TableCell align="center">{item.price} บาท</TableCell>
                             <TableCell align="center">{item.edges?.promotion?.promotionName}</TableCell>
+                            <TableCell align="center">{item.edges?.promotion?.discount}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
