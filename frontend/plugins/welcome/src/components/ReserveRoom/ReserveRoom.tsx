@@ -147,7 +147,7 @@ const ReserveRoom: FC<{}> = () => {
 
   //validate
   const validatePhoneNumber = (val: string) => {
-    return val.match("[0]\\d{9}");
+    return val.match("[0]\\d{9}") && val.length <= 10;
   }
 
   const validateAmount = (val: Number) => {

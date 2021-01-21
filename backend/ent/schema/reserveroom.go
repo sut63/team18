@@ -17,9 +17,9 @@ type ReserveRoom struct {
 func (ReserveRoom) Fields() []ent.Field {
 	return []ent.Field{
 		field.Time("reserve_date"),
-		field.String("province").NotEmpty().MaxLen(50),
+		field.String("request").MaxLen(50),
 		field.Int("amount").Min(1).Max(5).Positive(),
-		field.String("phone_number").Match(regexp.MustCompile("[0]\\d{9}")),
+		field.String("phone_number").Match(regexp.MustCompile("[0]\\d{9}")).MinLen(10).MaxLen(10),
 		field.Float("net_price").Positive(),
 	}
 }

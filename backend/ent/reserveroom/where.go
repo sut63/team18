@@ -100,10 +100,10 @@ func ReserveDate(v time.Time) predicate.ReserveRoom {
 	})
 }
 
-// Province applies equality check predicate on the "province" field. It's identical to ProvinceEQ.
-func Province(v string) predicate.ReserveRoom {
+// Request applies equality check predicate on the "request" field. It's identical to RequestEQ.
+func Request(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldProvince), v))
+		s.Where(sql.EQ(s.C(FieldRequest), v))
 	})
 }
 
@@ -204,22 +204,22 @@ func ReserveDateLTE(v time.Time) predicate.ReserveRoom {
 	})
 }
 
-// ProvinceEQ applies the EQ predicate on the "province" field.
-func ProvinceEQ(v string) predicate.ReserveRoom {
+// RequestEQ applies the EQ predicate on the "request" field.
+func RequestEQ(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldProvince), v))
+		s.Where(sql.EQ(s.C(FieldRequest), v))
 	})
 }
 
-// ProvinceNEQ applies the NEQ predicate on the "province" field.
-func ProvinceNEQ(v string) predicate.ReserveRoom {
+// RequestNEQ applies the NEQ predicate on the "request" field.
+func RequestNEQ(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldProvince), v))
+		s.Where(sql.NEQ(s.C(FieldRequest), v))
 	})
 }
 
-// ProvinceIn applies the In predicate on the "province" field.
-func ProvinceIn(vs ...string) predicate.ReserveRoom {
+// RequestIn applies the In predicate on the "request" field.
+func RequestIn(vs ...string) predicate.ReserveRoom {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -231,12 +231,12 @@ func ProvinceIn(vs ...string) predicate.ReserveRoom {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldProvince), v...))
+		s.Where(sql.In(s.C(FieldRequest), v...))
 	})
 }
 
-// ProvinceNotIn applies the NotIn predicate on the "province" field.
-func ProvinceNotIn(vs ...string) predicate.ReserveRoom {
+// RequestNotIn applies the NotIn predicate on the "request" field.
+func RequestNotIn(vs ...string) predicate.ReserveRoom {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -248,70 +248,70 @@ func ProvinceNotIn(vs ...string) predicate.ReserveRoom {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldProvince), v...))
+		s.Where(sql.NotIn(s.C(FieldRequest), v...))
 	})
 }
 
-// ProvinceGT applies the GT predicate on the "province" field.
-func ProvinceGT(v string) predicate.ReserveRoom {
+// RequestGT applies the GT predicate on the "request" field.
+func RequestGT(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldProvince), v))
+		s.Where(sql.GT(s.C(FieldRequest), v))
 	})
 }
 
-// ProvinceGTE applies the GTE predicate on the "province" field.
-func ProvinceGTE(v string) predicate.ReserveRoom {
+// RequestGTE applies the GTE predicate on the "request" field.
+func RequestGTE(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldProvince), v))
+		s.Where(sql.GTE(s.C(FieldRequest), v))
 	})
 }
 
-// ProvinceLT applies the LT predicate on the "province" field.
-func ProvinceLT(v string) predicate.ReserveRoom {
+// RequestLT applies the LT predicate on the "request" field.
+func RequestLT(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldProvince), v))
+		s.Where(sql.LT(s.C(FieldRequest), v))
 	})
 }
 
-// ProvinceLTE applies the LTE predicate on the "province" field.
-func ProvinceLTE(v string) predicate.ReserveRoom {
+// RequestLTE applies the LTE predicate on the "request" field.
+func RequestLTE(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldProvince), v))
+		s.Where(sql.LTE(s.C(FieldRequest), v))
 	})
 }
 
-// ProvinceContains applies the Contains predicate on the "province" field.
-func ProvinceContains(v string) predicate.ReserveRoom {
+// RequestContains applies the Contains predicate on the "request" field.
+func RequestContains(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldProvince), v))
+		s.Where(sql.Contains(s.C(FieldRequest), v))
 	})
 }
 
-// ProvinceHasPrefix applies the HasPrefix predicate on the "province" field.
-func ProvinceHasPrefix(v string) predicate.ReserveRoom {
+// RequestHasPrefix applies the HasPrefix predicate on the "request" field.
+func RequestHasPrefix(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldProvince), v))
+		s.Where(sql.HasPrefix(s.C(FieldRequest), v))
 	})
 }
 
-// ProvinceHasSuffix applies the HasSuffix predicate on the "province" field.
-func ProvinceHasSuffix(v string) predicate.ReserveRoom {
+// RequestHasSuffix applies the HasSuffix predicate on the "request" field.
+func RequestHasSuffix(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldProvince), v))
+		s.Where(sql.HasSuffix(s.C(FieldRequest), v))
 	})
 }
 
-// ProvinceEqualFold applies the EqualFold predicate on the "province" field.
-func ProvinceEqualFold(v string) predicate.ReserveRoom {
+// RequestEqualFold applies the EqualFold predicate on the "request" field.
+func RequestEqualFold(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldProvince), v))
+		s.Where(sql.EqualFold(s.C(FieldRequest), v))
 	})
 }
 
-// ProvinceContainsFold applies the ContainsFold predicate on the "province" field.
-func ProvinceContainsFold(v string) predicate.ReserveRoom {
+// RequestContainsFold applies the ContainsFold predicate on the "request" field.
+func RequestContainsFold(v string) predicate.ReserveRoom {
 	return predicate.ReserveRoom(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldProvince), v))
+		s.Where(sql.ContainsFold(s.C(FieldRequest), v))
 	})
 }
 

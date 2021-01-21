@@ -29,7 +29,7 @@ type Resreve_Room struct {
 	Status      int
 	ReserveDate string
 	PhoneNumber string
-	Province    string
+	Request     string
 	Amount      int
 	NetPrice    float64
 }
@@ -113,7 +113,7 @@ func (ctl *ReserveRoomController) CreateReserveRoom(c *gin.Context) {
 		SetStatus(s).
 		SetAmount(obj.Amount).
 		SetPhoneNumber(obj.PhoneNumber).
-		SetProvince(obj.Province).
+		SetRequest(obj.Request).
 		SetNetPrice(obj.NetPrice).
 		Save(context.Background())
 

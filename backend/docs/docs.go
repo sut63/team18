@@ -3341,8 +3341,8 @@ var doc = `{
                     "description": "PhoneNumber holds the value of the \"phone_number\" field.",
                     "type": "string"
                 },
-                "province": {
-                    "description": "Province holds the value of the \"province\" field.",
+                "request": {
+                    "description": "Request holds the value of the \"request\" field.",
                     "type": "string"
                 },
                 "reserve_date": {

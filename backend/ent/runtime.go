@@ -198,24 +198,10 @@ func init() {
 	promotion.DiscountValidator = promotionDescDiscount.Validators[0].(func(float64) error)
 	reserveroomFields := schema.ReserveRoom{}.Fields()
 	_ = reserveroomFields
-	// reserveroomDescProvince is the schema descriptor for province field.
-	reserveroomDescProvince := reserveroomFields[1].Descriptor()
-	// reserveroom.ProvinceValidator is a validator for the "province" field. It is called by the builders before save.
-	reserveroom.ProvinceValidator = func() func(string) error {
-		validators := reserveroomDescProvince.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(province string) error {
-			for _, fn := range fns {
-				if err := fn(province); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
+	// reserveroomDescRequest is the schema descriptor for request field.
+	reserveroomDescRequest := reserveroomFields[1].Descriptor()
+	// reserveroom.RequestValidator is a validator for the "request" field. It is called by the builders before save.
+	reserveroom.RequestValidator = reserveroomDescRequest.Validators[0].(func(string) error)
 	// reserveroomDescAmount is the schema descriptor for amount field.
 	reserveroomDescAmount := reserveroomFields[2].Descriptor()
 	// reserveroom.AmountValidator is a validator for the "amount" field. It is called by the builders before save.
@@ -238,7 +224,22 @@ func init() {
 	// reserveroomDescPhoneNumber is the schema descriptor for phone_number field.
 	reserveroomDescPhoneNumber := reserveroomFields[3].Descriptor()
 	// reserveroom.PhoneNumberValidator is a validator for the "phone_number" field. It is called by the builders before save.
-	reserveroom.PhoneNumberValidator = reserveroomDescPhoneNumber.Validators[0].(func(string) error)
+	reserveroom.PhoneNumberValidator = func() func(string) error {
+		validators := reserveroomDescPhoneNumber.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+			validators[2].(func(string) error),
+		}
+		return func(phone_number string) error {
+			for _, fn := range fns {
+				if err := fn(phone_number); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// reserveroomDescNetPrice is the schema descriptor for net_price field.
 	reserveroomDescNetPrice := reserveroomFields[4].Descriptor()
 	// reserveroom.NetPriceValidator is a validator for the "net_price" field. It is called by the builders before save.

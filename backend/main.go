@@ -83,6 +83,36 @@ type CounterStaff struct {
 	password string
 }
 
+type Furnituretypes struct {
+	FurnitureType []FurnitureType
+}
+
+type FurnitureType struct {
+	type_name string
+}
+
+type Furnitures struct {
+	Furniture []Furniture
+}
+
+type Furniture struct {
+	furniture_name string
+}
+
+type DataRooms struct {
+	DataRoom []DataRoom
+}
+
+type DataRoom struct {
+	price      float64
+	roomnumber string
+	roomdetail string
+
+	promotion  int
+	statusroom int
+	typeroom   int
+}
+
 // @title SUT SE Example API
 // @version 1.0
 // @description This is a sample server for SUT SE 2563
@@ -263,6 +293,59 @@ func main() {
 		client.StatusCheckIn.
 			Create().
 			SetStatusName(si.Status).
+			Save(context.Background())
+	}
+
+	// Set Data Room Data
+	datarooms := DataRooms{
+		DataRoom: []DataRoom{
+			DataRoom{4500, "A001", "ห้องนี้ผีดุ", 1, 1, 1},
+			DataRoom{5000, "A002", "ใหม่เอี่ยม", 2, 1, 1},
+			DataRoom{5500, "B001", "หลับสบาย", 2, 1, 2},
+			DataRoom{6000, "C001", "โคตรหรู", 3, 1, 3},
+		},
+	}
+
+	for _, dr := range datarooms.DataRoom {
+		client.DataRoom.
+			Create().
+			SetPrice(dr.price).
+			SetRoomnumber(dr.roomnumber).
+			SetRoomdetail(dr.roomdetail).
+			SetPromotionID(dr.promotion).
+			SetStatusroomID(dr.statusroom).
+			SetTyperoomID(dr.typeroom).
+			Save(context.Background())
+	}
+
+	// Set Furniture Data
+	furnitures := Furnitures{
+		Furniture: []Furniture{
+			Furniture{"เก้าอี้"},
+			Furniture{"โซฟา"},
+			Furniture{"เตียง"},
+			Furniture{"แอร์"},
+			Furniture{"ตู้เย็น"},
+		},
+	}
+	for _, f := range furnitures.Furniture {
+		client.Furniture.
+			Create().
+			SetFurnitureName(f.furniture_name).
+			Save(context.Background())
+	}
+
+	// Set Furniture type Data
+	furnituretypes := Furnituretypes{
+		FurnitureType: []FurnitureType{
+			FurnitureType{"เครื่องเรือน"},
+			FurnitureType{"เครื่องใช้ไฟฟ้า"},
+		},
+	}
+	for _, ft := range furnituretypes.FurnitureType {
+		client.FurnitureType.
+			Create().
+			SetFurnitureType(ft.type_name).
 			Save(context.Background())
 	}
 

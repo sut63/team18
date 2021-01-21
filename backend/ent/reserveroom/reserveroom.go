@@ -9,8 +9,8 @@ const (
 	FieldID = "id"
 	// FieldReserveDate holds the string denoting the reserve_date field in the database.
 	FieldReserveDate = "reserve_date"
-	// FieldProvince holds the string denoting the province field in the database.
-	FieldProvince = "province"
+	// FieldRequest holds the string denoting the request field in the database.
+	FieldRequest = "request"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
 	// FieldPhoneNumber holds the string denoting the phone_number field in the database.
@@ -72,7 +72,7 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldReserveDate,
-	FieldProvince,
+	FieldRequest,
 	FieldAmount,
 	FieldPhoneNumber,
 	FieldNetPrice,
@@ -87,8 +87,8 @@ var ForeignKeys = []string{
 }
 
 var (
-	// ProvinceValidator is a validator for the "province" field. It is called by the builders before save.
-	ProvinceValidator func(string) error
+	// RequestValidator is a validator for the "request" field. It is called by the builders before save.
+	RequestValidator func(string) error
 	// AmountValidator is a validator for the "amount" field. It is called by the builders before save.
 	AmountValidator func(int) error
 	// PhoneNumberValidator is a validator for the "phone_number" field. It is called by the builders before save.
