@@ -31,9 +31,9 @@ func (rrc *ReserveRoomCreate) SetReserveDate(t time.Time) *ReserveRoomCreate {
 	return rrc
 }
 
-// SetProvince sets the province field.
-func (rrc *ReserveRoomCreate) SetProvince(s string) *ReserveRoomCreate {
-	rrc.mutation.SetProvince(s)
+// SetRequest sets the request field.
+func (rrc *ReserveRoomCreate) SetRequest(s string) *ReserveRoomCreate {
+	rrc.mutation.SetRequest(s)
 	return rrc
 }
 
@@ -156,12 +156,12 @@ func (rrc *ReserveRoomCreate) Save(ctx context.Context) (*ReserveRoom, error) {
 	if _, ok := rrc.mutation.ReserveDate(); !ok {
 		return nil, &ValidationError{Name: "reserve_date", err: errors.New("ent: missing required field \"reserve_date\"")}
 	}
-	if _, ok := rrc.mutation.Province(); !ok {
-		return nil, &ValidationError{Name: "province", err: errors.New("ent: missing required field \"province\"")}
+	if _, ok := rrc.mutation.Request(); !ok {
+		return nil, &ValidationError{Name: "request", err: errors.New("ent: missing required field \"request\"")}
 	}
-	if v, ok := rrc.mutation.Province(); ok {
-		if err := reserveroom.ProvinceValidator(v); err != nil {
-			return nil, &ValidationError{Name: "province", err: fmt.Errorf("ent: validator failed for field \"province\": %w", err)}
+	if v, ok := rrc.mutation.Request(); ok {
+		if err := reserveroom.RequestValidator(v); err != nil {
+			return nil, &ValidationError{Name: "request", err: fmt.Errorf("ent: validator failed for field \"request\": %w", err)}
 		}
 	}
 	if _, ok := rrc.mutation.Amount(); !ok {
@@ -256,13 +256,13 @@ func (rrc *ReserveRoomCreate) createSpec() (*ReserveRoom, *sqlgraph.CreateSpec) 
 		})
 		rr.ReserveDate = value
 	}
-	if value, ok := rrc.mutation.Province(); ok {
+	if value, ok := rrc.mutation.Request(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: reserveroom.FieldProvince,
+			Column: reserveroom.FieldRequest,
 		})
-		rr.Province = value
+		rr.Request = value
 	}
 	if value, ok := rrc.mutation.Amount(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

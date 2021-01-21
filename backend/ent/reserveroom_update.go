@@ -39,9 +39,9 @@ func (rru *ReserveRoomUpdate) SetReserveDate(t time.Time) *ReserveRoomUpdate {
 	return rru
 }
 
-// SetProvince sets the province field.
-func (rru *ReserveRoomUpdate) SetProvince(s string) *ReserveRoomUpdate {
-	rru.mutation.SetProvince(s)
+// SetRequest sets the request field.
+func (rru *ReserveRoomUpdate) SetRequest(s string) *ReserveRoomUpdate {
+	rru.mutation.SetRequest(s)
 	return rru
 }
 
@@ -214,9 +214,9 @@ func (rru *ReserveRoomUpdate) RemoveCheckins(c ...*CheckIn) *ReserveRoomUpdate {
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
 func (rru *ReserveRoomUpdate) Save(ctx context.Context) (int, error) {
-	if v, ok := rru.mutation.Province(); ok {
-		if err := reserveroom.ProvinceValidator(v); err != nil {
-			return 0, &ValidationError{Name: "province", err: fmt.Errorf("ent: validator failed for field \"province\": %w", err)}
+	if v, ok := rru.mutation.Request(); ok {
+		if err := reserveroom.RequestValidator(v); err != nil {
+			return 0, &ValidationError{Name: "request", err: fmt.Errorf("ent: validator failed for field \"request\": %w", err)}
 		}
 	}
 	if v, ok := rru.mutation.Amount(); ok {
@@ -309,11 +309,11 @@ func (rru *ReserveRoomUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: reserveroom.FieldReserveDate,
 		})
 	}
-	if value, ok := rru.mutation.Province(); ok {
+	if value, ok := rru.mutation.Request(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: reserveroom.FieldProvince,
+			Column: reserveroom.FieldRequest,
 		})
 	}
 	if value, ok := rru.mutation.Amount(); ok {
@@ -553,9 +553,9 @@ func (rruo *ReserveRoomUpdateOne) SetReserveDate(t time.Time) *ReserveRoomUpdate
 	return rruo
 }
 
-// SetProvince sets the province field.
-func (rruo *ReserveRoomUpdateOne) SetProvince(s string) *ReserveRoomUpdateOne {
-	rruo.mutation.SetProvince(s)
+// SetRequest sets the request field.
+func (rruo *ReserveRoomUpdateOne) SetRequest(s string) *ReserveRoomUpdateOne {
+	rruo.mutation.SetRequest(s)
 	return rruo
 }
 
@@ -728,9 +728,9 @@ func (rruo *ReserveRoomUpdateOne) RemoveCheckins(c ...*CheckIn) *ReserveRoomUpda
 
 // Save executes the query and returns the updated entity.
 func (rruo *ReserveRoomUpdateOne) Save(ctx context.Context) (*ReserveRoom, error) {
-	if v, ok := rruo.mutation.Province(); ok {
-		if err := reserveroom.ProvinceValidator(v); err != nil {
-			return nil, &ValidationError{Name: "province", err: fmt.Errorf("ent: validator failed for field \"province\": %w", err)}
+	if v, ok := rruo.mutation.Request(); ok {
+		if err := reserveroom.RequestValidator(v); err != nil {
+			return nil, &ValidationError{Name: "request", err: fmt.Errorf("ent: validator failed for field \"request\": %w", err)}
 		}
 	}
 	if v, ok := rruo.mutation.Amount(); ok {
@@ -821,11 +821,11 @@ func (rruo *ReserveRoomUpdateOne) sqlSave(ctx context.Context) (rr *ReserveRoom,
 			Column: reserveroom.FieldReserveDate,
 		})
 	}
-	if value, ok := rruo.mutation.Province(); ok {
+	if value, ok := rruo.mutation.Request(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: reserveroom.FieldProvince,
+			Column: reserveroom.FieldRequest,
 		})
 	}
 	if value, ok := rruo.mutation.Amount(); ok {

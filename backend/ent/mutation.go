@@ -6122,7 +6122,7 @@ type ReserveRoomMutation struct {
 	typ              string
 	id               *int
 	reserve_date     *time.Time
-	province         *string
+	request          *string
 	amount           *int
 	addamount        *int
 	phone_number     *string
@@ -6259,41 +6259,41 @@ func (m *ReserveRoomMutation) ResetReserveDate() {
 	m.reserve_date = nil
 }
 
-// SetProvince sets the province field.
-func (m *ReserveRoomMutation) SetProvince(s string) {
-	m.province = &s
+// SetRequest sets the request field.
+func (m *ReserveRoomMutation) SetRequest(s string) {
+	m.request = &s
 }
 
-// Province returns the province value in the mutation.
-func (m *ReserveRoomMutation) Province() (r string, exists bool) {
-	v := m.province
+// Request returns the request value in the mutation.
+func (m *ReserveRoomMutation) Request() (r string, exists bool) {
+	v := m.request
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldProvince returns the old province value of the ReserveRoom.
+// OldRequest returns the old request value of the ReserveRoom.
 // If the ReserveRoom object wasn't provided to the builder, the object is fetched
 // from the database.
 // An error is returned if the mutation operation is not UpdateOne, or database query fails.
-func (m *ReserveRoomMutation) OldProvince(ctx context.Context) (v string, err error) {
+func (m *ReserveRoomMutation) OldRequest(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldProvince is allowed only on UpdateOne operations")
+		return v, fmt.Errorf("OldRequest is allowed only on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldProvince requires an ID field in the mutation")
+		return v, fmt.Errorf("OldRequest requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldProvince: %w", err)
+		return v, fmt.Errorf("querying old value for OldRequest: %w", err)
 	}
-	return oldValue.Province, nil
+	return oldValue.Request, nil
 }
 
-// ResetProvince reset all changes of the "province" field.
-func (m *ReserveRoomMutation) ResetProvince() {
-	m.province = nil
+// ResetRequest reset all changes of the "request" field.
+func (m *ReserveRoomMutation) ResetRequest() {
+	m.request = nil
 }
 
 // SetAmount sets the amount field.
@@ -6663,8 +6663,8 @@ func (m *ReserveRoomMutation) Fields() []string {
 	if m.reserve_date != nil {
 		fields = append(fields, reserveroom.FieldReserveDate)
 	}
-	if m.province != nil {
-		fields = append(fields, reserveroom.FieldProvince)
+	if m.request != nil {
+		fields = append(fields, reserveroom.FieldRequest)
 	}
 	if m.amount != nil {
 		fields = append(fields, reserveroom.FieldAmount)
@@ -6685,8 +6685,8 @@ func (m *ReserveRoomMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case reserveroom.FieldReserveDate:
 		return m.ReserveDate()
-	case reserveroom.FieldProvince:
-		return m.Province()
+	case reserveroom.FieldRequest:
+		return m.Request()
 	case reserveroom.FieldAmount:
 		return m.Amount()
 	case reserveroom.FieldPhoneNumber:
@@ -6704,8 +6704,8 @@ func (m *ReserveRoomMutation) OldField(ctx context.Context, name string) (ent.Va
 	switch name {
 	case reserveroom.FieldReserveDate:
 		return m.OldReserveDate(ctx)
-	case reserveroom.FieldProvince:
-		return m.OldProvince(ctx)
+	case reserveroom.FieldRequest:
+		return m.OldRequest(ctx)
 	case reserveroom.FieldAmount:
 		return m.OldAmount(ctx)
 	case reserveroom.FieldPhoneNumber:
@@ -6728,12 +6728,12 @@ func (m *ReserveRoomMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetReserveDate(v)
 		return nil
-	case reserveroom.FieldProvince:
+	case reserveroom.FieldRequest:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetProvince(v)
+		m.SetRequest(v)
 		return nil
 	case reserveroom.FieldAmount:
 		v, ok := value.(int)
@@ -6836,8 +6836,8 @@ func (m *ReserveRoomMutation) ResetField(name string) error {
 	case reserveroom.FieldReserveDate:
 		m.ResetReserveDate()
 		return nil
-	case reserveroom.FieldProvince:
-		m.ResetProvince()
+	case reserveroom.FieldRequest:
+		m.ResetRequest()
 		return nil
 	case reserveroom.FieldAmount:
 		m.ResetAmount()

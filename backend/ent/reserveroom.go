@@ -22,8 +22,8 @@ type ReserveRoom struct {
 	ID int `json:"id,omitempty"`
 	// ReserveDate holds the value of the "reserve_date" field.
 	ReserveDate time.Time `json:"reserve_date,omitempty"`
-	// Province holds the value of the "province" field.
-	Province string `json:"province,omitempty"`
+	// Request holds the value of the "request" field.
+	Request string `json:"request,omitempty"`
 	// Amount holds the value of the "amount" field.
 	Amount int `json:"amount,omitempty"`
 	// PhoneNumber holds the value of the "phone_number" field.
@@ -126,7 +126,7 @@ func (*ReserveRoom) scanValues() []interface{} {
 	return []interface{}{
 		&sql.NullInt64{},   // id
 		&sql.NullTime{},    // reserve_date
-		&sql.NullString{},  // province
+		&sql.NullString{},  // request
 		&sql.NullInt64{},   // amount
 		&sql.NullString{},  // phone_number
 		&sql.NullFloat64{}, // net_price
@@ -161,9 +161,9 @@ func (rr *ReserveRoom) assignValues(values ...interface{}) error {
 		rr.ReserveDate = value.Time
 	}
 	if value, ok := values[1].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field province", values[1])
+		return fmt.Errorf("unexpected type %T for field request", values[1])
 	} else if value.Valid {
-		rr.Province = value.String
+		rr.Request = value.String
 	}
 	if value, ok := values[2].(*sql.NullInt64); !ok {
 		return fmt.Errorf("unexpected type %T for field amount", values[2])
@@ -260,8 +260,8 @@ func (rr *ReserveRoom) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v", rr.ID))
 	builder.WriteString(", reserve_date=")
 	builder.WriteString(rr.ReserveDate.Format(time.ANSIC))
-	builder.WriteString(", province=")
-	builder.WriteString(rr.Province)
+	builder.WriteString(", request=")
+	builder.WriteString(rr.Request)
 	builder.WriteString(", amount=")
 	builder.WriteString(fmt.Sprintf("%v", rr.Amount))
 	builder.WriteString(", phone_number=")

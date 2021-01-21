@@ -296,9 +296,9 @@ var (
 	ReserveRoomsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "reserve_date", Type: field.TypeTime},
-		{Name: "province", Type: field.TypeString, Size: 50},
+		{Name: "request", Type: field.TypeString, Size: 50},
 		{Name: "amount", Type: field.TypeInt},
-		{Name: "phone_number", Type: field.TypeString},
+		{Name: "phone_number", Type: field.TypeString, Size: 10},
 		{Name: "net_price", Type: field.TypeFloat64},
 		{Name: "customer_id", Type: field.TypeInt, Nullable: true},
 		{Name: "room_id", Type: field.TypeInt, Nullable: true},
