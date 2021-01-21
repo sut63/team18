@@ -38,6 +38,8 @@ type Tx struct {
 	Status *StatusClient
 	// StatusCheckIn is the client for interacting with the StatusCheckIn builders.
 	StatusCheckIn *StatusCheckInClient
+	// StatusOpinion is the client for interacting with the StatusOpinion builders.
+	StatusOpinion *StatusOpinionClient
 	// StatusReserve is the client for interacting with the StatusReserve builders.
 	StatusReserve *StatusReserveClient
 	// StatusRoom is the client for interacting with the StatusRoom builders.
@@ -192,6 +194,7 @@ func (tx *Tx) init() {
 	tx.ReserveRoom = NewReserveRoomClient(tx.config)
 	tx.Status = NewStatusClient(tx.config)
 	tx.StatusCheckIn = NewStatusCheckInClient(tx.config)
+	tx.StatusOpinion = NewStatusOpinionClient(tx.config)
 	tx.StatusReserve = NewStatusReserveClient(tx.config)
 	tx.StatusRoom = NewStatusRoomClient(tx.config)
 	tx.TypeRoom = NewTypeRoomClient(tx.config)

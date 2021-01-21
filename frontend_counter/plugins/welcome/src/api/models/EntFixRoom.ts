@@ -33,6 +33,12 @@ export interface EntFixRoom {
      */
     edges?: EntFixRoomEdges;
     /**
+     * Facebook holds the value of the "facebook" field.
+     * @type {string}
+     * @memberof EntFixRoom
+     */
+    facebook?: string;
+    /**
      * FixDetail holds the value of the "fix_detail" field.
      * @type {string}
      * @memberof EntFixRoom
@@ -44,6 +50,12 @@ export interface EntFixRoom {
      * @memberof EntFixRoom
      */
     id?: number;
+    /**
+     * PhoneNumber holds the value of the "phone_number" field.
+     * @type {string}
+     * @memberof EntFixRoom
+     */
+    phoneNumber?: string;
 }
 
 export function EntFixRoomFromJSON(json: any): EntFixRoom {
@@ -57,8 +69,10 @@ export function EntFixRoomFromJSONTyped(json: any, ignoreDiscriminator: boolean)
     return {
         
         'edges': !exists(json, 'edges') ? undefined : EntFixRoomEdgesFromJSON(json['edges']),
+        'facebook': !exists(json, 'facebook') ? undefined : json['facebook'],
         'fixDetail': !exists(json, 'fix_detail') ? undefined : json['fix_detail'],
         'id': !exists(json, 'id') ? undefined : json['id'],
+        'phoneNumber': !exists(json, 'phone_number') ? undefined : json['phone_number'],
     };
 }
 
@@ -72,8 +86,10 @@ export function EntFixRoomToJSON(value?: EntFixRoom | null): any {
     return {
         
         'edges': EntFixRoomEdgesToJSON(value.edges),
+        'facebook': value.facebook,
         'fix_detail': value.fixDetail,
         'id': value.id,
+        'phone_number': value.phoneNumber,
     };
 }
 

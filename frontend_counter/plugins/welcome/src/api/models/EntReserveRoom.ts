@@ -57,11 +57,11 @@ export interface EntReserveRoom {
      */
     phoneNumber?: string;
     /**
-     * Province holds the value of the "province" field.
+     * Request holds the value of the "request" field.
      * @type {string}
      * @memberof EntReserveRoom
      */
-    province?: string;
+    request?: string;
     /**
      * ReserveDate holds the value of the "reserve_date" field.
      * @type {string}
@@ -85,7 +85,7 @@ export function EntReserveRoomFromJSONTyped(json: any, ignoreDiscriminator: bool
         'id': !exists(json, 'id') ? undefined : json['id'],
         'netPrice': !exists(json, 'net_price') ? undefined : json['net_price'],
         'phoneNumber': !exists(json, 'phone_number') ? undefined : json['phone_number'],
-        'province': !exists(json, 'province') ? undefined : json['province'],
+        'request': !exists(json, 'request') ? undefined : json['request'],
         'reserveDate': !exists(json, 'reserve_date') ? undefined : json['reserve_date'],
     };
 }
@@ -104,7 +104,7 @@ export function EntReserveRoomToJSON(value?: EntReserveRoom | null): any {
         'id': value.id,
         'net_price': value.netPrice,
         'phone_number': value.phoneNumber,
-        'province': value.province,
+        'request': value.request,
         'reserve_date': value.reserveDate,
     };
 }

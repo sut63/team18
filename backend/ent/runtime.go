@@ -4,6 +4,7 @@ package ent
 
 import (
 	"github.com/team18/app/ent/checkin"
+	"github.com/team18/app/ent/checkout"
 	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/customer"
 	"github.com/team18/app/ent/dataroom"
@@ -15,6 +16,7 @@ import (
 	"github.com/team18/app/ent/schema"
 	"github.com/team18/app/ent/status"
 	"github.com/team18/app/ent/statuscheckin"
+	"github.com/team18/app/ent/statusopinion"
 	"github.com/team18/app/ent/statusreserve"
 	"github.com/team18/app/ent/statusroom"
 	"github.com/team18/app/ent/typeroom"
@@ -82,6 +84,48 @@ func init() {
 			return nil
 		}
 	}()
+	checkoutFields := schema.Checkout{}.Fields()
+	_ = checkoutFields
+	// checkoutDescIdentityCard is the schema descriptor for identity_card field.
+	checkoutDescIdentityCard := checkoutFields[1].Descriptor()
+	// checkout.IdentityCardValidator is a validator for the "identity_card" field. It is called by the builders before save.
+	checkout.IdentityCardValidator = func() func(string) error {
+		validators := checkoutDescIdentityCard.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(identity_card string) error {
+			for _, fn := range fns {
+				if err := fn(identity_card); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// checkoutDescPrice is the schema descriptor for price field.
+	checkoutDescPrice := checkoutFields[2].Descriptor()
+	// checkout.PriceValidator is a validator for the "price" field. It is called by the builders before save.
+	checkout.PriceValidator = func() func(float64) error {
+		validators := checkoutDescPrice.Validators
+		fns := [...]func(float64) error{
+			validators[0].(func(float64) error),
+			validators[1].(func(float64) error),
+		}
+		return func(price float64) error {
+			for _, fn := range fns {
+				if err := fn(price); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// checkoutDescComment is the schema descriptor for comment field.
+	checkoutDescComment := checkoutFields[3].Descriptor()
+	// checkout.CommentValidator is a validator for the "comment" field. It is called by the builders before save.
+	checkout.CommentValidator = checkoutDescComment.Validators[0].(func(string) error)
 	counterstaffFields := schema.CounterStaff{}.Fields()
 	_ = counterstaffFields
 	// counterstaffDescName is the schema descriptor for name field.
@@ -256,6 +300,12 @@ func init() {
 	statuscheckinDescStatusName := statuscheckinFields[0].Descriptor()
 	// statuscheckin.StatusNameValidator is a validator for the "status_name" field. It is called by the builders before save.
 	statuscheckin.StatusNameValidator = statuscheckinDescStatusName.Validators[0].(func(string) error)
+	statusopinionFields := schema.StatusOpinion{}.Fields()
+	_ = statusopinionFields
+	// statusopinionDescOpinion is the schema descriptor for opinion field.
+	statusopinionDescOpinion := statusopinionFields[0].Descriptor()
+	// statusopinion.OpinionValidator is a validator for the "opinion" field. It is called by the builders before save.
+	statusopinion.OpinionValidator = statusopinionDescOpinion.Validators[0].(func(string) error)
 	statusreserveFields := schema.StatusReserve{}.Fields()
 	_ = statusreserveFields
 	// statusreserveDescStatusName is the schema descriptor for status_name field.

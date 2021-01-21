@@ -45,6 +45,9 @@ type Status func(*sql.Selector)
 // StatusCheckIn is the predicate function for statuscheckin builders.
 type StatusCheckIn func(*sql.Selector)
 
+// StatusOpinion is the predicate function for statusopinion builders.
+type StatusOpinion func(*sql.Selector)
+
 // StatusReserve is the predicate function for statusreserve builders.
 type StatusReserve func(*sql.Selector)
 

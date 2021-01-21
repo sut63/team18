@@ -12,6 +12,7 @@ import (
 	"github.com/team18/app/ent/checkout"
 	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/status"
+	"github.com/team18/app/ent/statusopinion"
 )
 
 // Checkout is the model entity for the Checkout schema.
@@ -21,25 +22,34 @@ type Checkout struct {
 	ID int `json:"id,omitempty"`
 	// CheckoutDate holds the value of the "checkout_date" field.
 	CheckoutDate time.Time `json:"checkout_date,omitempty"`
+	// IdentityCard holds the value of the "identity_card" field.
+	IdentityCard string `json:"identity_card,omitempty"`
+	// Price holds the value of the "price" field.
+	Price float64 `json:"price,omitempty"`
+	// Comment holds the value of the "comment" field.
+	Comment string `json:"comment,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the CheckoutQuery when eager-loading is set.
-	Edges              CheckoutEdges `json:"edges"`
-	check_in_checkouts *int
-	staff_id           *int
-	status_checkouts   *int
+	Edges                    CheckoutEdges `json:"edges"`
+	check_in_checkouts       *int
+	staff_id                 *int
+	status_checkouts         *int
+	status_opinion_checkouts *int
 }
 
 // CheckoutEdges holds the relations/edges for other nodes in the graph.
 type CheckoutEdges struct {
 	// Statuss holds the value of the statuss edge.
 	Statuss *Status
+	// Statusopinion holds the value of the statusopinion edge.
+	Statusopinion *StatusOpinion
 	// Counterstaffs holds the value of the counterstaffs edge.
 	Counterstaffs *CounterStaff
 	// Checkins holds the value of the checkins edge.
 	Checkins *CheckIn
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // StatussOrErr returns the Statuss value or an error if the edge
@@ -56,10 +66,24 @@ func (e CheckoutEdges) StatussOrErr() (*Status, error) {
 	return nil, &NotLoadedError{edge: "statuss"}
 }
 
+// StatusopinionOrErr returns the Statusopinion value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e CheckoutEdges) StatusopinionOrErr() (*StatusOpinion, error) {
+	if e.loadedTypes[1] {
+		if e.Statusopinion == nil {
+			// The edge statusopinion was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: statusopinion.Label}
+		}
+		return e.Statusopinion, nil
+	}
+	return nil, &NotLoadedError{edge: "statusopinion"}
+}
+
 // CounterstaffsOrErr returns the Counterstaffs value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e CheckoutEdges) CounterstaffsOrErr() (*CounterStaff, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[2] {
 		if e.Counterstaffs == nil {
 			// The edge counterstaffs was loaded in eager-loading,
 			// but was not found.
@@ -73,7 +97,7 @@ func (e CheckoutEdges) CounterstaffsOrErr() (*CounterStaff, error) {
 // CheckinsOrErr returns the Checkins value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e CheckoutEdges) CheckinsOrErr() (*CheckIn, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		if e.Checkins == nil {
 			// The edge checkins was loaded in eager-loading,
 			// but was not found.
@@ -87,8 +111,11 @@ func (e CheckoutEdges) CheckinsOrErr() (*CheckIn, error) {
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Checkout) scanValues() []interface{} {
 	return []interface{}{
-		&sql.NullInt64{}, // id
-		&sql.NullTime{},  // checkout_date
+		&sql.NullInt64{},   // id
+		&sql.NullTime{},    // checkout_date
+		&sql.NullString{},  // identity_card
+		&sql.NullFloat64{}, // price
+		&sql.NullString{},  // comment
 	}
 }
 
@@ -98,6 +125,7 @@ func (*Checkout) fkValues() []interface{} {
 		&sql.NullInt64{}, // check_in_checkouts
 		&sql.NullInt64{}, // staff_id
 		&sql.NullInt64{}, // status_checkouts
+		&sql.NullInt64{}, // status_opinion_checkouts
 	}
 }
 
@@ -118,7 +146,22 @@ func (c *Checkout) assignValues(values ...interface{}) error {
 	} else if value.Valid {
 		c.CheckoutDate = value.Time
 	}
-	values = values[1:]
+	if value, ok := values[1].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field identity_card", values[1])
+	} else if value.Valid {
+		c.IdentityCard = value.String
+	}
+	if value, ok := values[2].(*sql.NullFloat64); !ok {
+		return fmt.Errorf("unexpected type %T for field price", values[2])
+	} else if value.Valid {
+		c.Price = value.Float64
+	}
+	if value, ok := values[3].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field comment", values[3])
+	} else if value.Valid {
+		c.Comment = value.String
+	}
+	values = values[4:]
 	if len(values) == len(checkout.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field check_in_checkouts", value)
@@ -138,6 +181,12 @@ func (c *Checkout) assignValues(values ...interface{}) error {
 			c.status_checkouts = new(int)
 			*c.status_checkouts = int(value.Int64)
 		}
+		if value, ok := values[3].(*sql.NullInt64); !ok {
+			return fmt.Errorf("unexpected type %T for edge-field status_opinion_checkouts", value)
+		} else if value.Valid {
+			c.status_opinion_checkouts = new(int)
+			*c.status_opinion_checkouts = int(value.Int64)
+		}
 	}
 	return nil
 }
@@ -145,6 +194,11 @@ func (c *Checkout) assignValues(values ...interface{}) error {
 // QueryStatuss queries the statuss edge of the Checkout.
 func (c *Checkout) QueryStatuss() *StatusQuery {
 	return (&CheckoutClient{config: c.config}).QueryStatuss(c)
+}
+
+// QueryStatusopinion queries the statusopinion edge of the Checkout.
+func (c *Checkout) QueryStatusopinion() *StatusOpinionQuery {
+	return (&CheckoutClient{config: c.config}).QueryStatusopinion(c)
 }
 
 // QueryCounterstaffs queries the counterstaffs edge of the Checkout.
@@ -182,6 +236,12 @@ func (c *Checkout) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v", c.ID))
 	builder.WriteString(", checkout_date=")
 	builder.WriteString(c.CheckoutDate.Format(time.ANSIC))
+	builder.WriteString(", identity_card=")
+	builder.WriteString(c.IdentityCard)
+	builder.WriteString(", price=")
+	builder.WriteString(fmt.Sprintf("%v", c.Price))
+	builder.WriteString(", comment=")
+	builder.WriteString(c.Comment)
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -21,6 +21,7 @@ import (
 	"github.com/team18/app/ent/reserveroom"
 	"github.com/team18/app/ent/status"
 	"github.com/team18/app/ent/statuscheckin"
+	"github.com/team18/app/ent/statusopinion"
 	"github.com/team18/app/ent/statusreserve"
 	"github.com/team18/app/ent/statusroom"
 	"github.com/team18/app/ent/typeroom"
@@ -50,6 +51,7 @@ const (
 	TypeReserveRoom     = "ReserveRoom"
 	TypeStatus          = "Status"
 	TypeStatusCheckIn   = "StatusCheckIn"
+	TypeStatusOpinion   = "StatusOpinion"
 	TypeStatusReserve   = "StatusReserve"
 	TypeStatusRoom      = "StatusRoom"
 	TypeTypeRoom        = "TypeRoom"
@@ -885,9 +887,15 @@ type CheckoutMutation struct {
 	typ                  string
 	id                   *int
 	checkout_date        *time.Time
+	identity_card        *string
+	price                *float64
+	addprice             *float64
+	comment              *string
 	clearedFields        map[string]struct{}
 	statuss              *int
 	clearedstatuss       bool
+	statusopinion        *int
+	clearedstatusopinion bool
 	counterstaffs        *int
 	clearedcounterstaffs bool
 	checkins             *int
@@ -1012,6 +1020,137 @@ func (m *CheckoutMutation) ResetCheckoutDate() {
 	m.checkout_date = nil
 }
 
+// SetIdentityCard sets the identity_card field.
+func (m *CheckoutMutation) SetIdentityCard(s string) {
+	m.identity_card = &s
+}
+
+// IdentityCard returns the identity_card value in the mutation.
+func (m *CheckoutMutation) IdentityCard() (r string, exists bool) {
+	v := m.identity_card
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIdentityCard returns the old identity_card value of the Checkout.
+// If the Checkout object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *CheckoutMutation) OldIdentityCard(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldIdentityCard is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldIdentityCard requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIdentityCard: %w", err)
+	}
+	return oldValue.IdentityCard, nil
+}
+
+// ResetIdentityCard reset all changes of the "identity_card" field.
+func (m *CheckoutMutation) ResetIdentityCard() {
+	m.identity_card = nil
+}
+
+// SetPrice sets the price field.
+func (m *CheckoutMutation) SetPrice(f float64) {
+	m.price = &f
+	m.addprice = nil
+}
+
+// Price returns the price value in the mutation.
+func (m *CheckoutMutation) Price() (r float64, exists bool) {
+	v := m.price
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPrice returns the old price value of the Checkout.
+// If the Checkout object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *CheckoutMutation) OldPrice(ctx context.Context) (v float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldPrice is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldPrice requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPrice: %w", err)
+	}
+	return oldValue.Price, nil
+}
+
+// AddPrice adds f to price.
+func (m *CheckoutMutation) AddPrice(f float64) {
+	if m.addprice != nil {
+		*m.addprice += f
+	} else {
+		m.addprice = &f
+	}
+}
+
+// AddedPrice returns the value that was added to the price field in this mutation.
+func (m *CheckoutMutation) AddedPrice() (r float64, exists bool) {
+	v := m.addprice
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetPrice reset all changes of the "price" field.
+func (m *CheckoutMutation) ResetPrice() {
+	m.price = nil
+	m.addprice = nil
+}
+
+// SetComment sets the comment field.
+func (m *CheckoutMutation) SetComment(s string) {
+	m.comment = &s
+}
+
+// Comment returns the comment value in the mutation.
+func (m *CheckoutMutation) Comment() (r string, exists bool) {
+	v := m.comment
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldComment returns the old comment value of the Checkout.
+// If the Checkout object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *CheckoutMutation) OldComment(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldComment is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldComment requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldComment: %w", err)
+	}
+	return oldValue.Comment, nil
+}
+
+// ResetComment reset all changes of the "comment" field.
+func (m *CheckoutMutation) ResetComment() {
+	m.comment = nil
+}
+
 // SetStatussID sets the statuss edge to Status by id.
 func (m *CheckoutMutation) SetStatussID(id int) {
 	m.statuss = &id
@@ -1049,6 +1188,45 @@ func (m *CheckoutMutation) StatussIDs() (ids []int) {
 func (m *CheckoutMutation) ResetStatuss() {
 	m.statuss = nil
 	m.clearedstatuss = false
+}
+
+// SetStatusopinionID sets the statusopinion edge to StatusOpinion by id.
+func (m *CheckoutMutation) SetStatusopinionID(id int) {
+	m.statusopinion = &id
+}
+
+// ClearStatusopinion clears the statusopinion edge to StatusOpinion.
+func (m *CheckoutMutation) ClearStatusopinion() {
+	m.clearedstatusopinion = true
+}
+
+// StatusopinionCleared returns if the edge statusopinion was cleared.
+func (m *CheckoutMutation) StatusopinionCleared() bool {
+	return m.clearedstatusopinion
+}
+
+// StatusopinionID returns the statusopinion id in the mutation.
+func (m *CheckoutMutation) StatusopinionID() (id int, exists bool) {
+	if m.statusopinion != nil {
+		return *m.statusopinion, true
+	}
+	return
+}
+
+// StatusopinionIDs returns the statusopinion ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// StatusopinionID instead. It exists only for internal usage by the builders.
+func (m *CheckoutMutation) StatusopinionIDs() (ids []int) {
+	if id := m.statusopinion; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetStatusopinion reset all changes of the "statusopinion" edge.
+func (m *CheckoutMutation) ResetStatusopinion() {
+	m.statusopinion = nil
+	m.clearedstatusopinion = false
 }
 
 // SetCounterstaffsID sets the counterstaffs edge to CounterStaff by id.
@@ -1143,9 +1321,18 @@ func (m *CheckoutMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *CheckoutMutation) Fields() []string {
-	fields := make([]string, 0, 1)
+	fields := make([]string, 0, 4)
 	if m.checkout_date != nil {
 		fields = append(fields, checkout.FieldCheckoutDate)
+	}
+	if m.identity_card != nil {
+		fields = append(fields, checkout.FieldIdentityCard)
+	}
+	if m.price != nil {
+		fields = append(fields, checkout.FieldPrice)
+	}
+	if m.comment != nil {
+		fields = append(fields, checkout.FieldComment)
 	}
 	return fields
 }
@@ -1157,6 +1344,12 @@ func (m *CheckoutMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case checkout.FieldCheckoutDate:
 		return m.CheckoutDate()
+	case checkout.FieldIdentityCard:
+		return m.IdentityCard()
+	case checkout.FieldPrice:
+		return m.Price()
+	case checkout.FieldComment:
+		return m.Comment()
 	}
 	return nil, false
 }
@@ -1168,6 +1361,12 @@ func (m *CheckoutMutation) OldField(ctx context.Context, name string) (ent.Value
 	switch name {
 	case checkout.FieldCheckoutDate:
 		return m.OldCheckoutDate(ctx)
+	case checkout.FieldIdentityCard:
+		return m.OldIdentityCard(ctx)
+	case checkout.FieldPrice:
+		return m.OldPrice(ctx)
+	case checkout.FieldComment:
+		return m.OldComment(ctx)
 	}
 	return nil, fmt.Errorf("unknown Checkout field %s", name)
 }
@@ -1184,6 +1383,27 @@ func (m *CheckoutMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCheckoutDate(v)
 		return nil
+	case checkout.FieldIdentityCard:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIdentityCard(v)
+		return nil
+	case checkout.FieldPrice:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPrice(v)
+		return nil
+	case checkout.FieldComment:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetComment(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Checkout field %s", name)
 }
@@ -1191,13 +1411,21 @@ func (m *CheckoutMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented
 // or decremented during this mutation.
 func (m *CheckoutMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addprice != nil {
+		fields = append(fields, checkout.FieldPrice)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was in/decremented
 // from a field with the given name. The second value indicates
 // that this field was not set, or was not define in the schema.
 func (m *CheckoutMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case checkout.FieldPrice:
+		return m.AddedPrice()
+	}
 	return nil, false
 }
 
@@ -1206,6 +1434,13 @@ func (m *CheckoutMutation) AddedField(name string) (ent.Value, bool) {
 // type mismatch the field type.
 func (m *CheckoutMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case checkout.FieldPrice:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPrice(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Checkout numeric field %s", name)
 }
@@ -1237,6 +1472,15 @@ func (m *CheckoutMutation) ResetField(name string) error {
 	case checkout.FieldCheckoutDate:
 		m.ResetCheckoutDate()
 		return nil
+	case checkout.FieldIdentityCard:
+		m.ResetIdentityCard()
+		return nil
+	case checkout.FieldPrice:
+		m.ResetPrice()
+		return nil
+	case checkout.FieldComment:
+		m.ResetComment()
+		return nil
 	}
 	return fmt.Errorf("unknown Checkout field %s", name)
 }
@@ -1244,9 +1488,12 @@ func (m *CheckoutMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *CheckoutMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.statuss != nil {
 		edges = append(edges, checkout.EdgeStatuss)
+	}
+	if m.statusopinion != nil {
+		edges = append(edges, checkout.EdgeStatusopinion)
 	}
 	if m.counterstaffs != nil {
 		edges = append(edges, checkout.EdgeCounterstaffs)
@@ -1265,6 +1512,10 @@ func (m *CheckoutMutation) AddedIDs(name string) []ent.Value {
 		if id := m.statuss; id != nil {
 			return []ent.Value{*id}
 		}
+	case checkout.EdgeStatusopinion:
+		if id := m.statusopinion; id != nil {
+			return []ent.Value{*id}
+		}
 	case checkout.EdgeCounterstaffs:
 		if id := m.counterstaffs; id != nil {
 			return []ent.Value{*id}
@@ -1280,7 +1531,7 @@ func (m *CheckoutMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *CheckoutMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	return edges
 }
 
@@ -1295,9 +1546,12 @@ func (m *CheckoutMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *CheckoutMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedstatuss {
 		edges = append(edges, checkout.EdgeStatuss)
+	}
+	if m.clearedstatusopinion {
+		edges = append(edges, checkout.EdgeStatusopinion)
 	}
 	if m.clearedcounterstaffs {
 		edges = append(edges, checkout.EdgeCounterstaffs)
@@ -1314,6 +1568,8 @@ func (m *CheckoutMutation) EdgeCleared(name string) bool {
 	switch name {
 	case checkout.EdgeStatuss:
 		return m.clearedstatuss
+	case checkout.EdgeStatusopinion:
+		return m.clearedstatusopinion
 	case checkout.EdgeCounterstaffs:
 		return m.clearedcounterstaffs
 	case checkout.EdgeCheckins:
@@ -1328,6 +1584,9 @@ func (m *CheckoutMutation) ClearEdge(name string) error {
 	switch name {
 	case checkout.EdgeStatuss:
 		m.ClearStatuss()
+		return nil
+	case checkout.EdgeStatusopinion:
+		m.ClearStatusopinion()
 		return nil
 	case checkout.EdgeCounterstaffs:
 		m.ClearCounterstaffs()
@@ -1346,6 +1605,9 @@ func (m *CheckoutMutation) ResetEdge(name string) error {
 	switch name {
 	case checkout.EdgeStatuss:
 		m.ResetStatuss()
+		return nil
+	case checkout.EdgeStatusopinion:
+		m.ResetStatusopinion()
 		return nil
 	case checkout.EdgeCounterstaffs:
 		m.ResetCounterstaffs()
@@ -7741,6 +8003,374 @@ func (m *StatusCheckInMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown StatusCheckIn edge %s", name)
+}
+
+// StatusOpinionMutation represents an operation that mutate the StatusOpinions
+// nodes in the graph.
+type StatusOpinionMutation struct {
+	config
+	op               Op
+	typ              string
+	id               *int
+	opinion          *string
+	clearedFields    map[string]struct{}
+	checkouts        map[int]struct{}
+	removedcheckouts map[int]struct{}
+	done             bool
+	oldValue         func(context.Context) (*StatusOpinion, error)
+}
+
+var _ ent.Mutation = (*StatusOpinionMutation)(nil)
+
+// statusopinionOption allows to manage the mutation configuration using functional options.
+type statusopinionOption func(*StatusOpinionMutation)
+
+// newStatusOpinionMutation creates new mutation for $n.Name.
+func newStatusOpinionMutation(c config, op Op, opts ...statusopinionOption) *StatusOpinionMutation {
+	m := &StatusOpinionMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeStatusOpinion,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withStatusOpinionID sets the id field of the mutation.
+func withStatusOpinionID(id int) statusopinionOption {
+	return func(m *StatusOpinionMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *StatusOpinion
+		)
+		m.oldValue = func(ctx context.Context) (*StatusOpinion, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().StatusOpinion.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withStatusOpinion sets the old StatusOpinion of the mutation.
+func withStatusOpinion(node *StatusOpinion) statusopinionOption {
+	return func(m *StatusOpinionMutation) {
+		m.oldValue = func(context.Context) (*StatusOpinion, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m StatusOpinionMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m StatusOpinionMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *StatusOpinionMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetOpinion sets the opinion field.
+func (m *StatusOpinionMutation) SetOpinion(s string) {
+	m.opinion = &s
+}
+
+// Opinion returns the opinion value in the mutation.
+func (m *StatusOpinionMutation) Opinion() (r string, exists bool) {
+	v := m.opinion
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOpinion returns the old opinion value of the StatusOpinion.
+// If the StatusOpinion object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *StatusOpinionMutation) OldOpinion(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldOpinion is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldOpinion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOpinion: %w", err)
+	}
+	return oldValue.Opinion, nil
+}
+
+// ResetOpinion reset all changes of the "opinion" field.
+func (m *StatusOpinionMutation) ResetOpinion() {
+	m.opinion = nil
+}
+
+// AddCheckoutIDs adds the checkouts edge to Checkout by ids.
+func (m *StatusOpinionMutation) AddCheckoutIDs(ids ...int) {
+	if m.checkouts == nil {
+		m.checkouts = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.checkouts[ids[i]] = struct{}{}
+	}
+}
+
+// RemoveCheckoutIDs removes the checkouts edge to Checkout by ids.
+func (m *StatusOpinionMutation) RemoveCheckoutIDs(ids ...int) {
+	if m.removedcheckouts == nil {
+		m.removedcheckouts = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedcheckouts[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedCheckouts returns the removed ids of checkouts.
+func (m *StatusOpinionMutation) RemovedCheckoutsIDs() (ids []int) {
+	for id := range m.removedcheckouts {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// CheckoutsIDs returns the checkouts ids in the mutation.
+func (m *StatusOpinionMutation) CheckoutsIDs() (ids []int) {
+	for id := range m.checkouts {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetCheckouts reset all changes of the "checkouts" edge.
+func (m *StatusOpinionMutation) ResetCheckouts() {
+	m.checkouts = nil
+	m.removedcheckouts = nil
+}
+
+// Op returns the operation name.
+func (m *StatusOpinionMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (StatusOpinion).
+func (m *StatusOpinionMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *StatusOpinionMutation) Fields() []string {
+	fields := make([]string, 0, 1)
+	if m.opinion != nil {
+		fields = append(fields, statusopinion.FieldOpinion)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *StatusOpinionMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case statusopinion.FieldOpinion:
+		return m.Opinion()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *StatusOpinionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case statusopinion.FieldOpinion:
+		return m.OldOpinion(ctx)
+	}
+	return nil, fmt.Errorf("unknown StatusOpinion field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *StatusOpinionMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case statusopinion.FieldOpinion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOpinion(v)
+		return nil
+	}
+	return fmt.Errorf("unknown StatusOpinion field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *StatusOpinionMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *StatusOpinionMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *StatusOpinionMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown StatusOpinion numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *StatusOpinionMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *StatusOpinionMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *StatusOpinionMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown StatusOpinion nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *StatusOpinionMutation) ResetField(name string) error {
+	switch name {
+	case statusopinion.FieldOpinion:
+		m.ResetOpinion()
+		return nil
+	}
+	return fmt.Errorf("unknown StatusOpinion field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *StatusOpinionMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.checkouts != nil {
+		edges = append(edges, statusopinion.EdgeCheckouts)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *StatusOpinionMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case statusopinion.EdgeCheckouts:
+		ids := make([]ent.Value, 0, len(m.checkouts))
+		for id := range m.checkouts {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *StatusOpinionMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedcheckouts != nil {
+		edges = append(edges, statusopinion.EdgeCheckouts)
+	}
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *StatusOpinionMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case statusopinion.EdgeCheckouts:
+		ids := make([]ent.Value, 0, len(m.removedcheckouts))
+		for id := range m.removedcheckouts {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *StatusOpinionMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *StatusOpinionMutation) EdgeCleared(name string) bool {
+	switch name {
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *StatusOpinionMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown StatusOpinion unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *StatusOpinionMutation) ResetEdge(name string) error {
+	switch name {
+	case statusopinion.EdgeCheckouts:
+		m.ResetCheckouts()
+		return nil
+	}
+	return fmt.Errorf("unknown StatusOpinion edge %s", name)
 }
 
 // StatusReserveMutation represents an operation that mutate the StatusReserves

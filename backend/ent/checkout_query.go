@@ -16,6 +16,7 @@ import (
 	"github.com/team18/app/ent/counterstaff"
 	"github.com/team18/app/ent/predicate"
 	"github.com/team18/app/ent/status"
+	"github.com/team18/app/ent/statusopinion"
 )
 
 // CheckoutQuery is the builder for querying Checkout entities.
@@ -28,6 +29,7 @@ type CheckoutQuery struct {
 	predicates []predicate.Checkout
 	// eager-loading edges.
 	withStatuss       *StatusQuery
+	withStatusopinion *StatusOpinionQuery
 	withCounterstaffs *CounterStaffQuery
 	withCheckins      *CheckInQuery
 	withFKs           bool
@@ -71,6 +73,24 @@ func (cq *CheckoutQuery) QueryStatuss() *StatusQuery {
 			sqlgraph.From(checkout.Table, checkout.FieldID, cq.sqlQuery()),
 			sqlgraph.To(status.Table, status.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, checkout.StatussTable, checkout.StatussColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryStatusopinion chains the current query on the statusopinion edge.
+func (cq *CheckoutQuery) QueryStatusopinion() *StatusOpinionQuery {
+	query := &StatusOpinionQuery{config: cq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := cq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(checkout.Table, checkout.FieldID, cq.sqlQuery()),
+			sqlgraph.To(statusopinion.Table, statusopinion.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, checkout.StatusopinionTable, checkout.StatusopinionColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
 		return fromU, nil
@@ -304,6 +324,17 @@ func (cq *CheckoutQuery) WithStatuss(opts ...func(*StatusQuery)) *CheckoutQuery 
 	return cq
 }
 
+//  WithStatusopinion tells the query-builder to eager-loads the nodes that are connected to
+// the "statusopinion" edge. The optional arguments used to configure the query builder of the edge.
+func (cq *CheckoutQuery) WithStatusopinion(opts ...func(*StatusOpinionQuery)) *CheckoutQuery {
+	query := &StatusOpinionQuery{config: cq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	cq.withStatusopinion = query
+	return cq
+}
+
 //  WithCounterstaffs tells the query-builder to eager-loads the nodes that are connected to
 // the "counterstaffs" edge. The optional arguments used to configure the query builder of the edge.
 func (cq *CheckoutQuery) WithCounterstaffs(opts ...func(*CounterStaffQuery)) *CheckoutQuery {
@@ -393,13 +424,14 @@ func (cq *CheckoutQuery) sqlAll(ctx context.Context) ([]*Checkout, error) {
 		nodes       = []*Checkout{}
 		withFKs     = cq.withFKs
 		_spec       = cq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			cq.withStatuss != nil,
+			cq.withStatusopinion != nil,
 			cq.withCounterstaffs != nil,
 			cq.withCheckins != nil,
 		}
 	)
-	if cq.withStatuss != nil || cq.withCounterstaffs != nil || cq.withCheckins != nil {
+	if cq.withStatuss != nil || cq.withStatusopinion != nil || cq.withCounterstaffs != nil || cq.withCheckins != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -450,6 +482,31 @@ func (cq *CheckoutQuery) sqlAll(ctx context.Context) ([]*Checkout, error) {
 			}
 			for i := range nodes {
 				nodes[i].Edges.Statuss = n
+			}
+		}
+	}
+
+	if query := cq.withStatusopinion; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*Checkout)
+		for i := range nodes {
+			if fk := nodes[i].status_opinion_checkouts; fk != nil {
+				ids = append(ids, *fk)
+				nodeids[*fk] = append(nodeids[*fk], nodes[i])
+			}
+		}
+		query.Where(statusopinion.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "status_opinion_checkouts" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.Statusopinion = n
 			}
 		}
 	}
