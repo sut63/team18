@@ -90,19 +90,41 @@ const SearchCheckIn: FC<{}> = () => {
         setCustomer(res)
     }
 
+    // alert setting
+    const [open, setOpen] = React.useState(false);
+    const [fail, setFail] = React.useState(false);
+
+    //close alert 
+    const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setFail(false);
+        setOpen(false);
+    };
+
+
     // CheckIn  
+    var lencheckin : number
     const [checkin, setCheckin] = React.useState<EntCheckIn[]>([])
     const getCheckins = async () => {
         const res = await api.getCheckin({ id: idCustomer })
-        setCheckin(res)     
+        setCheckin(res)
+        lencheckin = res.length
+        if (lencheckin > 0){
+            setOpen(true)
+        }else{
+            setFail(true)
+        }   
     }
 
     // Lifecycle Hooks
     useEffect(() => {
         getCustomer();
     }, []);
+    
 
-    // set data to object furniture_detail
+    // set data to object and setIdcustomer
     const handleChange = (
         event: React.ChangeEvent<{ name?: string; value: any }>,
     ) => {
@@ -211,6 +233,17 @@ const SearchCheckIn: FC<{}> = () => {
                         </TableBody>
                     </Table>
                 </TableContainer>
+                <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="success">
+              ค้นหาสำเร็จ
+          </Alert>
+          </Snackbar>
+
+          <Snackbar open={fail} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity="error">
+              ไม่พบข้อมูล
+          </Alert>
+          </Snackbar>
             </Content>
         </Page>
     );
