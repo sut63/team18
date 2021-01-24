@@ -55,6 +55,11 @@ export const AppSidebar = () => (
       to="SearchReserveRoom"
       text="ค้นหาใบจอง"
     />
+    <SidebarItem
+      icon={SearchIcon}
+      to="SearchCheckIn"
+      text="ค้นหาการ check in"
+    />
 
     {/* End global nav */}
     <SidebarDivider />

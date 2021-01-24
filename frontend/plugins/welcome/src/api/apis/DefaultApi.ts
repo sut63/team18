@@ -54,6 +54,9 @@ import {
     EntStatusCheckIn,
     EntStatusCheckInFromJSON,
     EntStatusCheckInToJSON,
+    EntStatusOpinion,
+    EntStatusOpinionFromJSON,
+    EntStatusOpinionToJSON,
     EntStatusReserve,
     EntStatusReserveFromJSON,
     EntStatusReserveToJSON,
@@ -109,6 +112,10 @@ export interface CreateStatuscheckinRequest {
     statuscheckin: EntStatus;
 }
 
+export interface CreateStatusopinionRequest {
+    statusopinion: EntStatusOpinion;
+}
+
 export interface CreateStatusroomRequest {
     statusroom: EntStatusRoom;
 }
@@ -146,6 +153,10 @@ export interface DeleteStatusReserveRequest {
 }
 
 export interface DeleteStatuscheckinRequest {
+    id: number;
+}
+
+export interface DeleteStatusopinionRequest {
     id: number;
 }
 
@@ -189,6 +200,10 @@ export interface GetFurnituretypeRequest {
     id: number;
 }
 
+export interface GetGetCheckout2Request {
+    id: number;
+}
+
 export interface GetPromotionRequest {
     id: number;
 }
@@ -210,6 +225,10 @@ export interface GetStatusReserveRequest {
 }
 
 export interface GetStatuscheckinRequest {
+    id: number;
+}
+
+export interface GetStatusopinionRequest {
     id: number;
 }
 
@@ -299,6 +318,11 @@ export interface ListStatusReserveRequest {
 }
 
 export interface ListStatuscheckinRequest {
+    limit?: number;
+    offset?: number;
+}
+
+export interface ListStatusopinionRequest {
     limit?: number;
     offset?: number;
 }
@@ -724,6 +748,41 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Create statusopinion
+     * Create statusopinion
+     */
+    async createStatusopinionRaw(requestParameters: CreateStatusopinionRequest): Promise<runtime.ApiResponse<EntStatusOpinion>> {
+        if (requestParameters.statusopinion === null || requestParameters.statusopinion === undefined) {
+            throw new runtime.RequiredError('statusopinion','Required parameter requestParameters.statusopinion was null or undefined when calling createStatusopinion.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/statusopinions`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: EntStatusOpinionToJSON(requestParameters.statusopinion),
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntStatusOpinionFromJSON(jsonValue));
+    }
+
+    /**
+     * Create statusopinion
+     * Create statusopinion
+     */
+    async createStatusopinion(requestParameters: CreateStatusopinionRequest): Promise<EntStatusOpinion> {
+        const response = await this.createStatusopinionRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
      * Create statusroom
      * Create statusroom
      */
@@ -1050,10 +1109,42 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * get statusopinion by ID
+     * Delete a statusopinion entity by ID
+     */
+    async deleteStatusopinionRaw(requestParameters: DeleteStatusopinionRequest): Promise<runtime.ApiResponse<object>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteStatusopinion.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/statusopinions/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse<any>(response);
+    }
+
+    /**
+     * get statusopinion by ID
+     * Delete a statusopinion entity by ID
+     */
+    async deleteStatusopinion(requestParameters: DeleteStatusopinionRequest): Promise<object> {
+        const response = await this.deleteStatusopinionRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
      * get checkin by ID
      * Get a checkin entity by ID
      */
-    async getCheckinRaw(requestParameters: GetCheckinRequest): Promise<runtime.ApiResponse<EntCheckIn>> {
+    async getCheckinRaw(requestParameters: GetCheckinRequest): Promise<runtime.ApiResponse<Array<EntCheckIn>>> {
         if (requestParameters.id === null || requestParameters.id === undefined) {
             throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getCheckin.');
         }
@@ -1069,14 +1160,14 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => EntCheckInFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntCheckInFromJSON));
     }
 
     /**
      * get checkin by ID
      * Get a checkin entity by ID
      */
-    async getCheckin(requestParameters: GetCheckinRequest): Promise<EntCheckIn> {
+    async getCheckin(requestParameters: GetCheckinRequest): Promise<Array<EntCheckIn>> {
         const response = await this.getCheckinRaw(requestParameters);
         return await response.value();
     }
@@ -1370,6 +1461,38 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * get GetCheckout2 by ID
+     * Get a GetCheckout2 entity by ID
+     */
+    async getGetCheckout2Raw(requestParameters: GetGetCheckout2Request): Promise<runtime.ApiResponse<EntReserveRoom>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getGetCheckout2.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/checkouts2/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntReserveRoomFromJSON(jsonValue));
+    }
+
+    /**
+     * get GetCheckout2 by ID
+     * Get a GetCheckout2 entity by ID
+     */
+    async getGetCheckout2(requestParameters: GetGetCheckout2Request): Promise<EntReserveRoom> {
+        const response = await this.getGetCheckout2Raw(requestParameters);
+        return await response.value();
+    }
+
+    /**
      * get promotion by ID
      * Get a promotion entity by ID
      */
@@ -1558,6 +1681,38 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getStatuscheckin(requestParameters: GetStatuscheckinRequest): Promise<EntStatusCheckIn> {
         const response = await this.getStatuscheckinRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * get statusopinion by ID
+     * Get a statusopinion entity by ID
+     */
+    async getStatusopinionRaw(requestParameters: GetStatusopinionRequest): Promise<runtime.ApiResponse<EntStatusOpinion>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getStatusopinion.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/statusopinions/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntStatusOpinionFromJSON(jsonValue));
+    }
+
+    /**
+     * get statusopinion by ID
+     * Get a statusopinion entity by ID
+     */
+    async getStatusopinion(requestParameters: GetStatusopinionRequest): Promise<EntStatusOpinion> {
+        const response = await this.getStatusopinionRaw(requestParameters);
         return await response.value();
     }
 
@@ -2234,6 +2389,42 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async listStatuscheckin(requestParameters: ListStatuscheckinRequest): Promise<Array<EntStatusCheckIn>> {
         const response = await this.listStatuscheckinRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * list statusopinion entities
+     * List statusopinion entities
+     */
+    async listStatusopinionRaw(requestParameters: ListStatusopinionRequest): Promise<runtime.ApiResponse<Array<EntStatusOpinion>>> {
+        const queryParameters: runtime.HTTPQuery = {};
+
+        if (requestParameters.limit !== undefined) {
+            queryParameters['limit'] = requestParameters.limit;
+        }
+
+        if (requestParameters.offset !== undefined) {
+            queryParameters['offset'] = requestParameters.offset;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/statusopinions`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntStatusOpinionFromJSON));
+    }
+
+    /**
+     * list statusopinion entities
+     * List statusopinion entities
+     */
+    async listStatusopinion(requestParameters: ListStatusopinionRequest): Promise<Array<EntStatusOpinion>> {
+        const response = await this.listStatusopinionRaw(requestParameters);
         return await response.value();
     }
 

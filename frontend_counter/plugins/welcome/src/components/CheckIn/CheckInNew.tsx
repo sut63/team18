@@ -220,8 +220,8 @@ const CheckIn: FC<{}> = () => {
         } else {
           checkerror(data.error.Name)
           setFail(true);
-        }
-      });
+      }
+    });
   }
 
   function Clears() {
@@ -388,7 +388,7 @@ const CheckIn: FC<{}> = () => {
 
           <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="success">
-              This is a success message!
+              บันทึกสำเร็จ
           </Alert>
           </Snackbar>
 

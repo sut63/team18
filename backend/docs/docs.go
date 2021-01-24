@@ -789,7 +789,10 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ent.CheckIn"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ent.CheckIn"
+                            }
                         }
                     },
                     "400": {
