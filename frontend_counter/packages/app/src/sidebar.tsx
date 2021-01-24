@@ -1,6 +1,7 @@
 import React from 'react';
 import HomeIcon from '@material-ui/icons/Home';
 import CreateComponentIcon from '@material-ui/icons/AddCircleOutline';
+import SearchIcon from '@material-ui/icons/Search';
 import YouTube from '@material-ui/icons/YouTube';
 import SignOut from '@material-ui/icons/Settings';
 import { Cookies } from 'plugin-welcome/src/Cookie'
@@ -49,6 +50,11 @@ export const AppSidebar = () => (
       to="FurnitureDetail"
       text="FurnitureDetail"
     />
+    <SidebarItem
+      icon={SearchIcon}
+      to="SearchReserveRoom"
+      text="ค้นหาใบจอง"
+    />
 
     {/* End global nav */}
     <SidebarDivider />
@@ -56,7 +62,7 @@ export const AppSidebar = () => (
     <SidebarDivider />
     <SidebarItem
       icon={SignOut}
-      to="sign_out"
+      to=" "
       text="Sign Out"
       onClick={Clears}
     />
