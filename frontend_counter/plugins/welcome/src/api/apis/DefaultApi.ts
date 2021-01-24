@@ -1144,7 +1144,7 @@ export class DefaultApi extends runtime.BaseAPI {
      * get checkin by ID
      * Get a checkin entity by ID
      */
-    async getCheckinRaw(requestParameters: GetCheckinRequest): Promise<runtime.ApiResponse<EntCheckIn>> {
+    async getCheckinRaw(requestParameters: GetCheckinRequest): Promise<runtime.ApiResponse<Array<EntCheckIn>>> {
         if (requestParameters.id === null || requestParameters.id === undefined) {
             throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getCheckin.');
         }
@@ -1160,14 +1160,14 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => EntCheckInFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntCheckInFromJSON));
     }
 
     /**
      * get checkin by ID
      * Get a checkin entity by ID
      */
-    async getCheckin(requestParameters: GetCheckinRequest): Promise<EntCheckIn> {
+    async getCheckin(requestParameters: GetCheckinRequest): Promise<Array<EntCheckIn>> {
         const response = await this.getCheckinRaw(requestParameters);
         return await response.value();
     }

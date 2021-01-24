@@ -24,15 +24,15 @@ type CheckinController struct {
 
 // CheckIn struct
 type CheckIn struct {
-	CheckinDate string
-	Statusname  string
-	MobileKey	string
-	PhoneNumber	string
-	PersonNumber	string
-	Customer    int
-	Counter     int
-	Reserveroom int
-	Dataroom    int
+	CheckinDate  string
+	Statusname   string
+	MobileKey    string
+	PhoneNumber  string
+	PersonNumber string
+	Customer     int
+	Counter      int
+	Reserveroom  int
+	Dataroom     int
 }
 
 // CreateCheckIn handles POST requests for adding checkin entities
@@ -127,7 +127,7 @@ func (ctl *CheckinController) CreateCheckIn(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(400, gin.H{
-			"error": err,
+			"error":  err,
 			"Status": false,
 		})
 		return
@@ -140,7 +140,7 @@ func (ctl *CheckinController) CreateCheckIn(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(400, gin.H{
-			"error": "Update status re CheckIn error",
+			"error": "Update status reserveroom CheckIn error",
 		})
 		return
 	}
@@ -148,7 +148,7 @@ func (ctl *CheckinController) CreateCheckIn(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"status": true,
-		"data": ch,
+		"data":   ch,
 	})
 }
 
@@ -201,7 +201,7 @@ func (ctl *CheckinController) ListCheckIn(c *gin.Context) {
 // @ID get-checkin
 // @Produce  json
 // @Param id path int true "Checkin ID"
-// @Success 200 {object} ent.CheckIn
+// @Success 200 {array} ent.CheckIn
 // @Failure 400 {object} gin.H
 // @Failure 404 {object} gin.H
 // @Failure 500 {object} gin.H
@@ -217,16 +217,23 @@ func (ctl *CheckinController) GetCheckIn(c *gin.Context) {
 
 	ch, err := ctl.client.CheckIn.
 		Query().
-		Where(checkin.IDEQ(int(id))).
-		Only(context.Background())
+		WithCustomer().
+		WithCounter().
+		WithReserveroom().
+		WithDataroom().
+		WithStatus().
+		Where(checkin.HasCustomerWith(customer.IDEQ(int(id)))).
+		All(context.Background())
+		
 	if err != nil {
 		c.JSON(404, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
-
+	
 	c.JSON(200, ch)
+	
 }
 
 // GetCheckInStatus handles request to get a list of  GetCheckInStatus entities

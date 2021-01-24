@@ -26,6 +26,10 @@ import {
     EntStatusFromJSON,
     EntStatusFromJSONTyped,
     EntStatusToJSON,
+    EntStatusOpinion,
+    EntStatusOpinionFromJSON,
+    EntStatusOpinionFromJSONTyped,
+    EntStatusOpinionToJSON,
 } from './';
 
 /**
@@ -48,6 +52,12 @@ export interface EntCheckoutEdges {
     counterstaffs?: EntCounterStaff;
     /**
      * 
+     * @type {EntStatusOpinion}
+     * @memberof EntCheckoutEdges
+     */
+    statusopinion?: EntStatusOpinion;
+    /**
+     * 
      * @type {EntStatus}
      * @memberof EntCheckoutEdges
      */
@@ -66,6 +76,7 @@ export function EntCheckoutEdgesFromJSONTyped(json: any, ignoreDiscriminator: bo
         
         'checkins': !exists(json, 'checkins') ? undefined : EntCheckInFromJSON(json['checkins']),
         'counterstaffs': !exists(json, 'counterstaffs') ? undefined : EntCounterStaffFromJSON(json['counterstaffs']),
+        'statusopinion': !exists(json, 'statusopinion') ? undefined : EntStatusOpinionFromJSON(json['statusopinion']),
         'statuss': !exists(json, 'statuss') ? undefined : EntStatusFromJSON(json['statuss']),
     };
 }
@@ -81,6 +92,7 @@ export function EntCheckoutEdgesToJSON(value?: EntCheckoutEdges | null): any {
         
         'checkins': EntCheckInToJSON(value.checkins),
         'counterstaffs': EntCounterStaffToJSON(value.counterstaffs),
+        'statusopinion': EntStatusOpinionToJSON(value.statusopinion),
         'statuss': EntStatusToJSON(value.statuss),
     };
 }

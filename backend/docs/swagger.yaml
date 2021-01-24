@@ -1130,7 +1130,9 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ent.CheckIn'
+            items:
+              $ref: '#/definitions/ent.CheckIn'
+            type: array
         "400":
           description: Bad Request
           schema:
