@@ -99,6 +99,7 @@ const checkout: FC<{}> = () => {
   };
 
   //get status pay
+  const [Statusid, setStatusid] = React.useState(1);
   const [Status, setStatus] =   React.useState<EntStatus[]>([]);
   const getstatus = async () => {
     const res = await api.listStatus({ limit: 10, offset: 0 });
@@ -126,6 +127,8 @@ const checkout: FC<{}> = () => {
     getstatus();
     getCounterStaff();
   }, [CheckOut.CheckinsID,CheckOut.CounterstaffsID,CheckOut.StatussID,CheckOut.StatusopinionID]);
+
+
 
   useEffect(() => {
     setCheckout({ ...CheckOut, ['CounterstaffsID']: counter?.id })
@@ -239,12 +242,12 @@ const checkerror = (s :string) => {
         clear();
         setOpen(true);
         
-      
       } else {
         clear();
         checkerror(data.error.Name);
         setFail(true);
         console.log(data);
+       
       }
     });
   }
@@ -269,6 +272,11 @@ const checkerror = (s :string) => {
       end = new Date().getTime();
    }
  }
+
+ const timer = setTimeout(()=>{
+  window.location.reload(false);
+},5000) //  5000 = 5 second 
+
   return (
     <Page theme={pageTheme.home}>
   
@@ -294,7 +302,7 @@ const checkerror = (s :string) => {
             </Grid>
             <Grid item xs={9}>
               <FormControl variant="outlined" className={classes.formControl}>
-                <InputLabel>เลือก</InputLabel>
+                <InputLabel>เลือก ID checkin</InputLabel>
                 <Select
                   name="CheckinsID"
                   value={CheckOut.CheckinsID  || ''} // (undefined || '') = ''
@@ -304,28 +312,6 @@ const checkerror = (s :string) => {
                     return (
                       <MenuItem key={item.id} value={item.id}>
                         {item.id}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={3}>
-              <div className={classes.paper}>status</div>
-            </Grid>
-            <Grid item xs={9}>
-              <FormControl variant="outlined" className={classes.formControl}>
-                <InputLabel>เลือก</InputLabel>
-                <Select
-                  name="StatussID"
-                  value={CheckOut.StatussID  || ''} // (undefined || '') = ''
-                  onChange={handleChange}
-                >
-                  {Status.map(item => {
-                    return (
-                      <MenuItem key={item.id} value={item.id}>
-                        {item.description}
                       </MenuItem>
                     );
                   })}
@@ -366,6 +352,27 @@ const checkerror = (s :string) => {
                 </FormControl>
            </Grid>
            <Grid item xs={3}>
+              <div className={classes.paper}>status</div>
+            </Grid>
+            <Grid item xs={9}>
+              <FormControl variant="outlined" className={classes.formControl}>
+                <InputLabel>เลือกสถานะการชำระเงิน</InputLabel>
+                <Select
+                  name="StatussID"
+                  value={CheckOut.StatussID  || 1 } // (undefined || '') = ''
+                  onChange={handleChange}
+                >
+                  {Status.map(item => {
+                    return (
+                      <MenuItem key={item.id} value={item.id}>
+                        {item.description}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </Grid>
+           <Grid item xs={3}>
             <div className={classes.paper}>เลขบัตรประชาชน</div>
             </Grid>
             <Grid item xs={9}>
@@ -373,7 +380,7 @@ const checkerror = (s :string) => {
             <TextField
                 error = {Identitycard ? true : false}
                 helperText={Identitycard}
-                label="ใส่เลข"
+                label="ใส่เลขบัตรประชาชน"
                 name="Identitycard"
                 variant="outlined"
                 onChange={handleChange} />
@@ -385,7 +392,7 @@ const checkerror = (s :string) => {
             </Grid>
             <Grid item xs={9}>
               <FormControl variant="outlined" className={classes.formControl}>
-                <InputLabel>เลือก</InputLabel>
+                <InputLabel>เลือกความพึงหอใจ</InputLabel>
                 <Select
                   name="StatusopinionID"
                   value={CheckOut.StatusopinionID  || ''} // (undefined || '') = ''
