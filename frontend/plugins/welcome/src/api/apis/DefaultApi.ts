@@ -1296,7 +1296,6 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        
         return new runtime.JSONApiResponse(response, (jsonValue) => EntDataRoomFromJSON(jsonValue));
     }
 

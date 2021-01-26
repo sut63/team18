@@ -130,7 +130,7 @@ func (ctl *DataRoomController) GetDataRoom(c *gin.Context) {
 		WithStatusroom().
 		WithTyperoom().
 		Where(dataroom.IDEQ(int(id))).
-		All(context.Background())
+		Only(context.Background())
 	if err != nil {
 		c.JSON(404, gin.H{
 			"error": err.Error(),
@@ -151,7 +151,7 @@ func (ctl *DataRoomController) GetDataRoom(c *gin.Context) {
 // @Failure 400 {object} gin.H
 // @Failure 404 {object} gin.H
 // @Failure 500 {object} gin.H
-// @Router /dataroomsbypromos/{id} [get]
+// @Router /dataroombypromos/{id} [get]
 func (ctl *DataRoomController) GetDataRoombyPromotion(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
