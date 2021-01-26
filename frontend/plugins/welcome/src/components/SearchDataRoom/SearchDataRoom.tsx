@@ -108,7 +108,7 @@ const SearchDataRoom: FC<{}> = () => {
     var lencheckin : number
     const [datarooms, setDataRooms] = React.useState<EntDataRoom[]>([])
     const getDatarooms = async () => {
-        const res = await api.getDataroom({ id:idPromotion})
+        const res = await api.getGetDataRoombyPromotion({ id:idPromotion})
         setDataRooms(res)
         lencheckin = res.length
         if (lencheckin > 0){

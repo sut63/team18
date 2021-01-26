@@ -208,6 +208,10 @@ export interface GetGetCheckout2Request {
     id: number;
 }
 
+export interface GetGetDataRoombyPromotionRequest {
+    id: number;
+}
+
 export interface GetPromotionRequest {
     id: number;
 }
@@ -1276,7 +1280,7 @@ export class DefaultApi extends runtime.BaseAPI {
      * get dataroom by ID
      * Get a dataroom entity by ID
      */
-    async getDataroomRaw(requestParameters: GetDataroomRequest): Promise<runtime.ApiResponse<Array<EntDataRoom>>> {
+    async getDataroomRaw(requestParameters: GetDataroomRequest): Promise<runtime.ApiResponse<EntDataRoom>> {
         if (requestParameters.id === null || requestParameters.id === undefined) {
             throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getDataroom.');
         }
@@ -1292,14 +1296,15 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntDataRoomFromJSON));
+        
+        return new runtime.JSONApiResponse(response, (jsonValue) => EntDataRoomFromJSON(jsonValue));
     }
 
     /**
      * get dataroom by ID
      * Get a dataroom entity by ID
      */
-    async getDataroom(requestParameters: GetDataroomRequest): Promise<Array<EntDataRoom>> {
+    async getDataroom(requestParameters: GetDataroomRequest): Promise<EntDataRoom> {
         const response = await this.getDataroomRaw(requestParameters);
         return await response.value();
     }
@@ -1525,6 +1530,38 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getGetCheckout2(requestParameters: GetGetCheckout2Request): Promise<EntReserveRoom> {
         const response = await this.getGetCheckout2Raw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * get GetDataRoombyPromotion by ID
+     * Get a GetDataRoombyPromotion entity by ID
+     */
+    async getGetDataRoombyPromotionRaw(requestParameters: GetGetDataRoombyPromotionRequest): Promise<runtime.ApiResponse<Array<EntDataRoom>>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getGetDataRoombyPromotion.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/dataroombypromos/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntDataRoomFromJSON));
+    }
+
+    /**
+     * get GetDataRoombyPromotion by ID
+     * Get a GetDataRoombyPromotion entity by ID
+     */
+    async getGetDataRoombyPromotion(requestParameters: GetGetDataRoombyPromotionRequest): Promise<Array<EntDataRoom>> {
+        const response = await this.getGetDataRoombyPromotionRaw(requestParameters);
         return await response.value();
     }
 
