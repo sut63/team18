@@ -129,6 +129,43 @@ func (ctl *DataRoomController) GetDataRoom(c *gin.Context) {
 		WithPromotion().
 		WithStatusroom().
 		WithTyperoom().
+		Where(dataroom.IDEQ(int(id))).
+		All(context.Background())
+	if err != nil {
+		c.JSON(404, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, s)
+}
+
+// GetDataRoombyPromotion handles GET requests to retrieve a GetDataRoombyPromotion entity
+// @Summary Get a GetDataRoombyPromotion entity by ID
+// @Description get GetDataRoombyPromotion by ID
+// @ID get-GetDataRoombyPromotion
+// @Produce  json
+// @Param id path int true "GetDataRoombyPromotion ID"
+// @Success 200 {array} ent.DataRoom
+// @Failure 400 {object} gin.H
+// @Failure 404 {object} gin.H
+// @Failure 500 {object} gin.H
+// @Router /dataroomsbypromotion/{id} [get]
+func (ctl *DataRoomController) GetDataRoombyPromotion(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	s, err := ctl.client.DataRoom.
+		Query().
+		WithPromotion().
+		WithStatusroom().
+		WithTyperoom().
 		Where(dataroom.HasPromotionWith(promotion.IDEQ(int(id)))).
 		All(context.Background())
 	if err != nil {
@@ -337,10 +374,10 @@ func (ctl *DataRoomController) register() {
 	datarooms := ctl.router.Group("/datarooms")
 	dataroomcustomer := ctl.router.Group("/dataroomcustomer")
 	dataroompromos := ctl.router.Group("/dataroompromos")
-
+	dataroombypromos := ctl.router.Group("/dataroombypromos")
 	datarooms.GET("", ctl.ListDataRoom)
 	dataroompromos.GET(":id", ctl.ListDataRoomPromo)
-
+	dataroombypromos.GET(":id", ctl.GetDataRoombyPromotion)
 	// CRUD
 	datarooms.POST("", ctl.CreateDataRoom)
 	datarooms.GET(":id", ctl.GetDataRoom)
