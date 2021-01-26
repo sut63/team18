@@ -807,6 +807,38 @@ paths:
           schema:
             $ref: '#/definitions/gin.H'
       summary: Get a Customer entity by ID
+  /FixRoomDataRoom/{id}:
+    get:
+      description: get FixRoomDataRoom by ID
+      operationId: get-FixRoomDataRoom
+      parameters:
+      - description: FixRoomDataRoom ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/ent.FixRoom'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: Get a FixRoomDataRoom entity by ID
   /FurnitureDetailRooms/{id}:
     get:
       description: list FurnitureDetailRoom entities

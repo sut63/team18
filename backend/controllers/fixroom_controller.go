@@ -140,6 +140,43 @@ func (ctl *FixRoomController) GetFixRoom(c *gin.Context) {
 	c.JSON(200, s)
 }
 
+// ListFixRoomDataRoom handles GET requests to retrieve a FixRoomDataRoom entity
+// @Summary Get a FixRoomDataRoom entity by ID
+// @Description get FixRoomDataRoom by ID
+// @ID get-FixRoomDataRoom
+// @Produce  json
+// @Param id path int true "FixRoomDataRoom ID"
+// @Success 200 {array} ent.FixRoom
+// @Failure 400 {object} gin.H
+// @Failure 404 {object} gin.H
+// @Failure 500 {object} gin.H
+// @Router /FixRoomDataRoom/{id} [get]
+func (ctl *FixRoomController) ListFixRoomDataRoom(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	i, err := ctl.client.FixRoom.
+		Query().
+		WithRoom().
+		WithCustomer().
+		WithFurnitureDetail().
+		Where(fixroom.HasRoomWith(dataroom.IDEQ(int(id)))).
+		All(context.Background())
+	if err != nil {
+		c.JSON(404, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, i)
+}
+
 // ListFixRoom handles request to get a list of fixroom entities
 // @Summary List fixroom entities
 // @Description list fixroom entities
@@ -229,7 +266,9 @@ func NewFixRoomController(router gin.IRouter, client *ent.Client) *FixRoomContro
 // InitFixRoomController registers routes to the main engine
 func (ctl *FixRoomController) register() {
 	fixrooms := ctl.router.Group("/fixrooms")
+	FixRoomDataRoom := ctl.router.Group("/FixRoomDataRoom")
 	fixrooms.GET("", ctl.ListFixRoom)
+	FixRoomDataRoom.GET(":id", ctl.ListFixRoomDataRoom)
 	// CRUD
 	fixrooms.POST("", ctl.CreateFixRoom)
 	fixrooms.GET(":id", ctl.GetFixRoom)
