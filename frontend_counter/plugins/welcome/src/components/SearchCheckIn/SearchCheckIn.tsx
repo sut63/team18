@@ -110,6 +110,8 @@ const SearchCheckIn: FC<{}> = () => {
     const getCheckins = async () => {
         const res = await api.getCheckin({ id: idCustomer })
         setCheckin(res)
+        console.log(res);
+        
         lencheckin = res.length
         if (lencheckin > 0){
             setOpen(true)

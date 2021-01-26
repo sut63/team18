@@ -302,7 +302,7 @@ func (ctl *ReserveRoomController) UpdateReserveRoom(c *gin.Context) {
 // GetReserveRoomCustomer handles GET requests to retrieve a ReserveRoomCustomer entity
 // @Summary Get a ReserveRoomCustomer entity by ID
 // @Description get ReserveRoomCustomer by ID
-// @ID list-ReserveRoomCustomer
+// @ID get-ReserveRoomCustomer
 // @Produce  json
 // @Param id path int true "ReserveRoomCustomer ID"
 // @Success 200 {array} ent.ReserveRoom
@@ -325,7 +325,7 @@ func (ctl *ReserveRoomController) GetReserveRoomCustomer(c *gin.Context) {
 		WithCustomer().
 		WithPromotion().
 		WithStatus().
-		Where(reserveroom.HasCustomerWith(customer.IDEQ(int(id)))).
+		Where(reserveroom.HasCustomerWith(customer.IDEQ(int(id))), reserveroom.HasStatusWith(statusreserve.StatusNameEQ("ยังไม่เข้าพัก"))).
 		All(context.Background())
 	if err != nil {
 		c.JSON(404, gin.H{
