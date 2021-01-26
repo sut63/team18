@@ -257,6 +257,7 @@ func main() {
 	// Set Promotion Data
 	promotions := Promotions{
 		Promotion: []Promotion{
+			Promotion{"ปกติ", 0},
 			Promotion{"ปีใหม่", 1200.50},
 			Promotion{"สงกรานต์", 500},
 			Promotion{"ฮาโลวีน", 350},
