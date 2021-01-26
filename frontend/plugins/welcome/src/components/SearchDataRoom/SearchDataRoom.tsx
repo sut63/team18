@@ -107,8 +107,8 @@ const SearchDataRoom: FC<{}> = () => {
     // CheckIn  
     var lencheckin : number
     const [datarooms, setDataRooms] = React.useState<EntDataRoom[]>([])
-   /*  const getDatarooms = async () => {
-        const res = await api.getDataroom({ id: idPromotion })
+    const getDatarooms = async () => {
+        const res = await api.getDataroom({ id:idPromotion})
         setDataRooms(res)
         lencheckin = res.length
         if (lencheckin > 0){
@@ -116,7 +116,8 @@ const SearchDataRoom: FC<{}> = () => {
         }else{
             setFail(true)
         }   
-    }*/
+    }
+    
     const listDatarooms = async () => {
         const res = await api.listDataroom({})
         setDataRooms(res)
@@ -144,10 +145,10 @@ const SearchDataRoom: FC<{}> = () => {
     }
     console.log(datarooms)
     // function seach data
-   /* function seach() {
+    function seach() {
         getDatarooms();
     }
-*/
+
     return (
         <Page theme={pageTheme.home}>
             <Header style={HeaderCustom} title={`ระบบค้นหาการ check in ห้องพัก`}>
@@ -165,13 +166,13 @@ const SearchDataRoom: FC<{}> = () => {
             <Content>
                 <Grid container spacing={1}>
                     <Grid item xs={1}>
-                        <div className={classes.paper}><h3>Customer</h3></div>
+                        <div className={classes.paper}><h3>Promotion</h3></div>
                     </Grid>
                     <Grid item xs={3}>
                         <FormControl variant="outlined" className={classes.formControl}>
-                            <InputLabel>select customer</InputLabel>
+                            <InputLabel>select Promotion</InputLabel>
                             <Select
-                                name="Customer"
+                                name="Promotion"
                                 value={idPromotion || ''} // (undefined || '') = ''
                                 onChange={handleChange}
                             >
@@ -190,7 +191,7 @@ const SearchDataRoom: FC<{}> = () => {
                             variant="contained"
                             color="secondary"
                             size="large"
-                            //onClick={seach}
+                            onClick={seach}
                         >
                             seach
                         </Button>
