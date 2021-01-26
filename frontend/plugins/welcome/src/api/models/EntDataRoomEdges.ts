@@ -104,11 +104,11 @@ export function EntDataRoomEdgesFromJSONTyped(json: any, ignoreDiscriminator: bo
     }
     return {
         
-        'checkins': !exists(json, 'checkins') ? undefined : ((json['checkins'] as Array<any>).map(EntCheckInFromJSON)),
-        'details': !exists(json, 'details') ? undefined : ((json['details'] as Array<any>).map(EntFurnitureDetailFromJSON)),
-        'fixs': !exists(json, 'fixs') ? undefined : ((json['fixs'] as Array<any>).map(EntFixRoomFromJSON)),
+        'checkins': !exists(json, 'Checkins') ? undefined : ((json['Checkins'] as Array<any>).map(EntCheckInFromJSON)),
+        'details': !exists(json, 'Details') ? undefined : ((json['Details'] as Array<any>).map(EntFurnitureDetailFromJSON)),
+        'fixs': !exists(json, 'Fixs') ? undefined : ((json['Fixs'] as Array<any>).map(EntFixRoomFromJSON)),
         'promotion': !exists(json, 'Promotion') ? undefined : EntPromotionFromJSON(json['Promotion']),
-        'reserves': !exists(json, 'reserves') ? undefined : ((json['reserves'] as Array<any>).map(EntReserveRoomFromJSON)),
+        'reserves': !exists(json, 'Reserves') ? undefined : ((json['Reserves'] as Array<any>).map(EntReserveRoomFromJSON)),
         'statusroom': !exists(json, 'Statusroom') ? undefined : EntStatusRoomFromJSON(json['Statusroom']),
         'typeroom': !exists(json, 'Typeroom') ? undefined : EntTypeRoomFromJSON(json['Typeroom']),
     };
