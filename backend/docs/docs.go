@@ -1099,7 +1099,10 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ent.Checkout"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ent.Checkout"
+                            }
                         }
                     },
                     "400": {
@@ -1188,6 +1191,54 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/ent.ReserveRoom"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            }
+        },
+        "/dataroombypromos/{id}": {
+            "get": {
+                "description": "get GetDataRoombyPromotion by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get a GetDataRoombyPromotion entity by ID",
+                "operationId": "get-GetDataRoombyPromotion",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "GetDataRoombyPromotion ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ent.DataRoom"
+                            }
                         }
                     },
                     "400": {
@@ -1480,54 +1531,6 @@ var doc = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/gin.H"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/gin.H"
-                        }
-                    }
-                }
-            }
-        },
-        "/dataroomsbypromos/{id}": {
-            "get": {
-                "description": "get GetDataRoombyPromotion by ID",
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Get a GetDataRoombyPromotion entity by ID",
-                "operationId": "get-GetDataRoombyPromotion",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "GetDataRoombyPromotion ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/ent.DataRoom"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/gin.H"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/gin.H"
                         }
