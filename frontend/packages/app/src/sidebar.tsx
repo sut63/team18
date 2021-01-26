@@ -40,6 +40,12 @@ export const AppSidebar = () => (
       to="fix"
       text="แจ้งซ่อม"
     />
+   <SidebarItem
+      icon={CreateComponentIcon}
+      to="searchdataroom"
+      text="ค้นหาห้องพัก"
+    />
+
 
     {/* End global nav */}
     <SidebarDivider />

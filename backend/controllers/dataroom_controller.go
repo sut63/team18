@@ -110,7 +110,7 @@ func (ctl *DataRoomController) CreateDataRoom(c *gin.Context) {
 // @ID get-dataroom
 // @Produce  json
 // @Param id path int true "DataRoom ID"
-// @Success 200 {object} ent.DataRoom
+// @Success 200 {array} ent.DataRoom
 // @Failure 400 {object} gin.H
 // @Failure 404 {object} gin.H
 // @Failure 500 {object} gin.H
@@ -129,8 +129,8 @@ func (ctl *DataRoomController) GetDataRoom(c *gin.Context) {
 		WithPromotion().
 		WithStatusroom().
 		WithTyperoom().
-		Where(dataroom.IDEQ(int(id))).
-		Only(context.Background())
+		Where(dataroom.HasPromotionWith(promotion.IDEQ(int(id)))).
+		All(context.Background())
 	if err != nil {
 		c.JSON(404, gin.H{
 			"error": err.Error(),
