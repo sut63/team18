@@ -1522,9 +1522,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/ent.DataRoom'
-            type: array
+            $ref: '#/definitions/ent.DataRoom'
         "400":
           description: Bad Request
           schema:
@@ -1571,7 +1569,7 @@ paths:
           schema:
             $ref: '#/definitions/gin.H'
       summary: Update a Dataroom entity by ID
-  /dataroomsbypromotion/{id}:
+  /dataroomsbypromos/{id}:
     get:
       description: get GetDataRoombyPromotion by ID
       operationId: get-GetDataRoombyPromotion

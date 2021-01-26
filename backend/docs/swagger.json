@@ -1405,10 +1405,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/ent.DataRoom"
-                            }
+                            "$ref": "#/definitions/ent.DataRoom"
                         }
                     },
                     "400": {
@@ -1481,7 +1478,7 @@
                 }
             }
         },
-        "/dataroomsbypromotion/{id}": {
+        "/dataroomsbypromos/{id}": {
             "get": {
                 "description": "get GetDataRoombyPromotion by ID",
                 "produces": [

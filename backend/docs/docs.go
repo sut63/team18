@@ -1420,10 +1420,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/ent.DataRoom"
-                            }
+                            "$ref": "#/definitions/ent.DataRoom"
                         }
                     },
                     "400": {
@@ -1496,7 +1493,7 @@ var doc = `{
                 }
             }
         },
-        "/dataroomsbypromotion/{id}": {
+        "/dataroomsbypromos/{id}": {
             "get": {
                 "description": "get GetDataRoombyPromotion by ID",
                 "produces": [
