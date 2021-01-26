@@ -107,10 +107,10 @@ export function EntDataRoomEdgesFromJSONTyped(json: any, ignoreDiscriminator: bo
         'checkins': !exists(json, 'checkins') ? undefined : ((json['checkins'] as Array<any>).map(EntCheckInFromJSON)),
         'details': !exists(json, 'details') ? undefined : ((json['details'] as Array<any>).map(EntFurnitureDetailFromJSON)),
         'fixs': !exists(json, 'fixs') ? undefined : ((json['fixs'] as Array<any>).map(EntFixRoomFromJSON)),
-        'promotion': !exists(json, 'promotion') ? undefined : EntPromotionFromJSON(json['promotion']),
+        'promotion': !exists(json, 'Promotion') ? undefined : EntPromotionFromJSON(json['Promotion']),
         'reserves': !exists(json, 'reserves') ? undefined : ((json['reserves'] as Array<any>).map(EntReserveRoomFromJSON)),
-        'statusroom': !exists(json, 'statusroom') ? undefined : EntStatusRoomFromJSON(json['statusroom']),
-        'typeroom': !exists(json, 'typeroom') ? undefined : EntTypeRoomFromJSON(json['typeroom']),
+        'statusroom': !exists(json, 'Statusroom') ? undefined : EntStatusRoomFromJSON(json['Statusroom']),
+        'typeroom': !exists(json, 'Typeroom') ? undefined : EntTypeRoomFromJSON(json['Typeroom']),
     };
 }
 
