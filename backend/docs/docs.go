@@ -1372,7 +1372,10 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ent.DataRoom"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ent.DataRoom"
+                            }
                         }
                     },
                     "400": {
