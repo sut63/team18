@@ -226,7 +226,7 @@ func (ctl *CheckoutController) ListCheckout(c *gin.Context) {
 // @ID get-checkout
 // @Produce  json
 // @Param id path int true "Checkout ID"
-// @Success 200 {object} ent.Checkout
+// @Success 200 {array} ent.Checkout
 // @Failure 400 {object} gin.H
 // @Failure 404 {object} gin.H
 // @Failure 500 {object} gin.H
@@ -242,8 +242,12 @@ func (ctl *CheckoutController) GetCheckout(c *gin.Context) {
 
 	u, err := ctl.client.Checkout.
 		Query().
-		Where(checkout.IDEQ(int(id))).
-		Only(context.Background())
+		WithCheckins().
+		WithStatuss().
+		WithStatusopinion().
+		WithCounterstaffs().
+		Where(checkout.HasStatusopinionWith(statusopinion.IDEQ(int(id)))).
+		All(context.Background())
 	if err != nil {
 		c.JSON(404, gin.H{
 			"error": err.Error(),

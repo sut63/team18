@@ -8,7 +8,7 @@ import FurnitureDetail from './components/FurnitureDetail'
 import SearchReserveRoom from './components/SearchReserveRoom'
 import SearchCheckIn from './components/SearchCheckIn'
 import { Cookies } from './Cookie'
-
+import SearchCheckout from './components/SearchCheckout'
 var ck = new Cookies()
 var role = ck.GetRole()
 
@@ -22,6 +22,7 @@ export const plugin = createPlugin({
       router.registerRoute('/CheckIn', SignIn);
       router.registerRoute('/checkout', SignIn);
       router.registerRoute('/FurnitureDetail', SignIn);
+      router.registerRoute('/SearchCheckout', SearchCheckout);    
     }else{
       router.registerRoute('/', WelcomePage);
       router.registerRoute('/WelcomePage', WelcomePage);
@@ -31,6 +32,7 @@ export const plugin = createPlugin({
       router.registerRoute('/FurnitureDetail', FurnitureDetail);
       router.registerRoute('/SearchReserveRoom', SearchReserveRoom);
       router.registerRoute('/SearchCheckIn', SearchCheckIn);
+      router.registerRoute('/SearchCheckout', SearchCheckout);    
     }
   },
 });

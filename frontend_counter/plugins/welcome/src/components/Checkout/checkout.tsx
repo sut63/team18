@@ -241,13 +241,13 @@ const checkerror = (s :string) => {
       if (data.status == true) {
         clear();
         setOpen(true);
-        
+        reload()
       } else {
         clear();
         checkerror(data.error.Name);
         setFail(true);
         console.log(data);
-       
+        reload()
       }
     });
   }
@@ -273,9 +273,6 @@ const checkerror = (s :string) => {
    }
  }
 
- const timer = setTimeout(()=>{
-  window.location.reload(false);
-},5000) //  5000 = 5 second 
 
   return (
     <Page theme={pageTheme.home}>
@@ -359,7 +356,7 @@ const checkerror = (s :string) => {
                 <InputLabel>เลือกสถานะการชำระเงิน</InputLabel>
                 <Select
                   name="StatussID"
-                  value={CheckOut.StatussID  || 1 } // (undefined || '') = ''
+                  value={CheckOut.StatussID  || '' } // (undefined || '') = ''
                   onChange={handleChange}
                 >
                   {Status.map(item => {
