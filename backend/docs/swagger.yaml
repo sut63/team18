@@ -1571,6 +1571,38 @@ paths:
           schema:
             $ref: '#/definitions/gin.H'
       summary: Update a Dataroom entity by ID
+  /dataroomsbypromotion/{id}:
+    get:
+      description: get GetDataRoombyPromotion by ID
+      operationId: get-GetDataRoombyPromotion
+      parameters:
+      - description: GetDataRoombyPromotion ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/ent.DataRoom'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: Get a GetDataRoombyPromotion entity by ID
   /fixrooms:
     get:
       description: list fixroom entities
