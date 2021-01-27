@@ -438,6 +438,54 @@
                 }
             }
         },
+        "/ReserveCustomer/{id}": {
+            "get": {
+                "description": "list ReserveRoom entity by customer ID",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "list a ReserveRoom entity by customerID",
+                "operationId": "list-ReserveCustomer",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ReserveCustomee ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ent.ReserveRoom"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            }
+        },
         "/ReserveRooms": {
             "get": {
                 "description": "list ReserveRoom entities",

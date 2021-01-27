@@ -310,6 +310,10 @@ export interface ListPromotionRequest {
     offset?: number;
 }
 
+export interface ListReserveCustomerRequest {
+    id: number;
+}
+
 export interface ListReserveRoomRequest {
     limit?: number;
     offset?: number;
@@ -2317,6 +2321,38 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async listPromotion(requestParameters: ListPromotionRequest): Promise<Array<EntPromotion>> {
         const response = await this.listPromotionRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * list ReserveRoom entity by customer ID
+     * list a ReserveRoom entity by customerID
+     */
+    async listReserveCustomerRaw(requestParameters: ListReserveCustomerRequest): Promise<runtime.ApiResponse<Array<EntReserveRoom>>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling listReserveCustomer.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/ReserveCustomer/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntReserveRoomFromJSON));
+    }
+
+    /**
+     * list ReserveRoom entity by customer ID
+     * list a ReserveRoom entity by customerID
+     */
+    async listReserveCustomer(requestParameters: ListReserveCustomerRequest): Promise<Array<EntReserveRoom>> {
+        const response = await this.listReserveCustomerRaw(requestParameters);
         return await response.value();
     }
 

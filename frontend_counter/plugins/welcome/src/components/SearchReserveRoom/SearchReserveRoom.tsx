@@ -91,27 +91,43 @@ const SearchReserveRoom: FC<{}> = () => {
         setCustomer(res)
     }
 
+    // alert setting
+    const [open, setOpen] = React.useState(false);
+    const [fail, setFail] = React.useState(false);
+
+    //close alert 
+    const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setFail(false);
+        setOpen(false);
+    };
+
+    // CheckIn  
+    var checkReserve: number
     // ReserveRoom  
     const [reserveroom, setReserveroom] = React.useState<EntReserveRoom[]>([])
     const getReseveroom = async () => {
-        const res = await api.getReserveRoomCustomer({ id: idCustomer })
+        const res = await api.listReserveCustomer({ id: idCustomer })
         setReserveroom(res)
+        checkReserve = res.length
+        if (checkReserve > 0) {
+            setOpen(true)
+        } else {
+            setFail(true)
+        }
     }
+
     // Lifecycle Hooks
     useEffect(() => {
         getCustomer();
     }, []);
 
-    // // Lifecycle Hooks
-    // useEffect(() => {
-    //     getReseveroom();
-    // }, [idCustomer]);
-
-    // set data to object furniture_detail
+    // set data to search reserveroom
     const handleChange = (
-        event: React.ChangeEvent<{ name?: string; value: any }>,
+        event: React.ChangeEvent<{ value: any }>,
     ) => {
-        const name = event.target.name as keyof typeof SearchReserveRoom;
         const { value } = event.target;
         setIdcustomer(value);
     };
@@ -213,6 +229,17 @@ const SearchReserveRoom: FC<{}> = () => {
                         </TableBody>
                     </Table>
                 </TableContainer>
+                <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                    <Alert onClose={handleClose} severity="success">
+                        ค้นหาสำเร็จ
+                    </Alert>
+                </Snackbar>
+
+                <Snackbar open={fail} autoHideDuration={6000} onClose={handleClose}>
+                    <Alert onClose={handleClose} severity="error">
+                        ไม่พบข้อมูล
+                    </Alert>
+                </Snackbar>
             </Content>
         </Page>
     );

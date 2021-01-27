@@ -875,6 +875,38 @@ paths:
           schema:
             $ref: '#/definitions/gin.H'
       summary: List FurnitureDetailRoom entities
+  /ReserveCustomer/{id}:
+    get:
+      description: list ReserveRoom entity by customer ID
+      operationId: list-ReserveCustomer
+      parameters:
+      - description: ReserveCustomee ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/ent.ReserveRoom'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/gin.H'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/gin.H'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/gin.H'
+      summary: list a ReserveRoom entity by customerID
   /ReserveRooms:
     get:
       description: list ReserveRoom entities

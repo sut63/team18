@@ -193,6 +193,7 @@ func main() {
 	controllers.NewFixRoomController(v1, client)
 	controllers.NewStatusCheckinController(v1, client)
 	controllers.NewStatusOpinionController(v1, client)
+	controllers.NewSeachReserveRoomController(v1, client)
 	// Set StatusRoom Data
 	statusrooms := StatusRooms{
 		StatusRoom: []StatusRoom{
