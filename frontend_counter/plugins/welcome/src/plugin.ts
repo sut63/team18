@@ -22,7 +22,7 @@ export const plugin = createPlugin({
       router.registerRoute('/CheckIn', SignIn);
       router.registerRoute('/checkout', SignIn);
       router.registerRoute('/FurnitureDetail', SignIn);
-      router.registerRoute('/SearchCheckout', SearchCheckout);    
+      router.registerRoute('/SearchCheckout', SignIn);    
     }else{
       router.registerRoute('/', WelcomePage);
       router.registerRoute('/WelcomePage', WelcomePage);

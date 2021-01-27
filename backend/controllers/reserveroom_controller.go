@@ -337,44 +337,6 @@ func (ctl *ReserveRoomController) GetReserveRoomCustomer(c *gin.Context) {
 	c.JSON(200, i)
 }
 
-// ListReserveRoomCustomer handles GET requests to retrieve a ReserveRoomCustomer entity
-// @Summary Get a ReserveRoomCustomer entity by ID
-// @Description get ReserveRoomCustomer by ID
-// @ID get-ReserveRoomCustomer
-// @Produce  json
-// @Param id path int true "ReserveRoomCustomer ID"
-// @Success 200 {array} ent.ReserveRoom
-// @Failure 400 {object} gin.H
-// @Failure 404 {object} gin.H
-// @Failure 500 {object} gin.H
-// @Router /ReserveRoomsCustomer/{id} [get]
-func (ctl *ReserveRoomController) ListReserveRoomCustomer(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
-	if err != nil {
-		c.JSON(400, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	i, err := ctl.client.ReserveRoom.
-		Query().
-		WithRoom().
-		WithCustomer().
-		WithPromotion().
-		WithStatus().
-		Where(reserveroom.HasCustomerWith(customer.IDEQ(int(id))), reserveroom.HasStatusWith(statusreserve.StatusNameEQ("ยังไม่เข้าพัก"))).
-		All(context.Background())
-	if err != nil {
-		c.JSON(404, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	c.JSON(200, i)
-}
-
 // NewReserveRoomControllercreates and registers handles for the ReserveRoom controller
 func NewReserveRoomController(router gin.IRouter, client *ent.Client) *ReserveRoomController {
 	rr := &ReserveRoomController{
@@ -392,7 +354,6 @@ func NewReserveRoomController(router gin.IRouter, client *ent.Client) *ReserveRo
 func (ctl *ReserveRoomController) register() {
 	ReserveRooms := ctl.router.Group("/ReserveRooms")
 	ReserveRoomsCustomer := ctl.router.Group("/ReserveRoomsCustomer")
-	ReserveCustomers := ctl.router.Group("/ReserveCustomer")
 
 	ReserveRooms.GET("", ctl.ListReserveRoom)
 
@@ -400,9 +361,6 @@ func (ctl *ReserveRoomController) register() {
 	ReserveRooms.POST("", ctl.CreateReserveRoom)
 	ReserveRooms.GET(":id", ctl.GetReserveRoom)
 	ReserveRoomsCustomer.GET(":id", ctl.GetReserveRoomCustomer)
-	ReserveCustomers.GET(":id", ctl.ListReserveRoomCustomer)
 	ReserveRooms.PUT(":id", ctl.UpdateReserveRoom)
 	ReserveRooms.DELETE(":id", ctl.DeleteReserveRoom)
 }
-
-//
