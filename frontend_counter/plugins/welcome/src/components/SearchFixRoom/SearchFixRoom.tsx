@@ -91,7 +91,7 @@ const SearchFixRoom: FC<{}> = () => {
         const res = await api.listDataroom({})
         setDataRoom(res)
     }
-
+    // Fixsomething
     // FixRoom
     var lencheckin : number
     const [FixRoom, setFixRoom] = React.useState<EntFixRoom[]>([])
