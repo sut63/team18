@@ -353,12 +353,12 @@ var doc = `{
         },
         "/FixRoomDataRoom/{id}": {
             "get": {
-                "description": "get FixRoomDataRoom by ID",
+                "description": "list FixRoomDataRoom by ID",
                 "produces": [
                     "application/json"
                 ],
                 "summary": "Get a FixRoomDataRoom entity by ID",
-                "operationId": "get-FixRoomDataRoom",
+                "operationId": "list-FixRoomDataRoom",
                 "parameters": [
                     {
                         "type": "integer",

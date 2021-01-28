@@ -9,6 +9,7 @@ import SearchReserveRoom from './components/SearchReserveRoom'
 import SearchCheckIn from './components/SearchCheckIn'
 import { Cookies } from './Cookie'
 import SearchCheckout from './components/SearchCheckout'
+import SearchFixRoom from './components/SearchFixRoom'
 var ck = new Cookies()
 var role = ck.GetRole()
 
@@ -32,7 +33,8 @@ export const plugin = createPlugin({
       router.registerRoute('/FurnitureDetail', FurnitureDetail);
       router.registerRoute('/SearchReserveRoom', SearchReserveRoom);
       router.registerRoute('/SearchCheckIn', SearchCheckIn);
-      router.registerRoute('/SearchCheckout', SearchCheckout);    
+      router.registerRoute('/SearchCheckout', SearchCheckout);
+      router.registerRoute('/SearchFixRoom', SearchFixRoom);    
     }
   },
 });

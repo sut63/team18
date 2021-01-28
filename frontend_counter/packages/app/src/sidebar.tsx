@@ -66,6 +66,12 @@ export const AppSidebar = () => (
       text="shearch checkout"
     />
 
+    <SidebarItem
+      icon={SearchIcon}
+      to="SearchFixRoom"
+      text="ค้นหาใบแจ้งซ่อม"
+    />
+
     {/* End global nav */}
     <SidebarDivider />
     <SidebarSpace />

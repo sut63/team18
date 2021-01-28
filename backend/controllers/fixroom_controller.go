@@ -142,8 +142,8 @@ func (ctl *FixRoomController) GetFixRoom(c *gin.Context) {
 
 // ListFixRoomDataRoom handles GET requests to retrieve a FixRoomDataRoom entity
 // @Summary Get a FixRoomDataRoom entity by ID
-// @Description get FixRoomDataRoom by ID
-// @ID get-FixRoomDataRoom
+// @Description list FixRoomDataRoom by ID
+// @ID list-FixRoomDataRoom
 // @Produce  json
 // @Param id path int true "FixRoomDataRoom ID"
 // @Success 200 {array} ent.FixRoom

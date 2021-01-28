@@ -184,10 +184,6 @@ export interface GetDataroomcustomerRequest {
     id: number;
 }
 
-export interface GetFixRoomDataRoomRequest {
-    id: number;
-}
-
 export interface GetFixroomRequest {
     id: number;
 }
@@ -279,6 +275,10 @@ export interface ListDataroomRequest {
     offset?: number;
 }
 
+export interface ListFixRoomDataRoomRequest {
+    id: number;
+}
+
 export interface ListFixroomRequest {
     limit?: number;
     offset?: number;
@@ -308,6 +308,10 @@ export interface ListFurnituretypeRequest {
 export interface ListPromotionRequest {
     limit?: number;
     offset?: number;
+}
+
+export interface ListReserveCustomerRequest {
+    id: number;
 }
 
 export interface ListReserveRoomRequest {
@@ -1184,7 +1188,7 @@ export class DefaultApi extends runtime.BaseAPI {
      * get checkout by ID
      * Get a checkout entity by ID
      */
-    async getCheckoutRaw(requestParameters: GetCheckoutRequest): Promise<runtime.ApiResponse<EntCheckout>> {
+    async getCheckoutRaw(requestParameters: GetCheckoutRequest): Promise<runtime.ApiResponse<Array<EntCheckout>>> {
         if (requestParameters.id === null || requestParameters.id === undefined) {
             throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getCheckout.');
         }
@@ -1200,14 +1204,14 @@ export class DefaultApi extends runtime.BaseAPI {
             query: queryParameters,
         });
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => EntCheckoutFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntCheckoutFromJSON));
     }
 
     /**
      * get checkout by ID
      * Get a checkout entity by ID
      */
-    async getCheckout(requestParameters: GetCheckoutRequest): Promise<EntCheckout> {
+    async getCheckout(requestParameters: GetCheckoutRequest): Promise<Array<EntCheckout>> {
         const response = await this.getCheckoutRaw(requestParameters);
         return await response.value();
     }
@@ -1337,38 +1341,6 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getDataroomcustomer(requestParameters: GetDataroomcustomerRequest): Promise<EntDataRoom> {
         const response = await this.getDataroomcustomerRaw(requestParameters);
-        return await response.value();
-    }
-
-    /**
-     * get FixRoomDataRoom by ID
-     * Get a FixRoomDataRoom entity by ID
-     */
-    async getFixRoomDataRoomRaw(requestParameters: GetFixRoomDataRoomRequest): Promise<runtime.ApiResponse<Array<EntFixRoom>>> {
-        if (requestParameters.id === null || requestParameters.id === undefined) {
-            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getFixRoomDataRoom.');
-        }
-
-        const queryParameters: runtime.HTTPQuery = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/FixRoomDataRoom/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        });
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntFixRoomFromJSON));
-    }
-
-    /**
-     * get FixRoomDataRoom by ID
-     * Get a FixRoomDataRoom entity by ID
-     */
-    async getFixRoomDataRoom(requestParameters: GetFixRoomDataRoomRequest): Promise<Array<EntFixRoom>> {
-        const response = await this.getFixRoomDataRoomRaw(requestParameters);
         return await response.value();
     }
 
@@ -2073,6 +2045,38 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * list FixRoomDataRoom by ID
+     * Get a FixRoomDataRoom entity by ID
+     */
+    async listFixRoomDataRoomRaw(requestParameters: ListFixRoomDataRoomRequest): Promise<runtime.ApiResponse<Array<EntFixRoom>>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling listFixRoomDataRoom.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/FixRoomDataRoom/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntFixRoomFromJSON));
+    }
+
+    /**
+     * list FixRoomDataRoom by ID
+     * Get a FixRoomDataRoom entity by ID
+     */
+    async listFixRoomDataRoom(requestParameters: ListFixRoomDataRoomRequest): Promise<Array<EntFixRoom>> {
+        const response = await this.listFixRoomDataRoomRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
      * list fixroom entities
      * List fixroom entities
      */
@@ -2317,6 +2321,38 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async listPromotion(requestParameters: ListPromotionRequest): Promise<Array<EntPromotion>> {
         const response = await this.listPromotionRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * list ReserveRoom entity by customer ID
+     * list a ReserveRoom entity by customerID
+     */
+    async listReserveCustomerRaw(requestParameters: ListReserveCustomerRequest): Promise<runtime.ApiResponse<Array<EntReserveRoom>>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling listReserveCustomer.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/ReserveCustomer/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntReserveRoomFromJSON));
+    }
+
+    /**
+     * list ReserveRoom entity by customer ID
+     * list a ReserveRoom entity by customerID
+     */
+    async listReserveCustomer(requestParameters: ListReserveCustomerRequest): Promise<Array<EntReserveRoom>> {
+        const response = await this.listReserveCustomerRaw(requestParameters);
         return await response.value();
     }
 

@@ -74,10 +74,10 @@ export function EntCheckoutEdgesFromJSONTyped(json: any, ignoreDiscriminator: bo
     }
     return {
         
-        'checkins': !exists(json, 'Checkins') ? undefined : EntCheckInFromJSON(json['Checkins']),
-        'counterstaffs': !exists(json, 'Counterstaffs') ? undefined : EntCounterStaffFromJSON(json['Counterstaffs']),
-        'statusopinion': !exists(json, 'Statusopinion') ? undefined : EntStatusOpinionFromJSON(json['Statusopinion']),
-        'statuss': !exists(json, 'Statuss') ? undefined : EntStatusFromJSON(json['Statuss']),
+        'checkins': !exists(json, 'checkins') ? undefined : EntCheckInFromJSON(json['checkins']),
+        'counterstaffs': !exists(json, 'counterstaffs') ? undefined : EntCounterStaffFromJSON(json['counterstaffs']),
+        'statusopinion': !exists(json, 'statusopinion') ? undefined : EntStatusOpinionFromJSON(json['statusopinion']),
+        'statuss': !exists(json, 'statuss') ? undefined : EntStatusFromJSON(json['statuss']),
     };
 }
 
