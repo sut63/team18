@@ -809,8 +809,8 @@ paths:
       summary: Get a Customer entity by ID
   /FixRoomDataRoom/{id}:
     get:
-      description: get FixRoomDataRoom by ID
-      operationId: get-FixRoomDataRoom
+      description: list FixRoomDataRoom by ID
+      operationId: list-FixRoomDataRoom
       parameters:
       - description: FixRoomDataRoom ID
         in: path

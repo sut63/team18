@@ -184,10 +184,6 @@ export interface GetDataroomcustomerRequest {
     id: number;
 }
 
-export interface GetFixRoomDataRoomRequest {
-    id: number;
-}
-
 export interface GetFixroomRequest {
     id: number;
 }
@@ -277,6 +273,10 @@ export interface ListDataRoomPromoRequest {
 export interface ListDataroomRequest {
     limit?: number;
     offset?: number;
+}
+
+export interface ListFixRoomDataRoomRequest {
+    id: number;
 }
 
 export interface ListFixroomRequest {
@@ -1345,38 +1345,6 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
-     * get FixRoomDataRoom by ID
-     * Get a FixRoomDataRoom entity by ID
-     */
-    async getFixRoomDataRoomRaw(requestParameters: GetFixRoomDataRoomRequest): Promise<runtime.ApiResponse<Array<EntFixRoom>>> {
-        if (requestParameters.id === null || requestParameters.id === undefined) {
-            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getFixRoomDataRoom.');
-        }
-
-        const queryParameters: runtime.HTTPQuery = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/FixRoomDataRoom/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        });
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntFixRoomFromJSON));
-    }
-
-    /**
-     * get FixRoomDataRoom by ID
-     * Get a FixRoomDataRoom entity by ID
-     */
-    async getFixRoomDataRoom(requestParameters: GetFixRoomDataRoomRequest): Promise<Array<EntFixRoom>> {
-        const response = await this.getFixRoomDataRoomRaw(requestParameters);
-        return await response.value();
-    }
-
-    /**
      * get fixroom by ID
      * Get a fixroom entity by ID
      */
@@ -2073,6 +2041,38 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async listDataroom(requestParameters: ListDataroomRequest): Promise<Array<EntDataRoom>> {
         const response = await this.listDataroomRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     * list FixRoomDataRoom by ID
+     * Get a FixRoomDataRoom entity by ID
+     */
+    async listFixRoomDataRoomRaw(requestParameters: ListFixRoomDataRoomRequest): Promise<runtime.ApiResponse<Array<EntFixRoom>>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling listFixRoomDataRoom.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/FixRoomDataRoom/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(EntFixRoomFromJSON));
+    }
+
+    /**
+     * list FixRoomDataRoom by ID
+     * Get a FixRoomDataRoom entity by ID
+     */
+    async listFixRoomDataRoom(requestParameters: ListFixRoomDataRoomRequest): Promise<Array<EntFixRoom>> {
+        const response = await this.listFixRoomDataRoomRaw(requestParameters);
         return await response.value();
     }
 
