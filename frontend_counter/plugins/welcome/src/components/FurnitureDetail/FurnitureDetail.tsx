@@ -327,23 +327,7 @@ const FurnitureDetail: FC<{}> = () => {
               </FormControl>
             </Grid>
 
-            <Grid item xs={3}>
-              <div className={classes.paper}>เลือกวันที่เพิ่มเฟอร์นิเจอร์</div>
-            </Grid>
-            <Grid item xs={9}>
-              <FormControl variant="outlined" className={classes.formControl}>
-                <TextField
-                  name="Dateadd"
-                  type="datetime-local"
-                  value={dateAdd}
-                  defaultValue="2020-12-31"
-                  onChange={handleChangeDateAdd}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </FormControl>
-            </Grid>
+            
 
             <Grid item xs={3}>
               <div className={classes.paper}>Detail</div>
@@ -394,6 +378,24 @@ const FurnitureDetail: FC<{}> = () => {
                 onChange={handleChange} />
             </Grid>
 
+            <Grid item xs={3}>
+              <div className={classes.paper}>เลือกวันที่เพิ่มเฟอร์นิเจอร์</div>
+            </Grid>
+            <Grid item xs={9}>
+              <FormControl variant="outlined" className={classes.formControl}>
+                <TextField
+                  name="Dateadd"
+                  type="datetime-local"
+                  value={dateAdd}
+                  defaultValue="2020-12-31"
+                  onChange={handleChangeDateAdd}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </FormControl>
+            </Grid>
+
                                       
             <Grid item xs={3}></Grid>
             <Grid item xs={9}>
@@ -411,7 +413,7 @@ const FurnitureDetail: FC<{}> = () => {
           </Grid>
           <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="success">
-              This is a success message!
+              บันทึกสำเร็จ!
         </Alert>
           </Snackbar>
 

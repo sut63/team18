@@ -232,6 +232,8 @@ func (ctl *FurnitureDetailController) ListFurnitureDetailRooms(c *gin.Context) {
 	furnituredetails, err := ctl.client.FurnitureDetail.
 		Query().
 		WithFurnitures().
+		WithCounterstaffs().
+		WithRooms().
 		Limit(limit).
 		Offset(offset).
 		Where(furnituredetail.HasRoomsWith(dataroom.IDEQ(int(id)))).

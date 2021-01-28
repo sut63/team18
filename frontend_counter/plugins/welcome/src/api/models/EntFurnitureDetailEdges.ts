@@ -84,10 +84,10 @@ export function EntFurnitureDetailEdgesFromJSONTyped(json: any, ignoreDiscrimina
     }
     return {
         
-        'counterstaffs': !exists(json, 'counterstaffs') ? undefined : EntCounterStaffFromJSON(json['counterstaffs']),
+        'counterstaffs': !exists(json, 'Counterstaffs') ? undefined : EntCounterStaffFromJSON(json['Counterstaffs']),
         'fixs': !exists(json, 'fixs') ? undefined : ((json['fixs'] as Array<any>).map(EntFixRoomFromJSON)),
-        'furnitures': !exists(json, 'furnitures') ? undefined : EntFurnitureFromJSON(json['furnitures']),
-        'rooms': !exists(json, 'rooms') ? undefined : EntDataRoomFromJSON(json['rooms']),
+        'furnitures': !exists(json, 'Furnitures') ? undefined : EntFurnitureFromJSON(json['Furnitures']),
+        'rooms': !exists(json, 'Rooms') ? undefined : EntDataRoomFromJSON(json['Rooms']),
         'types': !exists(json, 'types') ? undefined : EntFurnitureTypeFromJSON(json['types']),
     };
 }

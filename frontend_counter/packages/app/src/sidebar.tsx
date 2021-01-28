@@ -72,6 +72,12 @@ export const AppSidebar = () => (
       text="ค้นหาใบแจ้งซ่อม"
     />
 
+    <SidebarItem
+      icon={SearchIcon}
+      to="searchfurniture"
+      text="ค้นหาเฟอร์นิเจอร์"
+    />
+
     {/* End global nav */}
     <SidebarDivider />
     <SidebarSpace />
