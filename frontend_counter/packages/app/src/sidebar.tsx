@@ -63,7 +63,7 @@ export const AppSidebar = () => (
     <SidebarItem
       icon={SearchIcon}
       to="SearchCheckout"
-      text="shearch checkout"
+      text="ค้นหาcheckout"
     />
 
     <SidebarItem
