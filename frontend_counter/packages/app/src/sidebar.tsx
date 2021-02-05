@@ -58,7 +58,7 @@ export const AppSidebar = () => (
     <SidebarItem
       icon={SearchIcon}
       to="SearchCheckIn"
-      text="ค้นหาการ check in"
+      text="Search check in"
     />
     <SidebarItem
       icon={SearchIcon}
