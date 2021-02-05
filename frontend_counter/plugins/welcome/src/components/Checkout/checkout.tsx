@@ -389,7 +389,7 @@ const checkerror = (s :string) => {
             </Grid>
             <Grid item xs={9}>
               <FormControl variant="outlined" className={classes.formControl}>
-                <InputLabel>เลือกความพึงหอใจ</InputLabel>
+                <InputLabel>เลือกความพึงพอใจ</InputLabel>
                 <Select
                   name="StatusopinionID"
                   value={CheckOut.StatusopinionID  || ''} // (undefined || '') = ''

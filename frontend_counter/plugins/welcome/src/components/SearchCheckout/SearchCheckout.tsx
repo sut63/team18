@@ -193,7 +193,7 @@ const SearchCheckout: FC<{}> = () => {
                     <Grid item xs={6}>
                         <Button
                             variant="contained"
-                            color="secondary"
+                            
                             size="large"
                             onClick={seach}
                         >
