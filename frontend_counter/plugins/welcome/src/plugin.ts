@@ -24,6 +24,7 @@ export const plugin = createPlugin({
       router.registerRoute('/CheckIn', SignIn);
       router.registerRoute('/checkout', SignIn);
       router.registerRoute('/FurnitureDetail', SignIn);
+      router.registerRoute('/SearchCheckIn', SignIn);
       router.registerRoute('/SearchCheckout', SignIn);    
     }else{
       router.registerRoute('/', WelcomePage);

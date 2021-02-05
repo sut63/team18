@@ -94,12 +94,12 @@ export function EntCheckInEdgesFromJSONTyped(json: any, ignoreDiscriminator: boo
     }
     return {
         
-        'checkouts': !exists(json, 'checkouts') ? undefined : EntCheckoutFromJSON(json['checkouts']),
-        'counter': !exists(json, 'counter') ? undefined : EntCounterStaffFromJSON(json['counter']),
-        'customer': !exists(json, 'customer') ? undefined : EntCustomerFromJSON(json['customer']),
-        'dataroom': !exists(json, 'dataroom') ? undefined : EntDataRoomFromJSON(json['dataroom']),
-        'reserveroom': !exists(json, 'reserveroom') ? undefined : EntReserveRoomFromJSON(json['reserveroom']),
-        'status': !exists(json, 'status') ? undefined : EntStatusCheckInFromJSON(json['status']),
+        'checkouts': !exists(json, 'Checkouts') ? undefined : EntCheckoutFromJSON(json['Checkouts']),
+        'counter': !exists(json, 'Counter') ? undefined : EntCounterStaffFromJSON(json['Counter']),
+        'customer': !exists(json, 'Customer') ? undefined : EntCustomerFromJSON(json['Customer']),
+        'dataroom': !exists(json, 'Dataroom') ? undefined : EntDataRoomFromJSON(json['Dataroom']),
+        'reserveroom': !exists(json, 'Reserveroom') ? undefined : EntReserveRoomFromJSON(json['Reserveroom']),
+        'status': !exists(json, 'Status') ? undefined : EntStatusCheckInFromJSON(json['Status']),
     };
 }
 
