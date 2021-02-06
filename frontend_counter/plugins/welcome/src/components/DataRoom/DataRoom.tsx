@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { Theme, makeStyles, withStyles, createStyles } from '@material-ui/core/styles';
 import { Content, Header, Page, pageTheme } from '@backstage/core';
 import SaveIcon from '@material-ui/icons/Save'; // icon save
 import Swal from 'sweetalert2'; // alert
@@ -15,6 +15,7 @@ import {
   TextField,
   Avatar,
   Button,
+  Badge,
 } from '@material-ui/core';
 import { DefaultApi } from '../../api/apis';
 import { EntPromotion } from '../../api/models/EntPromotion';
@@ -22,11 +23,42 @@ import { EntTypeRoom } from '../../api/models/EntTypeRoom';
 import { EntStatusRoom } from '../../api/models/EntStatusRoom';
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
-
+import accountImg from '../../image/account.jpg'
 // header css
 const HeaderCustom = {
   minHeight: '50px',
 };
+
+const StyledBadge = withStyles((theme: Theme) =>
+  createStyles({
+    badge: {
+      backgroundColor: '#44b700',
+      color: '#44b700',
+      boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+      '&::after': {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        borderRadius: '50%',
+        animation: '$ripple 1.2s infinite ease-in-out',
+        border: '1px solid currentColor',
+        content: '""',
+      },
+    },
+    '@keyframes ripple': {
+      '0%': {
+        transform: 'scale(.8)',
+        opacity: 1,
+      },
+      '100%': {
+        transform: 'scale(2.4)',
+        opacity: 0,
+      },
+    },
+  }),
+)(Badge);
 
 // css style
 const useStyles = makeStyles(theme => ({
@@ -94,7 +126,7 @@ const DataRoom: FC<{}> = () => {
     return val.match("[A-Z]\\d{3}");
   }
 
-  
+
   const validatePrice = (val: Number) => {
     return val > 0 ? true : false;
   }
@@ -103,9 +135,9 @@ const DataRoom: FC<{}> = () => {
   const validateRoomdetail = (val: string) => {
     return val.length > 70 ? false : true;
   }
-//checkpatten
-  const checkPattern  = (id: string, value: string) => {
-    switch(id) {
+  //checkpatten
+  const checkPattern = (id: string, value: string) => {
+    switch (id) {
       case 'RoomNumber':
         validateRoomnumber(value) ? setRoomnumberError('') : setRoomnumberError('หมายเลขห้องขึ้นต้นด้วย A-Z เเละ ตัวเลข 3 ตัว');
         return;
@@ -133,8 +165,8 @@ const DataRoom: FC<{}> = () => {
     setOpen(false);
   };
 
-  const checkerror = (s :string) => {
-    switch(s) {
+  const checkerror = (s: string) => {
+    switch (s) {
       case 'roomnumber':
         setError("รูปแบบหมายเลขห้องพักไม่ถูกต้อง")
         return;
@@ -149,8 +181,8 @@ const DataRoom: FC<{}> = () => {
         return;
     }
   };
-  
-  
+
+
   // Lifecycle Hooks
   useEffect(() => {
     getStatusRoom();
@@ -165,11 +197,11 @@ const DataRoom: FC<{}> = () => {
     const name = event.target.name as keyof typeof DataRoom;
     const { value } = event.target;
     setDataRoom({ ...DataRoom, [name]: value });
-    const validateValue = value.toString() 
+    const validateValue = value.toString()
     checkPattern(name, validateValue)
     console.log(DataRoom);
   };
-  
+
 
 
   // clear input form
@@ -209,7 +241,16 @@ const DataRoom: FC<{}> = () => {
   return (
     <Page theme={pageTheme.home}>
       <Header style={HeaderCustom} title={`ข้อมูลห้องพัก`}>
-        <Avatar alt="Remy Sharp" src="../../image/account.jpg" />
+        <StyledBadge
+          overlap="circle"
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          variant="dot"
+        >
+          <Avatar alt="Remy Sharp" src={accountImg} />
+        </StyledBadge>
         <div style={{ marginLeft: 10, marginRight: 20 }}>{cookieName}</div>
         <Button
           variant="outlined"
@@ -229,7 +270,7 @@ const DataRoom: FC<{}> = () => {
             </Grid>
             <Grid item xs={9}>
               <TextField
-                error = {RoomnumberError ? true : false}
+                error={RoomnumberError ? true : false}
                 helperText={RoomnumberError}
                 value={DataRoom.RoomNumber || ''}
                 label="เลขห้องพัก"
@@ -308,7 +349,7 @@ const DataRoom: FC<{}> = () => {
             </Grid>
             <Grid item xs={9}>
               <TextField
-                error = {PriceError ? true : false}
+                error={PriceError ? true : false}
                 helperText={PriceError}
                 type={"number"}
                 value={DataRoom.Price || ''}
@@ -317,14 +358,14 @@ const DataRoom: FC<{}> = () => {
                 variant="outlined"
                 onChange={handleChange} />
             </Grid>
-           
+
 
             <Grid item xs={3}>
               <div className={classes.paper}>รายละเอียด</div>
             </Grid>
             <Grid item xs={9}>
               <TextField
-                error = {RoomDetailError ? true : false}
+                error={RoomDetailError ? true : false}
                 helperText={RoomDetailError}
                 value={DataRoom.RoomDetail || ''}
                 label="รายละเอียด"
@@ -354,8 +395,8 @@ const DataRoom: FC<{}> = () => {
 
           <Snackbar open={fail} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="error">
-            {errors}
-        </Alert>
+              {errors}
+            </Alert>
           </Snackbar>
 
         </Container>

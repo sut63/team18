@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { Theme, makeStyles, withStyles, createStyles } from '@material-ui/core/styles';
 import { Content, Header, Page, pageTheme } from '@backstage/core';
 import Swal from 'sweetalert2'; // alert
 
@@ -13,6 +13,7 @@ import {
   Avatar,
   Button,
   TextField,
+  Badge,
 } from '@material-ui/core';
 import { DefaultApi } from '../../api/apis';
 import { EntCounterStaff, EntCustomer, EntDataRoom, EntReserveRoom } from '../../api';
@@ -20,11 +21,43 @@ import { Cookies } from '../../Cookie'
 import { Link as RouterLink } from 'react-router-dom';
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
+import accountImg from '../../image/account.jpg'
 
 // header css
 const HeaderCustom = {
   minHeight: '50px',
 };
+
+const StyledBadge = withStyles((theme: Theme) =>
+  createStyles({
+    badge: {
+      backgroundColor: '#44b700',
+      color: '#44b700',
+      boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+      '&::after': {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        borderRadius: '50%',
+        animation: '$ripple 1.2s infinite ease-in-out',
+        border: '1px solid currentColor',
+        content: '""',
+      },
+    },
+    '@keyframes ripple': {
+      '0%': {
+        transform: 'scale(.8)',
+        opacity: 1,
+      },
+      '100%': {
+        transform: 'scale(2.4)',
+        opacity: 0,
+      },
+    },
+  }),
+)(Badge);
 
 // css style
 const useStyles = makeStyles(theme => ({
@@ -118,28 +151,28 @@ const CheckIn: FC<{}> = () => {
     setCheckIn({ ...CheckIn, [name]: value })
     setIdcustomer(event.target.value)
     setIdreserveroom(event.target.value)
-    const validateValue = value.toString() 
+    const validateValue = value.toString()
     checkPattern(name, validateValue)
   }
 
   //valid
   const validateMobileKey = (val: string) => {
-    return val.length == 10 ? true:false;
+    return val.length == 10 ? true : false;
   }
   const validatePhoneNumber = (val: string) => {
-    return val.match("[0]\\d{9}") && val.length == 10 ? true:false;
+    return val.match("[0]\\d{9}") && val.length == 10 ? true : false;
   }
   const validatePersonNumber = (val: string) => {
-    return val.match("[0-9]\\d{12}") && val.length == 13 ? true:false;
+    return val.match("[0-9]\\d{12}") && val.length == 13 ? true : false;
   }
 
   // checkPattern
-  const checkPattern  = (id: string, value: string) => {
-    switch(id) { 
+  const checkPattern = (id: string, value: string) => {
+    switch (id) {
       case 'MobileKey':
         validateMobileKey(value) ? setMobileKeyError('') : setMobileKeyError('ความปลอดภัยต่ำ กรุณาใส่ 10 ตัว');
         return;
-      case 'PhoneNumber': 
+      case 'PhoneNumber':
         validatePhoneNumber(value) ? setPhoneNumberError('') : setPhoneNumberError('Ex 0600000000');
         return;
       case 'PersonNumber':
@@ -182,10 +215,10 @@ const CheckIn: FC<{}> = () => {
   }, [dataroom]);
 
   // func checkerror
-  const checkerror = (s :string) => {
-    switch(s) {
+  const checkerror = (s: string) => {
+    switch (s) {
       case 'phone_number':
-        setError("เบอร์โทรต้องเป็นตัวเลข 10 หลักและขึ้นต้นด้วย 0") 
+        setError("เบอร์โทรต้องเป็นตัวเลข 10 หลักและขึ้นต้นด้วย 0")
         return;
       case 'mobile_key':
         setError("Mobile Key ต้องมีความยาว 10 ตัว")
@@ -198,7 +231,7 @@ const CheckIn: FC<{}> = () => {
         return;
     }
   };
-  
+
 
 
   // function save data
@@ -220,8 +253,8 @@ const CheckIn: FC<{}> = () => {
         } else {
           checkerror(data.error.Name)
           setFail(true);
-      }
-    });
+        }
+      });
   }
 
   function Clears() {
@@ -238,7 +271,16 @@ const CheckIn: FC<{}> = () => {
   return (
     <Page theme={pageTheme.home}>
       <Header style={HeaderCustom} title={`ระบบย่อย Check In`}>
-        <Avatar alt="Remy Sharp" src="../../image/account.jpg" />
+        <StyledBadge
+          overlap="circle"
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          variant="dot"
+        >
+          <Avatar alt="Remy Sharp" src={accountImg} />
+        </StyledBadge>
         <div style={{ marginLeft: 10, marginRight: 20 }}>{cookieName}</div>
         <Button
           variant="outlined"
@@ -302,7 +344,7 @@ const CheckIn: FC<{}> = () => {
               <div className={classes.paper}>Room Number</div>
             </Grid>
             <Grid item xs={9}>
-            <FormControl variant="outlined" className={classes.formControl}>
+              <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
                   disabled
                   name="Dataroom"
@@ -316,7 +358,7 @@ const CheckIn: FC<{}> = () => {
               <div className={classes.paper}>Counter staff</div>
             </Grid>
             <Grid item xs={9}>
-            <FormControl variant="outlined" className={classes.formControl}>
+              <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
                   disabled
                   name="Counter"
@@ -329,9 +371,9 @@ const CheckIn: FC<{}> = () => {
               <div className={classes.paper}>Peson id</div>
             </Grid>
             <Grid item xs={9}>
-            <FormControl variant="outlined" className={classes.formControl}>
+              <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
-                  error = {PersonNumberError ? true : false}
+                  error={PersonNumberError ? true : false}
                   helperText={PersonNumberError}
                   name="PersonNumber"
                   label="เลขบัตรประชาชน"
@@ -345,9 +387,9 @@ const CheckIn: FC<{}> = () => {
               <div className={classes.paper}>Phone number</div>
             </Grid>
             <Grid item xs={9}>
-            <FormControl variant="outlined" className={classes.formControl}>
+              <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
-                  error = {PhoneNumberError ? true : false}
+                  error={PhoneNumberError ? true : false}
                   helperText={PhoneNumberError}
                   name="PhoneNumber"
                   label="เบอร์โทรศัพท์"
@@ -361,9 +403,9 @@ const CheckIn: FC<{}> = () => {
               <div className={classes.paper}>Mobile Key</div>
             </Grid>
             <Grid item xs={9}>
-            <FormControl variant="outlined" className={classes.formControl}>
+              <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
-                  error = {MobileKeyError ? true : false}
+                  error={MobileKeyError ? true : false}
                   helperText={MobileKeyError}
                   name="MobileKey"
                   label="คีย์เข้าห้อง"
@@ -395,9 +437,9 @@ const CheckIn: FC<{}> = () => {
           <Snackbar open={fail} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="error">
               {errors}
-          </Alert>
+            </Alert>
           </Snackbar>
-          
+
         </Container>
       </Content>
     </Page>

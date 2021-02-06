@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { Theme, makeStyles, withStyles, createStyles } from '@material-ui/core/styles';
 import { Content, Header, Page, pageTheme } from '@backstage/core';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
@@ -22,6 +22,7 @@ import {
     TextField,
     Avatar,
     Button,
+    Badge,
 } from '@material-ui/core';
 import { DefaultApi } from '../../api/apis'; // Api Gennerate From Command
 import { Cookies } from '../../Cookie'
@@ -29,12 +30,43 @@ import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
 import { EntStatusOpinion } from '../../api/models/EntStatusOpinion'; // import interface EntStatusOpinion
 import { EntCheckout } from '../../api/models/EntCheckout'; // import interface EntCheckout
-
+import accountImg from '../../image/account.jpg'
 
 // header css
 const HeaderCustom = {
     minHeight: '50px',
 };
+
+const StyledBadge = withStyles((theme: Theme) =>
+    createStyles({
+        badge: {
+            backgroundColor: '#44b700',
+            color: '#44b700',
+            boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+            '&::after': {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                borderRadius: '50%',
+                animation: '$ripple 1.2s infinite ease-in-out',
+                border: '1px solid currentColor',
+                content: '""',
+            },
+        },
+        '@keyframes ripple': {
+            '0%': {
+                transform: 'scale(.8)',
+                opacity: 1,
+            },
+            '100%': {
+                transform: 'scale(2.4)',
+                opacity: 0,
+            },
+        },
+    }),
+)(Badge);
 
 // css style
 const useStyles = makeStyles(theme => ({
@@ -155,7 +187,16 @@ const SearchCheckout: FC<{}> = () => {
     return (
         <Page theme={pageTheme.home}>
             <Header style={HeaderCustom} title={`ระบบค้นหาการ checkout `}>
-                <Avatar alt="Remy Sharp" src="../../image/account.jpg" />
+            <StyledBadge
+                    overlap="circle"
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                    }}
+                    variant="dot"
+                >
+                    <Avatar alt="Remy Sharp" src={accountImg} />
+                </StyledBadge>
                 <div style={{ marginLeft: 10, marginRight: 20 }}>{cookieName}</div>
                 <Button
                     variant="outlined"
