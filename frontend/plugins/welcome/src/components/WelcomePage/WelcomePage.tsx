@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Typography, Grid } from '@material-ui/core';
+import { Typography, Grid, Link } from '@material-ui/core';
 import {
   Content,
   Header,
@@ -12,6 +12,9 @@ import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
+import karyl6 from '../../image/FullArt6Kyaru.png'
+import karylsummer from '../../image/FullArtSummerKyaru.png'
+import karylnewyear from '../../image/FullArtNewYearKyaru.png'
 
 const HeaderCustom = {
   minHeight: '50px',
@@ -27,29 +30,31 @@ export type ProfileProps = {
   name: string; 
   id: string;
   system: string;
+  img: string;
+  link: string;
 };
 
-export function CardTeam({ name, id, system }: ProfileProps) {
+export function CardTeam({ name, id, system, img, link}: ProfileProps) {
   const classes = useStyles();
   return (
     <Grid item xs={12} md={3}>
       <Card className={classes.root}>
         <CardActionArea>
+        <Link
+        href = {link}
+        >
           <CardMedia
             component="img"
-            alt="นาย สมชาย ใจดี"
             height="140"
-            image="../../image/account.jpg"
-            title="นาย สมชาย ใจดี"
+            image={img}  
           />
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="h2">
+           </Link>
+            <Typography gutterBottom variant="h5" component="h4">
               {system}
             </Typography>
-            <Typography gutterBottom variant="h5" component="h2">
+            <Typography gutterBottom variant="h6" component="h2">
               {id} {name}
             </Typography>
-          </CardContent>
         </CardActionArea>
       </Card>
     </Grid>
@@ -57,18 +62,17 @@ export function CardTeam({ name, id, system }: ProfileProps) {
 }
 
 const WelcomePage: FC<{}> = () => {
+  const profile = { givenName: 'ระบบจองห้องพัก' };
   return (
-    <Page theme={pageTheme.home}>
-      <Header style={HeaderCustom} title={`ระบบ...`}></Header>
+    <Page theme={pageTheme.website}>
+      <Header style={HeaderCustom} title={`ยินดีต้อนรับสู่ ${profile.givenName || 'to Backstage'}`}
+       subtitle="สำหรับลูกค้า"></Header>
       <Content>
-        <ContentHeader title="สมาชิกในกลุ่ม"></ContentHeader>
+        <ContentHeader title="รายการระบบย่อย"></ContentHeader>
         <Grid container>
-          <CardTeam name={"นาย สมชาย ใจดี"} id={"B5012345"} system={"ระบบย่อย..."}></CardTeam>
-          <CardTeam name={"นาย สมชาย ใจดี"} id={"B5012345"} system={"ระบบย่อย..."}></CardTeam>
-          <CardTeam name={"นาย สมชาย ใจดี"} id={"B5012345"} system={"ระบบย่อย..."}></CardTeam>
-          <CardTeam name={"นาย สมชาย ใจดี"} id={"B5012345"} system={"ระบบย่อย..."}></CardTeam>
-          <CardTeam name={"นาย สมชาย ใจดี"} id={"B5012345"} system={"ระบบย่อย..."}></CardTeam>
-          <CardTeam name={"นาย สมชาย ใจดี"} id={"B5012345"} system={"ระบบย่อย..."}></CardTeam>
+          <CardTeam name={"นายวิษณุ สันติภาษิต"} id={"B6115234"} system={"ระบบย่อยจองห้องพัก"} img = {karyl6} link = "/reserve"></CardTeam>
+          <CardTeam name={"นายสิรภพ นิธิภัทรชัย"} id={"B6108380"} system={"ระบบย่องแจ้งซ่อม"} img = {karylsummer} link = "/fix"></CardTeam>
+          <CardTeam name={"นายชัยฤทธิ์ แซ่ฮึง"} id={"B6131081"} system={"ระบบย่อยค้นหาห้องพัก"} img = {karylnewyear} link = "/searchdataroom"></CardTeam>
         </Grid>
       </Content>
     </Page>

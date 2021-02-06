@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { Theme, makeStyles, withStyles, createStyles } from '@material-ui/core/styles';
 import { Content, Header, Page, pageTheme } from '@backstage/core';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
@@ -27,16 +27,50 @@ import {
     TextField,
     Avatar,
     Button,
+    Badge,
 } from '@material-ui/core';
 import { DefaultApi } from '../../api/apis'; // Api Gennerate From Command
 import { EntCustomer, EntCheckIn, EntPromotion, EntDataRoom } from '../../api';
 import { Cookies } from '../../Cookie'
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
+import accountImg from '../../image/account.jpg'
+
 // header css
 const HeaderCustom = {
     minHeight: '50px',
 };
+
+const StyledBadge = withStyles((theme: Theme) =>
+    createStyles({
+        badge: {
+            backgroundColor: '#44b700',
+            color: '#44b700',
+            boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+            '&::after': {
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                borderRadius: '50%',
+                animation: '$ripple 1.2s infinite ease-in-out',
+                border: '1px solid currentColor',
+                content: '""',
+            },
+        },
+        '@keyframes ripple': {
+            '0%': {
+                transform: 'scale(.8)',
+                opacity: 1,
+            },
+            '100%': {
+                transform: 'scale(2.4)',
+                opacity: 0,
+            },
+        },
+    }),
+)(Badge);
 
 // css style
 const useStyles = makeStyles(theme => ({
@@ -105,30 +139,30 @@ const SearchDataRoom: FC<{}> = () => {
 
 
     // CheckIn  
-    var lencheckin : number
+    var lencheckin: number
     const [datarooms, setDataRooms] = React.useState<EntDataRoom[]>([])
     const getDatarooms = async () => {
-        const res = await api.getGetDataRoombyPromotion({ id:idPromotion})
+        const res = await api.getGetDataRoombyPromotion({ id: idPromotion })
         setDataRooms(res)
         lencheckin = res.length
-        if (lencheckin > 0){
+        if (lencheckin > 0) {
             setOpen(true)
-        }else{
+        } else {
             setFail(true)
-        }   
+        }
     }
-    
+
     const listDatarooms = async () => {
         const res = await api.listDataroom({})
         setDataRooms(res)
     }
-  
+
     // Lifecycle Hooks
     useEffect(() => {
         getPromotion();
         listDatarooms();
     }, []);
-    
+
 
     // set data to object and setIdcustomer
     const handleChange = (
@@ -152,7 +186,16 @@ const SearchDataRoom: FC<{}> = () => {
     return (
         <Page theme={pageTheme.home}>
             <Header style={HeaderCustom} title={`ระบบค้นหาการ check in ห้องพัก`}>
-                <Avatar alt="Remy Sharp" src="../../image/account.jpg" />
+                <StyledBadge
+                    overlap="circle"
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                    }}
+                    variant="dot"
+                >
+                    <Avatar alt="Remy Sharp" src={accountImg} />
+                </StyledBadge>
                 <div style={{ marginLeft: 10, marginRight: 20 }}>{cookieName}</div>
                 <Button
                     variant="outlined"
@@ -227,22 +270,22 @@ const SearchDataRoom: FC<{}> = () => {
                                     <TableCell align="center">{item.edges?.statusroom?.statusName}</TableCell>
                                     <TableCell align="center">{item.price}</TableCell>
                                     <TableCell align="center">{item.roomdetail}</TableCell>
-                                </TableRow> 
+                                </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
                 <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity="success">
-              ค้นหาสำเร็จ
+                    <Alert onClose={handleClose} severity="success">
+                        ค้นหาสำเร็จ
           </Alert>
-          </Snackbar>
+                </Snackbar>
 
-          <Snackbar open={fail} autoHideDuration={6000} onClose={handleClose}>
-            <Alert onClose={handleClose} severity="error">
-              ไม่พบข้อมูล
+                <Snackbar open={fail} autoHideDuration={6000} onClose={handleClose}>
+                    <Alert onClose={handleClose} severity="error">
+                        ไม่พบข้อมูล
           </Alert>
-          </Snackbar>
+                </Snackbar>
             </Content>
         </Page>
     );
