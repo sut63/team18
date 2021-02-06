@@ -64,9 +64,9 @@ export function EntFixRoomEdgesFromJSONTyped(json: any, ignoreDiscriminator: boo
     }
     return {
         
-        'customer': !exists(json, 'customer') ? undefined : EntCustomerFromJSON(json['customer']),
-        'furnitureDetail': !exists(json, 'furnitureDetail') ? undefined : EntFurnitureDetailFromJSON(json['furnitureDetail']),
-        'room': !exists(json, 'room') ? undefined : EntDataRoomFromJSON(json['room']),
+        'customer': !exists(json, 'Customer') ? undefined : EntCustomerFromJSON(json['Customer']),
+        'furnitureDetail': !exists(json, 'FurnitureDetail') ? undefined : EntFurnitureDetailFromJSON(json['FurnitureDetail']),
+        'room': !exists(json, 'Room') ? undefined : EntDataRoomFromJSON(json['Room']),
     };
 }
 
@@ -79,9 +79,9 @@ export function EntFixRoomEdgesToJSON(value?: EntFixRoomEdges | null): any {
     }
     return {
         
-        'customer': EntCustomerToJSON(value.customer),
-        'furnitureDetail': EntFurnitureDetailToJSON(value.furnitureDetail),
-        'room': EntDataRoomToJSON(value.room),
+        'Customer': EntCustomerToJSON(value.customer),
+        'FurnitureDetail': EntFurnitureDetailToJSON(value.furnitureDetail),
+        'Room': EntDataRoomToJSON(value.room),
     };
 }
 
