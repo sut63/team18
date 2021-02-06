@@ -4,6 +4,7 @@ import Reserve from './components/ReserveRoom'
 import RoomList from './components/RoomList'
 import SignIn from './components/SignIn'
 import SearchDataRoom from './components/SearchDataRoom'
+import WelcomePage from './components/WelcomePage'
 import { Cookies } from './Cookie'
 
 var ck = new Cookies()
@@ -19,7 +20,7 @@ export const plugin = createPlugin({
       router.registerRoute('/sign_in', SignIn);
       router.registerRoute('/searchdataroom', SignIn);
     }else{
-      router.registerRoute('/', RoomList);
+      router.registerRoute('/', WelcomePage);
       router.registerRoute('/reserve', Reserve);
       router.registerRoute('/fix', FixRoom);
       router.registerRoute('/sign_in', SignIn);

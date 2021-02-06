@@ -3,6 +3,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import CreateComponentIcon from '@material-ui/icons/AddCircleOutline';
 import YouTube from '@material-ui/icons/YouTube';
 import SignOut from '@material-ui/icons/Settings';
+import SearchIcon from '@material-ui/icons/Search';
 import { Cookies } from 'plugin-welcome/src/Cookie'
 
 import { 
@@ -31,7 +32,7 @@ export const AppSidebar = () => (
     {/* <SidebarItem icon={CreateComponentIcon} to="create" text="Create..." />
     <SidebarItem icon={CreateComponentIcon} to="welcome" text="Welcome" /> */}
     <SidebarItem
-      icon={YouTube}
+      icon={CreateComponentIcon}
       to="reserve"
       text="จองห้องพัก"
     />
@@ -41,7 +42,7 @@ export const AppSidebar = () => (
       text="แจ้งซ่อม"
     />
    <SidebarItem
-      icon={CreateComponentIcon}
+      icon={SearchIcon}
       to="searchdataroom"
       text="ค้นหาห้องพัก"
     />
