@@ -1,8 +1,8 @@
 import React, { FC, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import {  Content, Header, Page, pageTheme } from '@backstage/core';
+import { Theme, makeStyles, withStyles, createStyles } from '@material-ui/core/styles';
+import { Content, Header, Page, pageTheme } from '@backstage/core';
 import SaveIcon from '@material-ui/icons/Save'; // icon save
-import {Cookies} from '../../Cookie'
+import { Cookies } from '../../Cookie'
 import {
   Container,
   Grid,
@@ -13,7 +13,8 @@ import {
   TextField,
   Avatar,
   Button,
-  Typography
+  Typography,
+  Badge,
 } from '@material-ui/core';
 import { DefaultApi } from '../../api/apis'; // Api Gennerate From Command
 // me
@@ -25,11 +26,41 @@ import { EntReserveRoom } from '../../api/models/EntReserveRoom'; // import inte
 
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
-
+import accountImg from '../../image/account.jpg'
 // header css
 const HeaderCustom = {
   minHeight: '50px',
 };
+const StyledBadge = withStyles((theme: Theme) =>
+  createStyles({
+    badge: {
+      backgroundColor: '#44b700',
+      color: '#44b700',
+      boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+      '&::after': {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        borderRadius: '50%',
+        animation: '$ripple 1.2s infinite ease-in-out',
+        border: '1px solid currentColor',
+        content: '""',
+      },
+    },
+    '@keyframes ripple': {
+      '0%': {
+        transform: 'scale(.8)',
+        opacity: 1,
+      },
+      '100%': {
+        transform: 'scale(2.4)',
+        opacity: 0,
+      },
+    },
+  }),
+)(Badge);
 
 // css style
 const useStyles = makeStyles(theme => ({
@@ -56,13 +87,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 interface CheckOut {
-    CheckinsID: number;
-    StatussID: number;
-    CounterstaffsID: number;
-    Identitycard:    string;
-	  StatusopinionID: number;
-	  Comment:         string;
-	  Price:           number;
+  CheckinsID: number;
+  StatussID: number;
+  CounterstaffsID: number;
+  Identitycard: string;
+  StatusopinionID: number;
+  Comment: string;
+  Price: number;
 }
 
 const checkout: FC<{}> = () => {
@@ -92,7 +123,7 @@ const checkout: FC<{}> = () => {
 
 
   // get chackin
-  const [Checkin, setCheckin] = React.useState<EntCheckIn[]>([]); 
+  const [Checkin, setCheckin] = React.useState<EntCheckIn[]>([]);
   const getcheckIn = async () => {
     const res = await api.listGetCheckInStatus();
     setCheckin(res);
@@ -100,7 +131,7 @@ const checkout: FC<{}> = () => {
 
   //get status pay
   const [Statusid, setStatusid] = React.useState(1);
-  const [Status, setStatus] =   React.useState<EntStatus[]>([]);
+  const [Status, setStatus] = React.useState<EntStatus[]>([]);
   const getstatus = async () => {
     const res = await api.listStatus({ limit: 10, offset: 0 });
     setStatus(res);
@@ -112,7 +143,7 @@ const checkout: FC<{}> = () => {
     const res = await api.getCounterStaff({ id: Number(cookieID) })
     setCounter(res)
   }
-  
+
   // get opinion
   const [opinion, setopinion] = React.useState<EntStatusOpinion[]>([]);
   const getstatusopinion = async () => {
@@ -122,11 +153,11 @@ const checkout: FC<{}> = () => {
   // Lifecycle Hooks
   useEffect(() => {
 
-    getstatusopinion(); 
+    getstatusopinion();
     getcheckIn();
     getstatus();
     getCounterStaff();
-  }, [CheckOut.CheckinsID,CheckOut.CounterstaffsID,CheckOut.StatussID,CheckOut.StatusopinionID]);
+  }, [CheckOut.CheckinsID, CheckOut.CounterstaffsID, CheckOut.StatussID, CheckOut.StatusopinionID]);
 
 
 
@@ -134,17 +165,17 @@ const checkout: FC<{}> = () => {
     setCheckout({ ...CheckOut, ['CounterstaffsID']: counter?.id })
   }, [counter]);
 
-  
+
   // สำหรับตรวจสอบความถูกต้อง
   const [Identitycard, setIdentitycardError] = React.useState('');
   const [Comment, setCommentError] = React.useState('');
   const [Price, setPriceError] = React.useState('');
 
-  
+
 
   //valid functions  
   const validateIdentitycard = (val: string) => {
-    return val.length == 13 ? true:false;
+    return val.length == 13 ? true : false;
   }
 
   const validatePrice = (val: Number) => {
@@ -156,13 +187,13 @@ const checkout: FC<{}> = () => {
   }
 
   // checkPattern
-  const checkPattern  = (id: string, value: string) => {
-    switch(id) { 
+  const checkPattern = (id: string, value: string) => {
+    switch (id) {
       case 'Comment':
         validateComment(value) ? setCommentError('') : setCommentError('ความเห็นยาวเกินขนาด 70 ตัวอักษร');
         return;
-      case 'Price': 
-      validatePrice(Number(value)) ? setPriceError('') : setPriceError('จำนวนเงินไม่ถูกต้อง');
+      case 'Price':
+        validatePrice(Number(value)) ? setPriceError('') : setPriceError('จำนวนเงินไม่ถูกต้อง');
         return;
       case 'Identitycard':
         validateIdentitycard(value) ? setIdentitycardError('') : setIdentitycardError('ตัวเลขไม่ครบ 13 หลัก')
@@ -173,24 +204,24 @@ const checkout: FC<{}> = () => {
   }
 
 
-// func checkerror
-const [errors, setError] = React.useState(String);
-const checkerror = (s :string) => {
-  switch(s) {
-    case 'identity_card':
-      setError("เลขประจำตัวไม่ครบ 13 หลัก") 
-      return;
-    case 'price':
-      setError("ตัวเลขไม่ถูกต้อง")
-      return;
-    case 'comment':
-      setError("ข้อความยาวเกิน 70 ตัวอักษร")
-      return;
-    default:
-      setError("บันทึกไม่สำเร็จ")
-      return;
-  }
-};
+  // func checkerror
+  const [errors, setError] = React.useState(String);
+  const checkerror = (s: string) => {
+    switch (s) {
+      case 'identity_card':
+        setError("เลขประจำตัวไม่ครบ 13 หลัก")
+        return;
+      case 'price':
+        setError("ตัวเลขไม่ถูกต้อง")
+        return;
+      case 'comment':
+        setError("ข้อความยาวเกิน 70 ตัวอักษร")
+        return;
+      default:
+        setError("บันทึกไม่สำเร็จ")
+        return;
+    }
+  };
 
   // set data to object DataRoom
   const handleChange = (
@@ -199,28 +230,28 @@ const checkerror = (s :string) => {
     const name = event.target.name as keyof typeof CheckOut;
     const { value } = event.target;
     setCheckout({ ...CheckOut, [name]: value });
-    
+
     const validateValue = value.toString()
     checkPattern(name, validateValue)
-    if (name == "CheckinsID"){
+    if (name == "CheckinsID") {
       getReserveroom(value)
-    } 
+    }
   };
 
-  
+
   //get reserveroom
-  const [idReserveroom, setidReserveroom] = React.useState<Number>(0); 
-  const [Reserveroom, setReserveroom] = React.useState<EntReserveRoom>(); 
-  const getReserveroom = async (id:number) => {
-    const res = await api.getGetCheckout2({ id:id})
+  const [idReserveroom, setidReserveroom] = React.useState<Number>(0);
+  const [Reserveroom, setReserveroom] = React.useState<EntReserveRoom>();
+  const getReserveroom = async (id: number) => {
+    const res = await api.getGetCheckout2({ id: id })
     console.log("res = ==== ");
     console.log(res);
     setReserveroom(res)
   }
   useEffect(() => {
 
-  },[])
-  
+  }, [])
+
 
   // function save data
   function save() {
@@ -234,25 +265,25 @@ const checkerror = (s :string) => {
     console.log(CheckOut); // log ดูข้อมูล สามารถ Inspect ดูข้อมูลได้ F12 เลือก Tab Console
 
     fetch(apiUrl, requestOptions)
-    .then(response => response.json())
-    .then(data => {
-      console.log(data.status);
-      console.log(data);
-      if (data.status == true) {
-        clear();
-        setOpen(true);
-        reload()
-      } else {
-        clear();
-        checkerror(data.error.Name);
-        setFail(true);
+      .then(response => response.json())
+      .then(data => {
+        console.log(data.status);
         console.log(data);
-        reload()
-      }
-    });
+        if (data.status == true) {
+          clear();
+          setOpen(true);
+          reload()
+        } else {
+          clear();
+          checkerror(data.error.Name);
+          setFail(true);
+          console.log(data);
+          reload()
+        }
+      });
   }
 
-// clear input form
+  // clear input form
   function clear() {
     setCheckout({});
     getCounterStaff();
@@ -265,35 +296,44 @@ const checkerror = (s :string) => {
   function reload() {
     window.location.reload(false)
   }
-  function wait(ms:number){
+  function wait(ms: number) {
     var start = new Date().getTime();
     var end = start;
-    while(end < start + ms) {
+    while (end < start + ms) {
       end = new Date().getTime();
-   }
- }
+    }
+  }
 
 
   return (
     <Page theme={pageTheme.home}>
-  
+
       <Header style={HeaderCustom} title={`ระบบ check out`}>
-        <Avatar alt="Remy Sharp" src="../../image/account.jpg" />
-        <div style={{ marginLeft: 10, marginRight:20 }}>{cookieName}</div>
+        <StyledBadge
+          overlap="circle"
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          variant="dot"
+        >
+          <Avatar alt="Remy Sharp" src={accountImg} />
+        </StyledBadge>
+        <div style={{ marginLeft: 10, marginRight: 20 }}>{cookieName}</div>
         <Button
           variant="outlined"
           color="secondary"
           size="large"
           onClick={Clears}
-          >
+        >
           Logout
         </Button>
       </Header>
       <Content>
         <Container maxWidth="sm">
           <Grid container spacing={3}>
-            
-            
+
+
             <Grid item xs={3}>
               <div className={classes.paper}>check in</div>
             </Grid>
@@ -302,7 +342,7 @@ const checkerror = (s :string) => {
                 <InputLabel>เลือก ID checkin</InputLabel>
                 <Select
                   name="CheckinsID"
-                  value={CheckOut.CheckinsID  || ''} // (undefined || '') = ''
+                  value={CheckOut.CheckinsID || ''} // (undefined || '') = ''
                   onChange={handleChange}
                 >
                   {Checkin.map(item => {
@@ -320,7 +360,7 @@ const checkerror = (s :string) => {
               <div className={classes.paper}>counter staff</div>
             </Grid>
             <Grid item xs={9}>
-            <FormControl variant="outlined" className={classes.formControl}>
+              <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
                   disabled
                   name="CounterstaffsID"
@@ -330,25 +370,25 @@ const checkerror = (s :string) => {
               </FormControl>
             </Grid>
             <Grid item xs={12}>
-            <Typography variant="h5"  color="primary" >จำนวนเงินที่ต้องจ่าย {Reserveroom?.netPrice}</Typography>
+              <Typography variant="h5" color="primary" >จำนวนเงินที่ต้องจ่าย {Reserveroom?.netPrice}</Typography>
             </Grid>
             <Grid item xs={3}>
-            <div className={classes.paper}>จำนวนเงินที่จ่าย</div>
+              <div className={classes.paper}>จำนวนเงินที่จ่าย</div>
             </Grid>
             <Grid item xs={9}>
-            <FormControl variant="outlined" className={classes.formControl}>
-            <TextField
-                error = {Price ? true : false}
-                helperText={Price}
-                label="ใส่จำนวนเงิน"
-                type={"number"}
-                name="Price"
-                value={CheckOut.Price || ''}
-                variant="outlined"
-                onChange={handleChange} />
-                </FormControl>
-           </Grid>
-           <Grid item xs={3}>
+              <FormControl variant="outlined" className={classes.formControl}>
+                <TextField
+                  error={Price ? true : false}
+                  helperText={Price}
+                  label="ใส่จำนวนเงิน"
+                  type={"number"}
+                  name="Price"
+                  value={CheckOut.Price || ''}
+                  variant="outlined"
+                  onChange={handleChange} />
+              </FormControl>
+            </Grid>
+            <Grid item xs={3}>
               <div className={classes.paper}>status</div>
             </Grid>
             <Grid item xs={9}>
@@ -356,7 +396,7 @@ const checkerror = (s :string) => {
                 <InputLabel>เลือกสถานะการชำระเงิน</InputLabel>
                 <Select
                   name="StatussID"
-                  value={CheckOut.StatussID  || '' } // (undefined || '') = ''
+                  value={CheckOut.StatussID || ''} // (undefined || '') = ''
                   onChange={handleChange}
                 >
                   {Status.map(item => {
@@ -369,22 +409,22 @@ const checkerror = (s :string) => {
                 </Select>
               </FormControl>
             </Grid>
-           <Grid item xs={3}>
-            <div className={classes.paper}>เลขบัตรประชาชน</div>
+            <Grid item xs={3}>
+              <div className={classes.paper}>เลขบัตรประชาชน</div>
             </Grid>
             <Grid item xs={9}>
-            <FormControl variant="outlined" className={classes.formControl}>
-            <TextField
-                error = {Identitycard ? true : false}
-                helperText={Identitycard}
-                label="ใส่เลขบัตรประชาชน"
-                name="Identitycard"
-                variant="outlined"
-                onChange={handleChange} />
-                </FormControl>
-           </Grid>
+              <FormControl variant="outlined" className={classes.formControl}>
+                <TextField
+                  error={Identitycard ? true : false}
+                  helperText={Identitycard}
+                  label="ใส่เลขบัตรประชาชน"
+                  name="Identitycard"
+                  variant="outlined"
+                  onChange={handleChange} />
+              </FormControl>
+            </Grid>
 
-           <Grid item xs={3}>
+            <Grid item xs={3}>
               <div className={classes.paper}>ความพึงพอใจลูกค้า</div>
             </Grid>
             <Grid item xs={9}>
@@ -392,7 +432,7 @@ const checkerror = (s :string) => {
                 <InputLabel>เลือกความพึงพอใจ</InputLabel>
                 <Select
                   name="StatusopinionID"
-                  value={CheckOut.StatusopinionID  || ''} // (undefined || '') = ''
+                  value={CheckOut.StatusopinionID || ''} // (undefined || '') = ''
                   onChange={handleChange}
                 >
                   {opinion.map(item => {
@@ -404,27 +444,27 @@ const checkerror = (s :string) => {
                   })}
                 </Select>
               </FormControl>
-            </Grid>        
+            </Grid>
 
-           <Grid item xs={3}>
-            <div className={classes.paper}>ความเห็นลูกค้า</div>
+            <Grid item xs={3}>
+              <div className={classes.paper}>ความเห็นลูกค้า</div>
             </Grid>
             <Grid item xs={9}>
-            <FormControl variant="outlined" className={classes.formControl}>
-            <TextField
-              multiline
-              rows={4}
-              error = {Comment ? true : false}
-                helperText={ Comment}
-                label="ใส่ความเห็น"
-                name="Comment"
-                variant="outlined"
-                onChange={handleChange} />
-                 </FormControl>
-           </Grid>
+              <FormControl variant="outlined" className={classes.formControl}>
+                <TextField
+                  multiline
+                  rows={4}
+                  error={Comment ? true : false}
+                  helperText={Comment}
+                  label="ใส่ความเห็น"
+                  name="Comment"
+                  variant="outlined"
+                  onChange={handleChange} />
+              </FormControl>
+            </Grid>
 
 
-           <Grid item xs={3}></Grid>
+            <Grid item xs={3}></Grid>
             <Grid item xs={9}>
               <Button
                 variant="contained"
@@ -449,9 +489,9 @@ const checkerror = (s :string) => {
           <Snackbar open={fail} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="error">
               {errors}
-        </Alert>
+            </Alert>
           </Snackbar>
-          
+
         </Container>
       </Content>
     </Page>

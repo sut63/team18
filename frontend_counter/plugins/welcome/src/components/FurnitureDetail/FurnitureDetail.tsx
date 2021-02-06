@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { Theme, makeStyles, withStyles, createStyles } from '@material-ui/core/styles';
 import { Content, Header, Page, pageTheme } from '@backstage/core';
 import SaveIcon from '@material-ui/icons/Save'; // icon save
 import Swal from 'sweetalert2'; // alert
@@ -18,6 +18,7 @@ import {
   TextField,
   Avatar,
   Button,
+  Badge,
 } from '@material-ui/core';
 import { DefaultApi } from '../../api/apis'; // Api Gennerate From Command
 import { EntDataRoom } from '../../api/models/EntDataRoom';
@@ -26,10 +27,43 @@ import { EntCounterStaff } from '../../api/models/EntCounterStaff';
 import { Cookies } from '../../Cookie'
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
+import accountImg from '../../image/account.jpg'
+
 // header css
 const HeaderCustom = {
   minHeight: '50px',
 };
+
+const StyledBadge = withStyles((theme: Theme) =>
+  createStyles({
+    badge: {
+      backgroundColor: '#44b700',
+      color: '#44b700',
+      boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+      '&::after': {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        borderRadius: '50%',
+        animation: '$ripple 1.2s infinite ease-in-out',
+        border: '1px solid currentColor',
+        content: '""',
+      },
+    },
+    '@keyframes ripple': {
+      '0%': {
+        transform: 'scale(.8)',
+        opacity: 1,
+      },
+      '100%': {
+        transform: 'scale(2.4)',
+        opacity: 0,
+      },
+    },
+  }),
+)(Badge);
 
 // css style
 const useStyles = makeStyles(theme => ({
@@ -60,14 +94,14 @@ interface FurnitureDetail {
   Furniture: number;
   CounterStaff: number;
   DateAdd: Date;
-  FurnitureAmount : number;
-	FurnitureColour: string;
-	Detail:          string;
+  FurnitureAmount: number;
+  FurnitureColour: string;
+  Detail: string;
   // create_by: number;
 }
 
 interface room {
-	StatusRoom: number;
+  StatusRoom: number;
   // create_by: number;
 }
 
@@ -75,12 +109,12 @@ const FurnitureDetail: FC<{}> = () => {
   const classes = useStyles();
   const api = new DefaultApi();
 
-   // ดึงคุกกี้
-   var ck = new Cookies()
-   var cookieName = ck.GetCookie()
-   var cookieID = ck.GetID()
+  // ดึงคุกกี้
+  var ck = new Cookies()
+  var cookieName = ck.GetCookie()
+  var cookieID = ck.GetID()
 
-   //อันหลักสำหรับสร้าง การ furniture_detail
+  //อันหลักสำหรับสร้าง การ furniture_detail
   const [furniture_detail, setFurnitureDetail] = React.useState<Partial<FurnitureDetail>>({});
   furniture_detail.FurnitureAmount = Number(furniture_detail.FurnitureAmount)
   // data room List
@@ -89,7 +123,7 @@ const FurnitureDetail: FC<{}> = () => {
     const res = await api.listDataroom({ limit: 10, offset: 0 });
     setdataroom(res);
   };
-  
+
 
   // furniture List
   const [furnitures, setFurniture] = React.useState<EntFurniture[]>([]);
@@ -97,7 +131,7 @@ const FurnitureDetail: FC<{}> = () => {
     const res = await api.listFurniture({ limit: 10, offset: 0 });
     setFurniture(res);
   };
-  
+
   const [FurnitureAmountError, setFurnitureAmountError] = React.useState('');
   const [FurnitureColourError, setFurnitureColourError] = React.useState('');
   const [DetailError, setDetailError] = React.useState('');
@@ -105,18 +139,18 @@ const FurnitureDetail: FC<{}> = () => {
   //counterstaff
   const [counterstaffs, setCounterStaffs] = React.useState<EntCounterStaff>();
   const getCounterStaffs = async () => {
-    const res = await api.getCounterStaff({id: Number(cookieID)});
+    const res = await api.getCounterStaff({ id: Number(cookieID) });
     setCounterStaffs(res);
   };
 
 
   //set time
   const [dateAdd, setDateAdd] = React.useState<any>(0)
-  
+
   const validateFurnitureColour = (val: string) => {
     return val.length > 10 ? false : true;
   }
-  
+
   const validateFurnitureAmount = (val: Number) => {
     return val > 0 && val <= 10 ? true : false;
   }
@@ -125,9 +159,9 @@ const FurnitureDetail: FC<{}> = () => {
   const validateDetail = (val: string) => {
     return val.length > 50 ? false : true;
   }
-//checkpatten
-  const checkPattern  = (id: string, value: string) => {
-    switch(id) {
+  //checkpatten
+  const checkPattern = (id: string, value: string) => {
+    switch (id) {
       case 'FurnitureColour':
         validateFurnitureColour(value) ? setFurnitureColourError('') : setFurnitureColourError('ห้ามเกิน 10 ตัวอักษร');
         return;
@@ -142,8 +176,8 @@ const FurnitureDetail: FC<{}> = () => {
     }
   }
 
-  const checkerror = (s :string) => {
-    switch(s) {
+  const checkerror = (s: string) => {
+    switch (s) {
       case 'furniture_colour':
         setError("รายละเอียดมีความยาวมากเกินไป")
         return;
@@ -191,7 +225,7 @@ const FurnitureDetail: FC<{}> = () => {
     const name = event.target.name as keyof typeof FurnitureDetail;
     const { value } = event.target;
     setFurnitureDetail({ ...furniture_detail, [name]: value });
-    const validateValue = value.toString() 
+    const validateValue = value.toString()
     checkPattern(name, validateValue)
     console.log(furniture_detail);
   };
@@ -221,7 +255,7 @@ const FurnitureDetail: FC<{}> = () => {
     ck.ClearCookie()
     window.location.reload(false)
   }
-  
+
   // function save data
   function save() {
     const apiUrl = 'http://localhost:8080/api/v1/furnituredetails';
@@ -230,7 +264,7 @@ const FurnitureDetail: FC<{}> = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(furniture_detail),
     };
-   
+
     console.log(furniture_detail); // log ดูข้อมูล สามารถ Inspect ดูข้อมูลได้ F12 เลือก Tab Console
 
     fetch(apiUrl, requestOptions)
@@ -245,21 +279,30 @@ const FurnitureDetail: FC<{}> = () => {
           setFail(true);
         }
       });
-   }
+  }
 
-  
+
 
   return (
     <Page theme={pageTheme.home}>
       <Header style={HeaderCustom} title={`ระบบจัดการเฟอร์นิเจอร์`}>
-        <Avatar alt="Remy Sharp" src="../../image/account.jpg" />
-        <div style={{ marginLeft: 10, marginRight:20 }}>{cookieName}</div>
+        <StyledBadge
+          overlap="circle"
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          variant="dot"
+        >
+          <Avatar alt="Remy Sharp" src={accountImg} />
+        </StyledBadge>
+        <div style={{ marginLeft: 10, marginRight: 20 }}>{cookieName}</div>
         <Button
           variant="outlined"
           color="secondary"
           size="large"
           onClick={Clears}
-          >
+        >
           Logout
         </Button>
       </Header>
@@ -271,9 +314,9 @@ const FurnitureDetail: FC<{}> = () => {
               <div className={classes.paper}>พนักงาน</div>
             </Grid>
             <Grid item xs={9}>
-            <FormControl variant="outlined" className={classes.formControl}>
+              <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
-                  disabled 
+                  disabled
                   name="CounterStaff"
                   variant="outlined"
                   value={counterstaffs?.name}
@@ -281,7 +324,7 @@ const FurnitureDetail: FC<{}> = () => {
               </FormControl>
             </Grid>
 
-            
+
 
             <Grid item xs={3}>
               <div className={classes.paper}>room</div>
@@ -327,15 +370,15 @@ const FurnitureDetail: FC<{}> = () => {
               </FormControl>
             </Grid>
 
-            
+
 
             <Grid item xs={3}>
               <div className={classes.paper}>Detail</div>
             </Grid>
             <Grid item xs={9}>
-            <FormControl variant="outlined" className={classes.formControl}>
+              <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
-                  error = {DetailError ? true : false}
+                  error={DetailError ? true : false}
                   helperText={DetailError}
                   name="Detail"
                   label="รายละเอียด"
@@ -350,9 +393,9 @@ const FurnitureDetail: FC<{}> = () => {
               <div className={classes.paper}>Furniture Colour</div>
             </Grid>
             <Grid item xs={9}>
-            <FormControl variant="outlined" className={classes.formControl}>
+              <FormControl variant="outlined" className={classes.formControl}>
                 <TextField
-                  error = {FurnitureColourError ? true : false}
+                  error={FurnitureColourError ? true : false}
                   helperText={FurnitureColourError}
                   name="FurnitureColour"
                   label="สีของเฟอร์นิเจอร์"
@@ -368,7 +411,7 @@ const FurnitureDetail: FC<{}> = () => {
             </Grid>
             <Grid item xs={9}>
               <TextField
-                error = {FurnitureAmountError ? true : false}
+                error={FurnitureAmountError ? true : false}
                 helperText={FurnitureAmountError}
                 type={"number"}
                 value={furniture_detail.FurnitureAmount || ''}
@@ -396,7 +439,7 @@ const FurnitureDetail: FC<{}> = () => {
               </FormControl>
             </Grid>
 
-                                      
+
             <Grid item xs={3}></Grid>
             <Grid item xs={9}>
               <Button
@@ -419,8 +462,8 @@ const FurnitureDetail: FC<{}> = () => {
 
           <Snackbar open={fail} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="error">
-            {errors}
-        </Alert>
+              {errors}
+            </Alert>
           </Snackbar>
         </Container>
       </Content>
