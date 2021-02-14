@@ -152,15 +152,9 @@ const SearchDataRoom: FC<{}> = () => {
         }
     }
 
-    const listDatarooms = async () => {
-        const res = await api.listDataroom({})
-        setDataRooms(res)
-    }
-
     // Lifecycle Hooks
     useEffect(() => {
         getPromotion();
-        listDatarooms();
     }, []);
 
 
