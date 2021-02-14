@@ -137,6 +137,13 @@ const checkout: FC<{}> = () => {
     setStatus(res);
   };
 
+  // get status v2
+  const [statusv2, setstatusv2] = React.useState<EntStatus>()
+  const getstatusv2 = async () => {
+    const res = await api.getStatus({ id: Number(1) })
+    setstatusv2(res)
+  }
+
   // get couterstaff
   const [counter, setCounter] = React.useState<EntCounterStaff>()
   const getCounterStaff = async () => {
@@ -156,6 +163,7 @@ const checkout: FC<{}> = () => {
     getstatusopinion();
     getcheckIn();
     getstatus();
+    getstatusv2();
     getCounterStaff();
   }, [CheckOut.CheckinsID, CheckOut.CounterstaffsID, CheckOut.StatussID, CheckOut.StatusopinionID]);
 
@@ -164,7 +172,11 @@ const checkout: FC<{}> = () => {
   useEffect(() => {
     setCheckout({ ...CheckOut, ['CounterstaffsID']: counter?.id })
   }, [counter]);
-
+  
+  //StatussID
+  useEffect(() => {
+    setCheckout({ ...CheckOut, ['StatussID']: statusv2?.id })
+  }, [statusv2]);
 
   // สำหรับตรวจสอบความถูกต้อง
   const [Identitycard, setIdentitycardError] = React.useState('');
@@ -394,9 +406,11 @@ const checkout: FC<{}> = () => {
             <Grid item xs={9}>
               <FormControl variant="outlined" className={classes.formControl}>
                 <InputLabel>เลือกสถานะการชำระเงิน</InputLabel>
+                
                 <Select
+                  disabled
                   name="StatussID"
-                  value={CheckOut.StatussID || ''} // (undefined || '') = ''
+                  value={'1'} // (undefined || '') = ''
                   onChange={handleChange}
                 >
                   {Status.map(item => {
@@ -482,7 +496,7 @@ const checkout: FC<{}> = () => {
 
           <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
             <Alert onClose={handleClose} severity="success">
-              This is a success message!
+              บันทึกสำเร็จ
         </Alert>
           </Snackbar>
 
