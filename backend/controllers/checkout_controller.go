@@ -90,7 +90,7 @@ func (ctl *CheckoutController) CreateCheckout(c *gin.Context) {
 
 	st, err := ctl.client.Status.
 		Query().
-		Where(status.IDEQ(int(obj.StatussID))).
+		Where(status.IDEQ(int(1))).
 		Only(context.Background())
 
 	if err != nil {
