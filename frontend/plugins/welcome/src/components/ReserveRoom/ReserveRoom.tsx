@@ -16,7 +16,7 @@ import {
   Badge,
 } from '@material-ui/core';
 import { DefaultApi } from '../../api/apis'; // Api Gennerate From Command
-import { EntDataRoom, EntPromotion, EntCustomer, EntStatusReserve} from '../../api/models/';
+import { EntDataRoom, EntPromotion, EntCustomer} from '../../api/models/';
 import { Cookies } from '../../Cookie'
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
