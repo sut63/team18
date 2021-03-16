@@ -152,13 +152,6 @@ const ReserveRoom: FC<{}> = () => {
     setCustomers(res);
   };
 
-  //status
-  const [status, setStatus] = React.useState<EntStatusReserve>();
-  const getStatus = async () => {
-    const res = await api.getStatusReserve({ id: 1 })
-    setStatus(res);
-  }
-
   //find net price
   const [price, setPrice] = React.useState<any>(0)
   const [discount, setDiscount] = React.useState<any>(0)
@@ -231,7 +224,6 @@ const ReserveRoom: FC<{}> = () => {
   useEffect(() => {
     getCustomes();
     getPromotion();
-    getStatus();
   }, []);
 
   useEffect(() => {
@@ -250,10 +242,6 @@ const ReserveRoom: FC<{}> = () => {
   useEffect(() => {
     setReserveroom({ ...reserve_room, ['NetPrice']: netprice });
   }, [netprice]);
-
-  useEffect(() => {
-    setReserveroom({ ...reserve_room, ['Status']: status?.id });
-  }, [status]);
 
   useEffect(() => {
     setReserveroom({ ...reserve_room, ['Customers']: customers?.id });
@@ -539,21 +527,6 @@ const ReserveRoom: FC<{}> = () => {
                   name="NetPrice"
                   variant="outlined"
                   value={netprice}
-                  onChange={handleChange}
-                />
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={3}>
-              <div className={classes.paper}>สถานะ</div>
-            </Grid>
-            <Grid item xs={9}>
-              <FormControl variant="outlined" className={classes.formControl}>
-                <TextField
-                  disabled
-                  name="Status"
-                  variant="outlined"
-                  value={status?.statusName}
                   onChange={handleChange}
                 />
               </FormControl>
