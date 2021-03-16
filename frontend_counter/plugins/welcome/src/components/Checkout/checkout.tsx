@@ -129,21 +129,7 @@ const checkout: FC<{}> = () => {
     setCheckin(res);
   };
 
-  //get status pay
-  const [Statusid, setStatusid] = React.useState(1);
-  const [Status, setStatus] = React.useState<EntStatus[]>([]);
-  const getstatus = async () => {
-    const res = await api.listStatus({ limit: 10, offset: 0 });
-    setStatus(res);
-  };
-
-  // get status v2
-  const [statusv2, setstatusv2] = React.useState<EntStatus>()
-  const getstatusv2 = async () => {
-    const res = await api.getStatus({ id: Number(1) })
-    setstatusv2(res)
-  }
-
+ 
   // get couterstaff
   const [counter, setCounter] = React.useState<EntCounterStaff>()
   const getCounterStaff = async () => {
@@ -162,8 +148,7 @@ const checkout: FC<{}> = () => {
 
     getstatusopinion();
     getcheckIn();
-    getstatus();
-    getstatusv2();
+
     getCounterStaff();
   }, [CheckOut.CheckinsID, CheckOut.CounterstaffsID, CheckOut.StatussID, CheckOut.StatusopinionID]);
 
@@ -173,10 +158,6 @@ const checkout: FC<{}> = () => {
     setCheckout({ ...CheckOut, ['CounterstaffsID']: counter?.id })
   }, [counter]);
   
-  //StatussID
-  useEffect(() => {
-    setCheckout({ ...CheckOut, ['StatussID']: statusv2?.id })
-  }, [statusv2]);
 
   // สำหรับตรวจสอบความถูกต้อง
   const [Identitycard, setIdentitycardError] = React.useState('');
@@ -284,13 +265,13 @@ const checkout: FC<{}> = () => {
         if (data.status == true) {
           clear();
           setOpen(true);
-          reload()
+          
         } else {
           clear();
           checkerror(data.error.Name);
           setFail(true);
           console.log(data);
-          reload()
+          
         }
       });
   }
@@ -400,29 +381,8 @@ const checkout: FC<{}> = () => {
                   onChange={handleChange} />
               </FormControl>
             </Grid>
-            <Grid item xs={3}>
-              <div className={classes.paper}>status</div>
-            </Grid>
-            <Grid item xs={9}>
-              <FormControl variant="outlined" className={classes.formControl}>
-                <InputLabel>เลือกสถานะการชำระเงิน</InputLabel>
-                
-                <Select
-                  disabled
-                  name="StatussID"
-                  value={'1'} // (undefined || '') = ''
-                  onChange={handleChange}
-                >
-                  {Status.map(item => {
-                    return (
-                      <MenuItem key={item.id} value={item.id}>
-                        {item.description}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-            </Grid>
+            
+            
             <Grid item xs={3}>
               <div className={classes.paper}>เลขบัตรประชาชน</div>
             </Grid>
@@ -432,6 +392,7 @@ const checkout: FC<{}> = () => {
                   error={Identitycard ? true : false}
                   helperText={Identitycard}
                   label="ใส่เลขบัตรประชาชน"
+                  value={CheckOut.Identitycard || ''}
                   name="Identitycard"
                   variant="outlined"
                   onChange={handleChange} />
@@ -469,6 +430,7 @@ const checkout: FC<{}> = () => {
                   multiline
                   rows={4}
                   error={Comment ? true : false}
+                  value={CheckOut.Comment || ''}
                   helperText={Comment}
                   label="ใส่ความเห็น"
                   name="Comment"
