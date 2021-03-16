@@ -26,7 +26,6 @@ type Resreve_Room struct {
 	Rooms       int
 	Promotions  int
 	Customers   int
-	Status      int
 	ReserveDate string
 	PhoneNumber string
 	Request     string
@@ -90,18 +89,6 @@ func (ctl *ReserveRoomController) CreateReserveRoom(c *gin.Context) {
 		return
 	}
 
-	s, err := ctl.client.StatusReserve.
-		Query().
-		Where(statusreserve.IDEQ(int(obj.Status))).
-		Only(context.Background())
-
-	if err != nil {
-		c.JSON(400, gin.H{
-			"error": "Status not found",
-		})
-		return
-	}
-
 	timereserve, err := time.Parse(time.RFC3339, obj.ReserveDate)
 
 	r, err := ctl.client.ReserveRoom.
@@ -110,7 +97,7 @@ func (ctl *ReserveRoomController) CreateReserveRoom(c *gin.Context) {
 		SetCustomer(cus).
 		SetPromotion(p).
 		SetRoom(d).
-		SetStatus(s).
+		SetStatusID(1).
 		SetAmount(obj.Amount).
 		SetPhoneNumber(obj.PhoneNumber).
 		SetRequest(obj.Request).
